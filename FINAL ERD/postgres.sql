@@ -87,6 +87,22 @@ CREATE VIEW pokojeView AS SELECT pokoj_id, numer_pokoju, pietro, liczba_miejsc, 
 -- CREATE VIEW mojeRezerwacje1 AS SELECT * FROM 
 SELECT * FROM uzytkownik u JOIN panel p ON u.uzytkownik_id = p.uzyt_id;
 
+-------------------------------------------------------------
+
+CREATE OR REPLACE FUNCTION isnumeric(text) RETURNS BOOLEAN AS $$
+DECLARE x NUMERIC;
+BEGIN
+    x = $1::NUMERIC;
+    RETURN TRUE;
+EXCEPTION WHEN others THEN
+    RETURN FALSE;
+END;
+$$
+STRICT
+LANGUAGE plpgsql IMMUTABLE;
+
+-------------------------------------------------------------
+
 CREATE OR REPLACE FUNCTION register_validator() RETURNS TRIGGER AS
 $$
 DECLARE
@@ -98,7 +114,7 @@ BEGIN
     IF NEW.e_mail LIKE '%@%' THEN
         flag := flag + 1;
     END IF;
-    IF ISNUMERIC(NEW.numer) THEN
+    IF isnumeric(NEW.numer) THEN
         flag := flag + 1;
         NEW.numer := CAST(NEW.numer AS NUMERIC);
     END IF;
