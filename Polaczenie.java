@@ -46,17 +46,18 @@ public class Polaczenie {
       return my_record;
   }
 
-  Boolean checkPasswd(String login, String password){
+  int checkPasswd(String login, String password){
     try { 
       //  Wykonanie zapytania SELSECT do bazy danych
       //  Wykorzystane elementy: prepareStatement(), executeQuery()
             //wydruk rekordow zawartych w zwroconym kursorze  ( zbior rekordow - ResultSet )
-       PreparedStatement pst = c.prepareStatement("SELECT haslo FROM projekt.panel WHERE login = \'" + login+"\'",ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
+       PreparedStatement pst = c.prepareStatement("SELECT uzyt_id, haslo FROM projekt.panel WHERE login = \'" + login+"\'",ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
        ResultSet rs = pst.executeQuery();
        String haslo;
       //  while (rs.next())  {
             rs.next();//
             haslo = rs.getString("haslo") ;
+            int id = Integer.parseInt(rs.getString("uzyt_id"));
             // String nazwisko    = rs.getString("lname") ;
             // System.out.print("Zwrocone kolumny  ");
             // System.out.println(imie+" "+nazwisko) ;
@@ -65,11 +66,15 @@ public class Polaczenie {
           //  }
        rs.close();
        pst.close();    
-      return password.equals(haslo);
+      if(password.equals(haslo)){
+        return id;
+      }else{
+        return -1;
+      }
       }
      catch(SQLException e)  {
           System.out.println("Blad podczas przetwarzania danych:"+e) ;
-          return false;
+          return -1;
         }
   }
 
@@ -82,7 +87,7 @@ public class Polaczenie {
         exist_result.close();
         exist_prepare.close();
         if(exist==0){
-          PreparedStatement counted_id = c.prepareStatement("SELECT MAX(uzyt_id) AS id FROM projekt.panel",ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
+          PreparedStatement counted_id = c.prepareStatement("SELECT COUNT(uzyt_id) AS id FROM projekt.panel",ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
           ResultSet result_count_id = counted_id.executeQuery();
           result_count_id.next();
           String string_id = result_count_id.getString("id");
@@ -91,14 +96,19 @@ public class Polaczenie {
           result_count_id.close();
           counted_id.close();
 
-          PreparedStatement pst1 = c.prepareStatement("INSERT INTO projekt.uzytkownik VALUES("+id+",\'"+imie+"\',\'"+nazwisko+"\',\'"+email+"\',"+Integer.parseInt(telefon)+" )");
-          pst1.executeUpdate();
+          // PreparedStatement pst1 = c.prepareStatement("INSERT INTO projekt.uzytkownik VALUES("+id+",\'"+imie+"\',\'"+nazwisko+"\',\'"+email+"\',"+Integer.parseInt(telefon)+" )");
+          PreparedStatement pst1 = c.prepareStatement("INSERT INTO projekt.uzytkownik VALUES("+id+",\'"+imie+"\',\'"+nazwisko+"\',\'"+email+"\',\'"+telefon+"\' )");
+          int ok = pst1.executeUpdate();
           pst1.close();    
-          PreparedStatement pst2 = c.prepareStatement("INSERT INTO projekt.panel VALUES("+id+", \'"+login+"\',\'"+haslo+"\')");
+          if(ok != 0){
+            PreparedStatement pst2 = c.prepareStatement("INSERT INTO projekt.panel VALUES("+id+", \'"+login+"\',\'"+haslo+"\')");
 
-          pst2.executeUpdate();
-          pst2.close();
-          return "Pomyslnie zarejestrowano uzytkownika!";
+            pst2.executeUpdate();
+            pst2.close();
+            return "Pomyslnie zarejestrowano uzytkownika!";
+          }else{
+            return "Prosze wprowadzic poprawne dane!";
+          }
         }else{
           return "Uzytkownik o podanym loginie juz istnieje!";
         }
@@ -109,55 +119,32 @@ public class Polaczenie {
           return "";
         }
   }
-  public ArrayList<String> getTableUzytkownicy(){
-      ArrayList<String> uzytkownicy_records = new ArrayList<>();
+  public ArrayList<ArrayList<String>> getTableUzytkownicy(){
+      ArrayList<ArrayList<String>> records = new ArrayList<>();
+      ArrayList<String> tmp = new ArrayList<>();
       try { 
 
-       PreparedStatement pst = c.prepareStatement("SELECT * FROM projekt.uzytkownik u JOIN projekt.panel p ON u.uzytkownik_id = p.uzyt_id",ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
+       PreparedStatement pst = c.prepareStatement("SELECT * FROM projekt.uzytkownicy",ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
        ResultSet rs = pst.executeQuery();
-       uzytkownicy_records.add("ID  |  LOGIN  |  HASLO  |  IMIE  |  NAZWISKO  |  E-MAIL  |  TELEFON");
+      tmp.add("ID:");
+      tmp.add("LOGIN:");
+      tmp.add("HASLO:");
+      tmp.add("IMIE:");
+      tmp.add("NAZWISKO:");
+      tmp.add("E-MAIL:");
+      tmp.add("TELEFON:");
+      records.add(tmp);
+
       while (rs.next())  {
-            uzytkownicy_records.add(rs.getString("uzyt_id")+"   "+rs.getString("login")+"   "+rs.getString("haslo")+"   "+rs.getString("imie")+"   "+rs.getString("nazwisko")+"   "+rs.getString("e_mail")+"   "+rs.getString("numer"));
-      }
-       rs.close();
-       pst.close();    
-      return uzytkownicy_records;
-      }
-      catch(SQLException e)  {
-          System.out.println("Blad podczas przetwarzania danych:"+e) ;
-          return uzytkownicy_records;
-      }
-  }
-
-  public ArrayList<String> getTableRezerwacje(){
-      ArrayList<String> rezerwacje_records = new ArrayList<>();
-      try { 
-
-       PreparedStatement pst = c.prepareStatement("SELECT * FROM projekt.rezerwacje",ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
-       ResultSet rs = pst.executeQuery();
-       rezerwacje_records.add("ID REZERWACJI  |  ID UZYTKOWNIKA  |  ID POKOJU  |  DATA REZERWACJI  |  OD KIEDY  |  DO KIEDY  |  LICZBA DZIECI   |   LICZBA DOROSLYCH");
-      while (rs.next())  {
-            rezerwacje_records.add(rs.getString("rezerwacja_id")+"   "+rs.getString("uzytkownik_id")+"   "+rs.getString("pokoj_id")+"   "+rs.getString("data_rezerwacji")+"   "+rs.getString("od_kiedy")+"   "+rs.getString("do_kiedy")+"   "+rs.getString("liczba_dzieci")+"   "+rs.getString("liczba_doroslych"));
-      }
-       rs.close();
-       pst.close();    
-      return rezerwacje_records;
-      }
-      catch(SQLException e)  {
-          System.out.println("Blad podczas przetwarzania danych:"+e) ;
-          return rezerwacje_records;
-      }
-  }
-
-  public ArrayList<String> getTableOplaty(){
-      ArrayList<String> records = new ArrayList<>();
-      try { 
-
-       PreparedStatement pst = c.prepareStatement("SELECT * FROM projekt.oplata",ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
-       ResultSet rs = pst.executeQuery();
-       records.add("ID OPLATA  |  ID REZERWACJI  |  STATUS  |  KWOTA");
-      while (rs.next())  {
-            records.add(rs.getString("oplata_id")+"   "+rs.getString("rezerwacja_id")+"   "+rs.getString("status_czy_oplacone")+"   "+rs.getString("kwota"));
+            tmp = new ArrayList<>();
+            tmp.add(rs.getString("uzyt_id"));
+            tmp.add(rs.getString("login"));
+            tmp.add(rs.getString("haslo"));
+            tmp.add(rs.getString("imie"));
+            tmp.add(rs.getString("nazwisko"));
+            tmp.add(rs.getString("e_mail"));
+            tmp.add(rs.getString("numer"));
+            records.add(tmp);
       }
        rs.close();
        pst.close();    
@@ -169,15 +156,191 @@ public class Polaczenie {
       }
   }
 
-  public ArrayList<String> getTableUslugi(){
-      ArrayList<String> records = new ArrayList<>();
+  public ArrayList<ArrayList<String>> getTableRezerwacje(){
+      ArrayList<ArrayList<String>> records = new ArrayList<>();
+      ArrayList<String> tmp = new ArrayList<>();
+      try { 
+
+       PreparedStatement pst = c.prepareStatement("SELECT * FROM projekt.rezerwacje",ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
+       ResultSet rs = pst.executeQuery();
+      tmp.add("ID REZERWACJI:");
+      tmp.add("ID UZYTKOWNIKA:");
+      tmp.add("ID POKOJU:");
+      tmp.add("DATA REZERWACJI:");
+      tmp.add("OD KIEDY:");
+      tmp.add("DO KIEDY:");
+      tmp.add("LICZBA DZIECI:");
+      tmp.add("LICZBA DOROSLYCH:");
+      records.add(tmp);
+
+      while (rs.next())  {
+            tmp = new ArrayList<>();
+            tmp.add(rs.getString("rezerwacja_id"));
+            tmp.add(rs.getString("uzytkownik_id"));
+            tmp.add(rs.getString("pokoj_id"));
+            tmp.add(rs.getString("data_rezerwacji"));
+            tmp.add(rs.getString("od_kiedy"));
+            tmp.add(rs.getString("do_kiedy"));
+            tmp.add(rs.getString("liczba_dzieci"));
+            tmp.add(rs.getString("liczba_doroslych"));
+            records.add(tmp);
+      }
+       rs.close();
+       pst.close();    
+      return records;
+      }
+      catch(SQLException e)  {
+          System.out.println("Blad podczas przetwarzania danych:"+e) ;
+          return records;
+      }
+  }
+
+  public ArrayList<ArrayList<String>> getTableOplaty(){
+      ArrayList<ArrayList<String>> records = new ArrayList<>();
+      ArrayList<String> tmp = new ArrayList<>();
+      try { 
+
+       PreparedStatement pst = c.prepareStatement("SELECT * FROM projekt.oplata",ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
+       ResultSet rs = pst.executeQuery();
+      tmp.add("ID OPLATY:");
+      tmp.add("ID REZERWACJI:");
+      tmp.add("STATUS:");
+      tmp.add("KWOTA:");
+      records.add(tmp);
+
+      while (rs.next())  {
+            tmp = new ArrayList<>();
+            tmp.add(rs.getString("oplata_id"));
+            tmp.add(rs.getString("rezerwacja_id"));
+            tmp.add(rs.getString("status_czy_oplacone"));
+            tmp.add(rs.getString("kwota"));
+            records.add(tmp);
+      }
+       rs.close();
+       pst.close();    
+      return records;
+      }
+      catch(SQLException e)  {
+          System.out.println("Blad podczas przetwarzania danych:"+e) ;
+          return records;
+      }
+  }
+
+  public ArrayList<ArrayList<String>> getTableUslugi(){
+      ArrayList<ArrayList<String>> records = new ArrayList<>();
+      ArrayList<String> tmp = new ArrayList<>();
       try { 
 
        PreparedStatement pst = c.prepareStatement("SELECT * FROM projekt.dodatkowe_uslugi",ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
        ResultSet rs = pst.executeQuery();
-       records.add("ID USLUGI  |  NAZWA USLUGI  |  CENA OD OSOBY  |  ID REZERWACJI");
+      tmp.add("ID USLUGI:");
+      tmp.add("ID REZERWACJI:");
+      tmp.add("NAZWA USLUGI:");
+      tmp.add("CENA OD OSOBY:");
+      records.add(tmp);
+
       while (rs.next())  {
-            records.add(rs.getString("dodatkowe_uslugi_id")+"   "+rs.getString("nazwa_uslugi")+"   "+rs.getString("cena_od_osoby")+"   "+rs.getString("rezerwacja_id"));
+            tmp = new ArrayList<>();
+            tmp.add(rs.getString("dodatkowe_uslugi_id"));
+            tmp.add(rs.getString("rezerwacja_id"));
+            tmp.add(rs.getString("nazwa_uslugi"));
+            tmp.add(rs.getString("cena_od_osoby"));
+            records.add(tmp);
+      }
+       rs.close();
+       pst.close();    
+      return records;
+      }
+      catch(SQLException e)  {
+          System.out.println("Blad podczas przetwarzania danych:"+e) ;
+          return records;
+      }
+  }
+
+  public ArrayList<ArrayList<String>> getTablePokoje(){
+      ArrayList<ArrayList<String>> records = new ArrayList<>();
+      ArrayList<String> tmp = new ArrayList<>();
+      try { 
+
+       PreparedStatement pst = c.prepareStatement("SELECT * FROM projekt.pokojeView",ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
+       ResultSet rs = pst.executeQuery();
+      tmp.add("ID POKOJU:");
+      tmp.add("NUMER POKOJU:");
+      tmp.add("PIETRO:");
+      tmp.add("LICZBA MIEJSC:");
+      tmp.add("ID KATEGORII:");
+      tmp.add("NAZWA KATEGORII:");
+      tmp.add("CENA OD OSOBY:");
+      records.add(tmp);
+
+      while (rs.next())  {
+            tmp = new ArrayList<>();
+            tmp.add(rs.getString("pokoj_id"));
+            tmp.add(rs.getString("numer_pokoju"));
+            tmp.add(rs.getString("pietro"));
+            tmp.add(rs.getString("liczba_miejsc"));
+            tmp.add(rs.getString("kategoria_id"));
+            tmp.add(rs.getString("nazwa_kategorii"));
+            tmp.add(rs.getString("cena_od_osoby"));
+            records.add(tmp);
+      }
+       rs.close();
+       pst.close();    
+      return records;
+      }
+      catch(SQLException e)  {
+          System.out.println("Blad podczas przetwarzania danych:"+e) ;
+          return records;
+      }
+  }
+  
+  public ArrayList<ArrayList<String>> getTableZakwaterowani(){
+      ArrayList<ArrayList<String>> records = new ArrayList<>();
+      ArrayList<String> tmp = new ArrayList<>();
+      try { 
+
+      PreparedStatement pst = c.prepareStatement("SELECT * FROM projekt.zakwaterowani_goscie_info",ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
+       ResultSet rs = pst.executeQuery();
+      tmp.add("ID INFORMACJI:");
+      tmp.add("ID REZERWACJI:");
+      tmp.add("STATUS:");
+      records.add(tmp);
+
+      while (rs.next())  {
+            tmp = new ArrayList<>();
+            tmp.add(rs.getString("info_id"));
+            tmp.add(rs.getString("rezerwacja_id"));
+            tmp.add(rs.getString("status_czy_zakwaterowany"));
+            records.add(tmp);
+      }
+       rs.close();
+       pst.close();    
+      return records;
+      }
+      catch(SQLException e)  {
+          System.out.println("Blad podczas przetwarzania danych:"+e) ;
+          return records;
+      }
+  }
+ 
+  public ArrayList<ArrayList<String>> getTableBlacklist(){
+      ArrayList<ArrayList<String>> records = new ArrayList<>();
+      ArrayList<String> tmp = new ArrayList<>();
+      try { 
+
+      PreparedStatement pst = c.prepareStatement("SELECT * FROM projekt.czarna_lista",ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
+       ResultSet rs = pst.executeQuery();
+      tmp.add("ID INFORMACJI:");
+      tmp.add("ID UZYTKOWNIKA:");
+      tmp.add("POWOD:");
+      records.add(tmp);
+
+      while (rs.next())  {
+            tmp = new ArrayList<>();
+            tmp.add(rs.getString("info_id"));
+            tmp.add(rs.getString("uzytkownik_id"));
+            tmp.add(rs.getString("powod"));
+            records.add(tmp);
       }
        rs.close();
        pst.close();    

@@ -3,7 +3,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 
-public class GUI_Podglad_Oplaty{
+public class GUI_Podglad_Blacklist{
     public int login_id;
     public GUI_Login mainWindow;
     public Polaczenie a;
@@ -12,13 +12,13 @@ public class GUI_Podglad_Oplaty{
     public JButton podgladButton;
     public ArrayList<ArrayList<String>> records;
 
-    public GUI_Podglad_Oplaty(Polaczenie p, GUI_Login mainWindow, int id){
+    public GUI_Podglad_Blacklist(Polaczenie p, GUI_Login mainWindow, int id){
         login_id = id;
         this.mainWindow = mainWindow;
         a = p;
         podgladPanel = new JPanel();
         podgladPanel.setBorder(BorderFactory.createEmptyBorder(100,100,100,100));
-        podgladPanel.setLayout(new GridLayout(0,4));
+        podgladPanel.setLayout(new GridLayout(0,3));
         records = new ArrayList<>();
         wypelnij();
         podgladButton = new JButton("Powrot do podgladu tabel");
@@ -37,7 +37,7 @@ public class GUI_Podglad_Oplaty{
     }
 
     public void wypelnij(){
-        records =  a.getTableOplaty();
+        records =  a.getTableBlacklist();
         String tmp;
         for(int i = 0; i < records.size(); i++){
             for(int j = 0; j <records.get(i).size(); j++){

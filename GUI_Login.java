@@ -17,9 +17,13 @@ public class GUI_Login{
     public JButton zaloguj;
     public JButton zarejestruj;
     public Polaczenie a;
+    public int login_id;
     public GUI_Login(Polaczenie p){
+        login_id = -1;
         a = p;
         frame = new JFrame();
+        frame.setSize(1200, 800);
+
         panel = new JPanel();
         label = new JLabel("nothing");
         log = new JTextField(16);
@@ -28,8 +32,9 @@ public class GUI_Login{
         zarejestruj = new JButton("Zarejestruj sie");
         
 
-        panel.setBorder(BorderFactory.createEmptyBorder(30,30,10,10));
+        panel.setBorder(BorderFactory.createEmptyBorder(300,300,300,300));
         panel.setLayout(new GridLayout(0,1));
+        // panel.setSize(1200, 800);
         panel.add(label);
         label.setVisible(false);
         panel.add(log);
@@ -41,8 +46,9 @@ public class GUI_Login{
             public void actionPerformed(ActionEvent e){
                 String l = log.getText();
                 String ps = pass.getText();
-                if(a.checkPasswd(l, ps)){
-                    GUI_Menu f = new GUI_Menu(a, tmp);
+                login_id = a.checkPasswd(l, ps);
+                if(login_id > -1){
+                    GUI_Menu f = new GUI_Menu(a, tmp, login_id);
                     frame.getContentPane().removeAll();
                     frame.getContentPane().add(f.menuPanel);
                     frame.setTitle("BD PROJEKT - Menu");

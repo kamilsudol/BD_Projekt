@@ -46,7 +46,7 @@ public class GUI_Register{
         confirmLabel = new JLabel("");
         confirmLabel.setVisible(false);
 
-        registerPanel.setBorder(BorderFactory.createEmptyBorder(30,30,10,10));
+        registerPanel.setBorder(BorderFactory.createEmptyBorder(100,100,100,100));
         registerPanel.setLayout(new GridLayout(0,1));
         registerPanel.add(imieLabel);
         registerPanel.add(imieText);
@@ -73,10 +73,14 @@ public class GUI_Register{
                 String log = loginText.getText();
                 String pass = hasloText.getText();
 
-                String flag = a.zarejestruj(im, nw, em, tel, log, pass);
-                confirmLabel.setText(flag);
-                confirmLabel.setVisible(true);
-
+                if(!im.equals("") && !nw.equals("") && !em.equals("") && !tel.equals("") && !log.equals("") && !pass.equals("")){
+                    String flag = a.zarejestruj(im, nw, em, tel, log, pass);
+                    confirmLabel.setText(flag);
+                    confirmLabel.setVisible(true);
+                }else{
+                    confirmLabel.setText("Prosze wypelnic wszystkie pola!");
+                    confirmLabel.setVisible(true);
+                }
             }
         });
 
