@@ -82,4 +82,33 @@ ALTER TABLE "czarna_lista" ADD FOREIGN KEY ("uzytkownik_id") REFERENCES "uzytkow
 
 INSERT INTO "uzytkownik" VALUES (0, 'ADMIN', 'ADMIN', 'TEST@TEST.COM', 999999999);
 INSERT INTO "panel" VALUES (0, 'admin', 'admin');
+CREATE VIEW uzytkownicy AS SELECT * FROM uzytkownik u JOIN panel p ON u.uzytkownik_id = p.uzyt_id;
+CREATE VIEW pokojeView AS SELECT pokoj_id, numer_pokoju, pietro, liczba_miejsc, p.kategoria_id, nazwa_kategorii, cena_od_osoby FROM pokoj p JOIN kategoria k ON p.kategoria_id = k.kategoria_id;
+-- CREATE VIEW mojeRezerwacje1 AS SELECT * FROM 
 SELECT * FROM uzytkownik u JOIN panel p ON u.uzytkownik_id = p.uzyt_id;
+
+CREATE OR REPLACE FUNCTION register_validator() RETURNS TRIGGER AS
+$$
+DECLARE
+    -- check_rec RECORD;
+    flag INTEGER;
+BEGIN
+    flag := 0;
+    -- SELECT e_mail, numer INTO check_rec FROM uzytkownik WHERE uzytkownik_id = NEW.uzytkownik_id;
+    IF NEW.e_mail LIKE '%@%' THEN
+        flag := flag + 1;
+    END IF;
+    IF ISNUMERIC(NEW.numer) THEN
+        flag := flag + 1;
+        NEW.numer := CAST(NEW.numer AS NUMERIC);
+    END IF;
+    IF flag = 2 THEN
+        RETURN NEW;
+    ELSE
+        RETURN NULL;
+    END IF;
+
+END;
+$$LANGUAGE 'plpgsql';
+
+CREATE TRIGGER trigger_register_validator BEFORE INSERT ON uzytkownik FOR EACH ROW EXECUTE PROCEDURE register_validator();
