@@ -9,7 +9,7 @@ CREATE TABLE "uzytkownik" (
   "imie" varchar,
   "nazwisko" varchar,
   "e_mail" text,
-  "numer" numeric
+  "numer" text
 );
 
 CREATE TABLE "rezerwacje" (
@@ -89,7 +89,7 @@ SELECT * FROM uzytkownik u JOIN panel p ON u.uzytkownik_id = p.uzyt_id;
 
 -------------------------------------------------------------
 
-CREATE OR REPLACE FUNCTION isnumeric(text) RETURNS BOOLEAN AS $$
+CREATE OR REPLACE FUNCTION numeric_check(TEXT) RETURNS BOOLEAN AS $$
 DECLARE x NUMERIC;
 BEGIN
     x = $1::NUMERIC;
@@ -114,9 +114,8 @@ BEGIN
     IF NEW.e_mail LIKE '%@%' THEN
         flag := flag + 1;
     END IF;
-    IF isnumeric(NEW.numer) THEN
+    IF projekt.numeric_check(NEW.numer) THEN
         flag := flag + 1;
-        NEW.numer := CAST(NEW.numer AS NUMERIC);
     END IF;
     IF flag = 2 THEN
         RETURN NEW;
