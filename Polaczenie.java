@@ -351,4 +351,22 @@ public class Polaczenie {
           return records;
       }
   }
+
+  public int getMaxPeople(){
+    try { 
+      PreparedStatement pst = c.prepareStatement("SELECT MAX(liczba_miejsc) AS max FROM projekt.pokoj",ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
+      ResultSet rs = pst.executeQuery();
+      int max = -1;
+      while (rs.next())  {
+            max = Integer.parseInt(rs.getString("max"));;
+      }
+      rs.close();
+      pst.close();    
+      return max;
+      }
+      catch(SQLException e)  {
+          System.out.println("Blad podczas przetwarzania danych:"+e) ;
+          return -1;
+      }
+  }
 }
