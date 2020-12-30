@@ -94,7 +94,7 @@ DECLARE x NUMERIC;
 BEGIN
     x = $1::NUMERIC;
     RETURN TRUE;
-EXCEPTION WHEN others THEN
+    EXCEPTION WHEN others THEN
     RETURN FALSE;
 END;
 $$
@@ -128,19 +128,7 @@ $$LANGUAGE 'plpgsql';
 
 CREATE TRIGGER trigger_register_validator BEFORE INSERT ON uzytkownik FOR EACH ROW EXECUTE PROCEDURE register_validator();
 
-CREATE TABLE "pokoj" (
-  "pokoj_id" int PRIMARY KEY,
-  "numer_pokoju" int,
-  "pietro" int,
-  "kategoria_id" int,
-  "liczba_miejsc" int
-);
-
-CREATE TABLE "kategoria" (
-  "kategoria_id" int PRIMARY KEY,
-  "nazwa_kategorii" text,
-  "cena_od_osoby" numeric
-);
+------------------------------------------------------------
 
 INSERT INTO kategoria VALUES(0, 'Dla osob specjalnej troski', 50);
 INSERT INTO kategoria VALUES(1, 'Pakiet podstawowy', 40);
@@ -161,3 +149,34 @@ INSERT INTO pokoj VALUES(11, 12, 3, 2, 4);
 INSERT INTO pokoj VALUES(12, 13, 3, 2, 5);
 INSERT INTO pokoj VALUES(13, 14, 3, 2, 6);
 INSERT INTO pokoj VALUES(14, 15, 3, 2, 3);
+
+
+-----------------------------------------
+CREATE OR REPLACE FUNCTION get_pokoje(liczba_osob INT, data_start DATE, data_stop DATE) RETURNS TABLE(id_pokoju INTEGER) AS $$
+DECLARE 
+    kursor_pokoj CURSOR FOR SELECT * FROM projekt.pokoj WHERE liczba_osob <= liczba_miejsc;
+    rec RECORD;
+    query_from_rezerwacje TEXT;
+    rec_check RECORD;
+BEGIN
+    OPEN kursor_pokoj;
+    LOOP
+          FETCH kursor_pokoj INTO rec;
+          EXIT WHEN NOT FOUND;
+
+          query_from_rezerwacje := 'SELECT pokoj_id FROM projekt.rezerwacje WHERE (pokoj_id = $1 AND (($2>od_kiedy AND $2<do_kiedy) OR ($3>od_kiedy AND $3<do_kiedy) OR (od_kiedy>$2 AND do_kiedy<$3))) LIMIT 1';
+          EXECUTE query_from_rezerwacje INTO rec_check USING rec.pokoj_id, data_start, data_stop;
+          IF rec_check IS NULL THEN
+              id_pokoju := rec.pokoj_id;
+              RETURN NEXT;
+          END IF;
+    END LOOP;
+    CLOSE kursor_pokoj;
+END;
+$$LANGUAGE 'plpgsql';
+
+select * from get_pokoje(5, CAST('2020-12-31' AS DATE), CAST('2021-01-03' AS DATE));
+select * from get_pokoje(5,'2020-12-31', '2021-01-03');
+INSERT INTO rezerwacje("uzytkownik_id","pokoj_id","data_rezerwacji","od_kiedy","do_kiedy","liczba_dzieci","liczba_doroslych") VALUES(0, 8, NOW(),CAST('2021-01-01' AS DATE),CAST('2021-01-02' AS DATE), 0,5);
+INSERT INTO rezerwacje("uzytkownik_id","pokoj_id","data_rezerwacji","od_kiedy","do_kiedy","liczba_dzieci","liczba_doroslych") VALUES(0, 13, NOW(),CAST('2021-01-01' AS DATE),CAST('2021-01-02' AS DATE), 0,5);
+select * from get_pokoje(5,'2021-01-04', '2021-01-08');
