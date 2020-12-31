@@ -369,4 +369,47 @@ public class Polaczenie {
           return -1;
       }
   }
+
+  public ArrayList<Integer> getWolnePokoje(int liczba_osob, String od_kiedy, String do_kiedy){
+    ArrayList<Integer> lista_pokoi = new ArrayList<>();
+    try { 
+      PreparedStatement pst = c.prepareStatement("SELECT * FROM projekt.get_pokoje(" + liczba_osob+",'"+od_kiedy+"','"+do_kiedy+"')",ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
+      ResultSet rs = pst.executeQuery();
+      while (rs.next())  {
+            lista_pokoi.add(Integer.parseInt(rs.getString("id_pokoju")));
+      }
+      rs.close();
+      pst.close();    
+      return lista_pokoi;
+      }
+      catch(SQLException e)  {
+          System.out.println("Blad podczas przetwarzania danych:"+e) ;
+          return lista_pokoi;
+      }
+  }
+
+  public ComboRoomInsert getPokojInfo(int id){
+    ComboRoomInsert info = new ComboRoomInsert();
+    try { 
+      PreparedStatement pst = c.prepareStatement("SELECT * FROM projekt.pokojeView WHERE pokoj_id = " + id,ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
+      ResultSet rs = pst.executeQuery();
+
+      while (rs.next())  {
+            int pokoj_id = Integer.parseInt(rs.getString("pokoj_id"));
+            int cena = Integer.parseInt(rs.getString("cena_od_osoby"));
+            String kategoria = rs.getString("nazwa_kategorii");
+            int numer_pokoju = Integer.parseInt(rs.getString("numer_pokoju"));
+            int pietro = Integer.parseInt(rs.getString("pietro"));
+            int miejsca = Integer.parseInt(rs.getString("liczba_miejsc"));
+            info.setNew(pokoj_id, pietro, numer_pokoju, kategoria, cena, miejsca);
+      }
+      rs.close();
+      pst.close();    
+      return info;
+      }
+      catch(SQLException e)  {
+          System.out.println("Blad podczas przetwarzania danych:"+e) ;
+          return info;
+      }
+  }
 }

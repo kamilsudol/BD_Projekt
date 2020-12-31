@@ -11,7 +11,8 @@ public class GUI_Rezerwacja{
     public JPanel rezerwacjaPanel;
     public JButton zatwierdzButton;
     public JButton menuButton;
-    public JLabel pokojLabel;
+    public JLabel pokojLabel1;
+    public JLabel pokojLabel2;
     public JLabel liczbaDoroslychLabel;
     public JLabel liczbaDzieciLabel;
     public JLabel kwotaLabel;
@@ -56,9 +57,16 @@ public class GUI_Rezerwacja{
 
     public JComboBox<ComboRoomInsert> pokojeDropList;
 
+    private int chosen_pokoj_liczba_miejsc;
+    private int chosen_pokoj_id;
+    private int chosen_pokoj_cena;
+
     Boolean data_flag;
     Boolean osoby_flag;
     Boolean pokoj_flag;
+
+    private String start_rezerwacji;
+    private String stop_rezerwacji;
 
     public GUI_Rezerwacja(Polaczenie p, GUI_Login mainWindow, int id){
         data_flag = false;
@@ -197,10 +205,16 @@ public class GUI_Rezerwacja{
         day_doKiedyDropList.setEnabled(false);
         day_doKiedyDropList.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e){
-                Object item = day_odKiedyDropList.getSelectedItem();
+                Object item = day_doKiedyDropList.getSelectedItem();
                 chosen_end_day = ((ComboInsert)item).getVal();
                 data_flag = chosen_end_day != -1;
-                pokojeDropList.setEnabled(osoby_flag && data_flag);
+                if(data_flag){
+                    przedzialRezerwacjiCompute();
+                    pokojeDropListCheck();
+                }else{
+                    przedzialRezerwacjiReset();
+                    pokojeDropListCheck();
+                }
             }
         });
         rezerwacjaPanel.add(day_doKiedyDropList);
@@ -245,16 +259,42 @@ public class GUI_Rezerwacja{
                 uslugiReset();
                 kwotaReset();
                 osoby_flag = chosen_kiddo_people != -1;
-                pokojeDropList.setEnabled(osoby_flag && data_flag);
+                if(osoby_flag){
+                    przedzialRezerwacjiCompute();
+                    pokojeDropListCheck();
+                }else{
+                    przedzialRezerwacjiReset();
+                    pokojeDropListCheck();
+                }
+                
             }
         });
         rezerwacjaPanel.add(dzieciDropList);
 
-        pokojLabel = new JLabel("Prosze wybrac pokoj:");
-        rezerwacjaPanel.add(pokojLabel);
+        pokojLabel1 = new JLabel("Prosze wybrac jeden z dostepnych pokoi (w przypadku wyboru pokoju z wieksza liczba miejsc,");
+        pokojLabel2 = new JLabel("niz zadeklarowana, wowczas pobrana bedzie oplata wysokosci 25% kwoty za pokoj od kazdego nadmiarowego miejsca):");
+        rezerwacjaPanel.add(pokojLabel1);
+        rezerwacjaPanel.add(pokojLabel2);
 
         pokojeDropList = new JComboBox<>();
+        pokojeDropList.addItem(new ComboRoomInsert("-----"));
         pokojeDropList.setEnabled(false);
+        pokojeDropList.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e){
+                Object item = pokojeDropList.getSelectedItem();
+                chosen_pokoj_id = ((ComboRoomInsert)item).getId();
+                chosen_pokoj_liczba_miejsc = ((ComboRoomInsert)item).getMiejsca();
+                chosen_pokoj_cena = ((ComboRoomInsert)item).getCena();
+                if(chosen_pokoj_id != -1){
+                    pokoj_flag = true;
+                    kwotaPokojeCompute();
+                    kwotaUpdate();
+                }else{
+                    pokoj_flag = false;
+                    kwotaReset();
+                }
+            }
+        });
         rezerwacjaPanel.add(pokojeDropList);
 
         uslugiLabel = new JLabel("Prosze wybrac dodatkowe uslugi (opcjonalnie):");
@@ -263,11 +303,11 @@ public class GUI_Rezerwacja{
         uslugaSilownia = new JCheckBox("Dostep do silowni - koszt 5 zl od osoby (tylko dla osob doroslych)");
         uslugaSilownia.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e){
-                if(uslugaSilownia.isSelected() && chosen_adult_people != -1 && chosen_kiddo_people != -1){
-                    kwota_z_uslug+= chosen_adult_people * 5 + chosen_kiddo_people * 2.5;
+                if(uslugaSilownia.isSelected() && chosen_adult_people != -1){
+                    kwota_z_uslug+= chosen_adult_people * 5;
                     kwotaUpdate();
                 }else{
-                    kwota_z_uslug-= chosen_adult_people * 5 + chosen_kiddo_people * 2.5;
+                    kwota_z_uslug-= chosen_adult_people * 5;
                     kwotaUpdate();
                 }
             }
@@ -349,7 +389,9 @@ public class GUI_Rezerwacja{
     }
 
     public void kwotaPokojeCompute(){
-        //
+        int liczba_dni = okresPobytu();
+        // System.out.println("Liczba dni:" + liczba_dni);
+        kwota_z_pokoi = liczba_dni*chosen_pokoj_cena*(chosen_adult_people + 0.5*chosen_kiddo_people + 0.25*(chosen_pokoj_liczba_miejsc - chosen_adult_people - chosen_kiddo_people));
     }
 
     public void dayDropListFill(JComboBox<ComboInsert> x, int day, int month_start, int month_stop, int year_start, int year_stop){
@@ -418,5 +460,78 @@ public class GUI_Rezerwacja{
         uslugaBilard.setSelected(false);
         uslugaKregielnia.setSelected(false);
         uslugaSilownia.setSelected(false);
+    }
+
+    public void przedzialRezerwacjiCompute(){
+        start_rezerwacji = chosen_start_year+"-"+chosen_start_month+"-"+chosen_start_day;
+        stop_rezerwacji = chosen_end_year+"-"+chosen_end_month+"-"+chosen_end_day;
+    }
+
+    public void przedzialRezerwacjiReset(){
+        start_rezerwacji = "";
+        stop_rezerwacji = "";
+    }
+
+    public void pokojeDropListCheck(){
+        if(osoby_flag && data_flag){
+            pokojeDropList.setEnabled(true);
+            wyczyscPokojeDropList();
+            wypelnijPokojeDropList();
+        }else{
+            pokojeDropList.setEnabled(false);
+            wyczyscPokojeDropList();
+        }
+    }
+
+    public void wypelnijPokojeDropList(){
+        GetWolnePokoje pokoje = new GetWolnePokoje(a);
+        pokoje.dostepnePokoje(chosen_adult_people+chosen_kiddo_people, start_rezerwacji, stop_rezerwacji);
+        ArrayList<ComboRoomInsert> tmp = pokoje.dostepnePokojeInfo();
+        for(int i = 0; i < tmp.size(); i++){
+            pokojeDropList.addItem(tmp.get(i));
+        } 
+    }
+
+    public void wyczyscPokojeDropList(){
+        for(int i=pokojeDropList.getItemCount()-1;i>0;i--){
+                pokojeDropList.removeItemAt(i);
+        }
+    }
+
+    public int okresPobytu(){
+        int count = 0;
+        int count_months = 0;
+
+        for(int i = chosen_start_year; i <= chosen_end_year; i++){
+            if(i == chosen_start_year){
+                count_months += 12 - chosen_start_month + 1;
+            }else if(i == chosen_end_year){
+                count_months += chosen_end_month;
+            }else{
+                count_months +=12;
+            }
+        }
+
+        int k = 0;
+        int month_start_copy = chosen_start_month;
+
+        for(int i = 1; i <= count_months; i++){
+            if(month_start_copy == chosen_start_month && i == 1){
+                count += miesiac.resolveDays(month_start_copy, chosen_start_year + k) - chosen_start_day + 1;
+            }else if(i == count_months){
+                count += chosen_end_day;
+                System.out.println(chosen_end_day);
+            }else{
+                count += miesiac.resolveDays(month_start_copy, chosen_start_year + k);
+            }
+            if(month_start_copy == 12){
+                k++;
+                month_start_copy = 1;
+            }else{
+                month_start_copy++;
+            }
+        }
+
+        return count;
     }
 }
