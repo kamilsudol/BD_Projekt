@@ -106,11 +106,9 @@ LANGUAGE plpgsql IMMUTABLE;
 CREATE OR REPLACE FUNCTION register_validator() RETURNS TRIGGER AS
 $$
 DECLARE
-    -- check_rec RECORD;
     flag INTEGER;
 BEGIN
     flag := 0;
-    -- SELECT e_mail, numer INTO check_rec FROM uzytkownik WHERE uzytkownik_id = NEW.uzytkownik_id;
     IF NEW.e_mail LIKE '%@%' THEN
         flag := flag + 1;
     END IF;
@@ -180,3 +178,78 @@ select * from get_pokoje(5,'2020-12-31', '2021-01-03');
 INSERT INTO rezerwacje("uzytkownik_id","pokoj_id","data_rezerwacji","od_kiedy","do_kiedy","liczba_dzieci","liczba_doroslych") VALUES(0, 8, NOW(),CAST('2021-01-01' AS DATE),CAST('2021-01-02' AS DATE), 0,5);
 INSERT INTO rezerwacje("uzytkownik_id","pokoj_id","data_rezerwacji","od_kiedy","do_kiedy","liczba_dzieci","liczba_doroslych") VALUES(0, 13, NOW(),CAST('2021-01-01' AS DATE),CAST('2021-01-02' AS DATE), 0,5);
 select * from get_pokoje(5,'2021-01-04', '2021-01-08');
+
+--------------------------
+CREATE OR REPLACE FUNCTION get_liczba_dni(data_start DATE, data_stop DATE) RETURNS int AS $$
+DECLARE
+    x INT;
+BEGIN
+    x := data_stop - data_start + 1;
+    RETURN x;
+END;
+$$LANGUAGE 'plpgsql';
+
+SELECT * FROM get_liczba_dni('2021-01-04', '2021-01-08');
+----------------------------
+CREATE OR REPLACE FUNCTION latest_rezerwacja_id() RETURNS int AS $$
+DECLARE 
+    x INT;
+    rec RECORD;
+BEGIN
+    SELECT MAX(rezerwacja_id) AS latest INTO rec FROM projekt.rezerwacje;
+    x := rec.latest;
+    RETURN x;
+END;
+$$LANGUAGE 'plpgsql';
+
+-------------------------
+CREATE OR REPLACE FUNCTION platnosc_rezerwacja() RETURNS TRIGGER AS $$
+DECLARE
+    cena NUMERIC;
+    liczba_dni INT;
+    rec RECORD;
+BEGIN
+    liczba_dni := projekt.get_liczba_dni(NEW.od_kiedy, NEW.do_kiedy);
+    SELECT liczba_miejsc, cena_od_osoby INTO rec FROM projekt.pokojeView;
+    cena := liczba_dni*rec.cena_od_osoby*(NEW.liczba_doroslych + 0.5*NEW.liczba_dzieci + 0.25*(rec.liczba_miejsc - NEW.liczba_dzieci - NEW.liczba_doroslych));
+    INSERT INTO projekt.oplata("rezerwacja_id", "status_czy_oplacone", "kwota") VALUES(NEW.rezerwacja_id, FALSE, cena);
+    RETURN NEW;
+END;
+$$LANGUAGE 'plpgsql';
+
+CREATE TRIGGER trigger_platnosc_rezerwacja AFTER INSERT ON projekt.rezerwacje FOR EACH ROW EXECUTE PROCEDURE platnosc_rezerwacja();
+
+-----------------------------
+CREATE OR REPLACE FUNCTION platnosc_update() RETURNS TRIGGER AS $$
+DECLARE
+    rec RECORD;
+    r_id INT;
+    dodatkowa_kwota NUMERIC;
+BEGIN
+    r_id := latest_rezerwacja_id();
+    SELECT liczba_doroslych, liczba_dzieci INTO rec FROM projekt.rezerwacje WHERE rezerwacja_id = r_id;
+    dodatkowa_kwota := NEW.cena_od_osoby*(rec.liczba_doroslych + 0.5*rec.liczba_dzieci);
+    UPDATE projekt.oplata SET kwota = kwota + dodatkowa_kwota WHERE rezerwacja_id = r_id;
+    RETURN NEW;
+END;
+$$LANGUAGE 'plpgsql';
+
+CREATE TRIGGER trigger_platnosc_update AFTER INSERT ON projekt.dodatkowe_uslugi FOR EACH ROW EXECUTE PROCEDURE platnosc_update();
+-----------------------------
+
+-- CREATE OR REPLACE FUNCTION dokonaj_rezerwacji(u_id INT, p_id INT, data_start DATE, data_stop DATE, dzieci INT, dorosli INT, uslugi_opis TEXT, uslugi_cena NUMERIC) RETURNS void AS $$
+-- BEGIN
+--     INSERT INTO projekt.rezerwacje("uzytkownik_id","pokoj_id","data_rezerwacji","od_kiedy","do_kiedy","liczba_dzieci","liczba_doroslych") VALUES(u_id, p_id, NOW(), data_start, data_stop, dzieci, dorosli);
+--     INSERT INTO projekt.dodatkowe_uslugi("nazwa_uslugi", "cena_od_osoby", "rezerwacja_id") VALUES(uslugi_opis, uslugi_cena, latest_rezerwacja_id());
+--     COMMIT;
+--     RETURN;
+-- END;
+-- $$ LANGUAGE 'plpgsql';
+
+-- select * from dokonaj_rezerwacji(0, 13, CAST('2021-01-01' AS DATE),CAST('2021-01-02' AS DATE), 0,5, 'TEST - BRAK', 0.0);
+
+------------------------------
+BEGIN;
+    INSERT INTO projekt.rezerwacje("uzytkownik_id","pokoj_id","data_rezerwacji","od_kiedy","do_kiedy","liczba_dzieci","liczba_doroslych") VALUES(0, 13,NOW(), CAST('2021-01-01' AS DATE),CAST('2021-01-02' AS DATE), 0,5);
+    INSERT INTO projekt.dodatkowe_uslugi("nazwa_uslugi", "cena_od_osoby", "rezerwacja_id") VALUES('TEST - BRAK', 0.0, latest_rezerwacja_id());
+COMMIT;
