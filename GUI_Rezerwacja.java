@@ -68,7 +68,18 @@ public class GUI_Rezerwacja{
     private String start_rezerwacji;
     private String stop_rezerwacji;
 
+    public GetUslugi silownia;
+    public GetUslugi basen;
+    public GetUslugi bilard;
+    public GetUslugi kregielnia;
+    public GetUslugi calosc;
+
     public GUI_Rezerwacja(Polaczenie p, GUI_Login mainWindow, int id){
+        silownia = new GetUslugi("Silownia ", 5);
+        kregielnia = new GetUslugi("Kregielnia ", 25);
+        bilard = new GetUslugi("Bilard ", 10);
+        basen = new GetUslugi("Basen ", 15);
+
         data_flag = false;
         osoby_flag = false;
         pokoj_flag = false;
@@ -88,7 +99,7 @@ public class GUI_Rezerwacja{
         rezerwacjaPanel.setBorder(BorderFactory.createEmptyBorder(100,100,100,100));
         rezerwacjaPanel.setLayout(new GridLayout(0,1));
 
-        odKiedyLabel = new JLabel("Prosze wybrac termin zakwaterowania:");
+        odKiedyLabel = new JLabel("Prosze wybrac termin zakwaterowania (nie wczesniej, niz 7 dni od dnia dzisiejszego):");
         rezerwacjaPanel.add(odKiedyLabel);
 
         year_odKiedyDropList = new JComboBox<>();
@@ -300,14 +311,16 @@ public class GUI_Rezerwacja{
         uslugiLabel = new JLabel("Prosze wybrac dodatkowe uslugi (opcjonalnie):");
         rezerwacjaPanel.add(uslugiLabel);
 
-        uslugaSilownia = new JCheckBox("Dostep do silowni - koszt 5 zl od osoby (tylko dla osob doroslych)");
+        uslugaSilownia = new JCheckBox("Dostep do silowni - koszt 5 zl od osoby (w przypadku dzieci obowiazuje ulga 50%)");
         uslugaSilownia.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e){
                 if(uslugaSilownia.isSelected() && chosen_adult_people != -1){
-                    kwota_z_uslug+= chosen_adult_people * 5;
+                    kwota_z_uslug+= chosen_adult_people * 5 + chosen_kiddo_people * 2.5;
+                    silownia.setVis(true);
                     kwotaUpdate();
                 }else{
-                    kwota_z_uslug-= chosen_adult_people * 5;
+                    kwota_z_uslug-= chosen_adult_people * 5 + chosen_kiddo_people * 2.5;
+                    silownia.setVis(false);
                     kwotaUpdate();
                 }
             }
@@ -319,9 +332,11 @@ public class GUI_Rezerwacja{
             public void actionPerformed(ActionEvent e){
                 if(uslugaBilard.isSelected() && chosen_adult_people != -1 && chosen_kiddo_people != -1){
                     kwota_z_uslug+= chosen_adult_people * 10 + chosen_kiddo_people * 5;
+                    bilard.setVis(true);
                     kwotaUpdate();
                 }else{
                     kwota_z_uslug-= chosen_adult_people * 10 + chosen_kiddo_people * 5;
+                    bilard.setVis(false);
                     kwotaUpdate();
                 }
             }
@@ -333,9 +348,11 @@ public class GUI_Rezerwacja{
             public void actionPerformed(ActionEvent e){
                 if(uslugaBasen.isSelected() && chosen_adult_people != -1 && chosen_kiddo_people != -1){
                     kwota_z_uslug+= chosen_adult_people * 15 + chosen_kiddo_people * 7.5;
+                    basen.setVis(true);
                     kwotaUpdate();
                 }else{
                     kwota_z_uslug-= chosen_adult_people * 15 + chosen_kiddo_people * 7.5;
+                    basen.setVis(false);
                     kwotaUpdate();
                 }
             }
@@ -347,9 +364,11 @@ public class GUI_Rezerwacja{
             public void actionPerformed(ActionEvent e){
                 if(uslugaKregielnia.isSelected() && chosen_adult_people != -1 && chosen_kiddo_people != -1){
                     kwota_z_uslug+= chosen_adult_people * 25 + chosen_kiddo_people * 12.5;
+                    kregielnia.setVis(true);
                     kwotaUpdate();
                 }else{
                     kwota_z_uslug-= chosen_adult_people * 25 + chosen_kiddo_people * 12.5;
+                    kregielnia.setVis(false);
                     kwotaUpdate();
                 }
             }
@@ -363,7 +382,13 @@ public class GUI_Rezerwacja{
         zatwierdzButton.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e){
                 if(data_flag && osoby_flag && pokoj_flag){
-                    //
+                    computeUslugi();
+                    String st = a.dokonaj_rezerwacji(login_id, chosen_pokoj_id, chosen_adult_people, chosen_kiddo_people, start_rezerwacji, stop_rezerwacji, calosc);
+                    GUI_Rezerwacja_Result m = new GUI_Rezerwacja_Result(a, mainWindow, login_id, st);
+                    mainWindow.frame.getContentPane().removeAll();
+                    mainWindow.frame.add(m.rezerwacjaPanel, BorderLayout.CENTER);
+                    mainWindow.frame.setTitle("BD PROJEKT - Rezerwacja");
+                    mainWindow.frame.validate();
                 }else{
                     System.out.println("Prosze uzupelnic wszystkie dane!");
                 }
@@ -391,7 +416,11 @@ public class GUI_Rezerwacja{
     public void kwotaPokojeCompute(){
         int liczba_dni = okresPobytu();
         // System.out.println("Liczba dni:" + liczba_dni);
-        kwota_z_pokoi = liczba_dni*chosen_pokoj_cena*(chosen_adult_people + 0.5*chosen_kiddo_people + 0.25*(chosen_pokoj_liczba_miejsc - chosen_adult_people - chosen_kiddo_people));
+        if(chosen_adult_people == 0 && chosen_kiddo_people == 0){
+            kwota_z_pokoi = 0;
+        }else{
+            kwota_z_pokoi = liczba_dni*chosen_pokoj_cena*(chosen_adult_people + 0.5*chosen_kiddo_people + 0.25*(chosen_pokoj_liczba_miejsc - chosen_adult_people - chosen_kiddo_people));
+        }
     }
 
     public void dayDropListFill(JComboBox<ComboInsert> x, int day, int month_start, int month_stop, int year_start, int year_stop){
@@ -500,38 +529,51 @@ public class GUI_Rezerwacja{
 
     public int okresPobytu(){
         int count = 0;
-        int count_months = 0;
+        // int count_months = 0;
 
-        for(int i = chosen_start_year; i <= chosen_end_year; i++){
-            if(i == chosen_start_year){
-                count_months += 12 - chosen_start_month + 1;
-            }else if(i == chosen_end_year){
-                count_months += chosen_end_month;
-            }else{
-                count_months +=12;
-            }
-        }
+        // for(int i = chosen_start_year; i <= chosen_end_year; i++){
+        //     if(i == chosen_start_year){
+        //         count_months += 12 - chosen_start_month + 1;
+        //     }else if(i == chosen_end_year){
+        //         count_months += chosen_end_month;
+        //     }else{
+        //         count_months +=12;
+        //     }
+        // }
 
-        int k = 0;
-        int month_start_copy = chosen_start_month;
+        // int k = 0;
+        // int month_start_copy = chosen_start_month;
 
-        for(int i = 1; i <= count_months; i++){
-            if(month_start_copy == chosen_start_month && i == 1){
-                count += miesiac.resolveDays(month_start_copy, chosen_start_year + k) - chosen_start_day + 1;
-            }else if(i == count_months){
-                count += chosen_end_day;
-                System.out.println(chosen_end_day);
-            }else{
-                count += miesiac.resolveDays(month_start_copy, chosen_start_year + k);
-            }
-            if(month_start_copy == 12){
-                k++;
-                month_start_copy = 1;
-            }else{
-                month_start_copy++;
-            }
-        }
+        // for(int i = 1; i <= count_months; i++){
+        //     if(month_start_copy == chosen_start_month && i == 1){
+        //         count += miesiac.resolveDays(month_start_copy, chosen_start_year + k) - chosen_start_day + 1;
+        //     }else if(i == count_months){
+        //         count += chosen_end_day;
+        //         System.out.println(chosen_end_day);
+        //     }else{
+        //         count += miesiac.resolveDays(month_start_copy, chosen_start_year + k);
+        //     }
+        //     if(month_start_copy == 12){
+        //         k++;
+        //         month_start_copy = 1;
+        //     }else{
+        //         month_start_copy++;
+        //     }
+        // }
 
+        count = a.okres_zakwaterowania(start_rezerwacji, stop_rezerwacji);
+        // System.out.println(count);
         return count;
+    }
+
+    public void computeUslugi(){
+        String koncowy_opis = "";
+        koncowy_opis += silownia.toString() + bilard.toString() + basen.toString() + kregielnia.toString();
+        if(koncowy_opis.equals("")){
+            koncowy_opis = "Brak";
+        }
+        int koncowa_cena = silownia.getCena() + bilard.getCena() + basen.getCena() + kregielnia.getCena();
+        calosc = new GetUslugi(koncowy_opis, koncowa_cena);
+        calosc.setVis(true);
     }
 }

@@ -412,4 +412,195 @@ public class Polaczenie {
           return info;
       }
   }
+
+  public int okres_zakwaterowania(String od_kiedy, String do_kiedy){
+    int a = -1;
+    try { 
+      PreparedStatement pst = c.prepareStatement("SELECT * FROM projekt.get_liczba_dni('"+od_kiedy+"','"+do_kiedy+"')",ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
+      ResultSet rs = pst.executeQuery();
+      while (rs.next())  {
+            a = Integer.parseInt(rs.getString("get_liczba_dni"));
+      }
+      rs.close();
+      pst.close();    
+      return a;
+      }
+      catch(SQLException e)  {
+          System.out.println("Blad podczas przetwarzania danych:"+e) ;
+          return a;
+      }
+  }
+
+  public String dokonaj_rezerwacji(int uzyt_id, int pokoj_id, int adult_people, int kiddo_people, String start, String stop, GetUslugi calosc){
+    try { 
+      PreparedStatement pst1 = c.prepareStatement("BEGIN");
+      PreparedStatement pst2 = c.prepareStatement("INSERT INTO projekt.rezerwacje(\"uzytkownik_id\",\"pokoj_id\",\"data_rezerwacji\",\"od_kiedy\",\"do_kiedy\",\"liczba_dzieci\",\"liczba_doroslych\") VALUES("+uzyt_id+","+pokoj_id+",NOW(),\'"+start+"\',\'"+stop+"\',"+kiddo_people+","+adult_people+")");
+      PreparedStatement pst3 = c.prepareStatement("INSERT INTO projekt.dodatkowe_uslugi(\"nazwa_uslugi\", \"cena_od_osoby\", \"rezerwacja_id\") VALUES(\'"+calosc.toString()+"\',"+calosc.getCena()+", projekt.latest_rezerwacja_id())");
+      PreparedStatement pst4 = c.prepareStatement("COMMIT");
+
+      pst1.executeUpdate();
+      pst2.executeUpdate();
+      pst3.executeUpdate();
+      pst4.executeUpdate();
+      
+      pst1.close();  
+      pst2.close();  
+      pst3.close();  
+      pst4.close();
+      return "Pomyslnie dodano rezerwacje!";
+      }
+      catch(SQLException e)  {
+          // System.out.println("Blad podczas przetwarzania danych:"+e) ;
+          try{
+            PreparedStatement pst5 = c.prepareStatement("ROLLBACK");
+            pst5.executeUpdate();
+            pst5.close();
+          }catch(SQLException d){
+            System.out.println("Blad podczas przetwarzania danych:"+d) ;
+            return "Blad przy dodawaniu rezerwacji!";
+          }
+          String powod = e.getMessage();
+          String[] powod_tab = powod.split("[||]");
+          // for(int i = 0; i < powod_tab.length; i++){
+          //   System.out.println(powod_tab[i]);
+          // }
+          return "Blad przy dodawaniu rezerwacji! " + powod_tab[2];
+      }
+  }
+
+  public ArrayList<GetMojeRezerwacjeInfo> getMojeRezerwacjeInfo(int id){
+      try { 
+        ArrayList<GetMojeRezerwacjeInfo> a = new ArrayList<>();
+        PreparedStatement pst = c.prepareStatement("SELECT * FROM projekt.RezerwacjeInfoView WHERE uzytkownik_id = " + id,ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
+        ResultSet rs = pst.executeQuery();
+        while (rs.next())  {
+            int rezerwacja_id = Integer.parseInt(rs.getString("rezerwacja_id"));
+            int uzytkownik_id = Integer.parseInt(rs.getString("uzytkownik_id"));
+            int pokoj_id = Integer.parseInt(rs.getString("pokoj_id"));
+            String od_kiedy = rs.getString("od_kiedy");
+            String do_kiedy = rs.getString("do_kiedy");
+            String data_rezerwacji = rs.getString("data_rezerwacji");
+            int liczba_dzieci = Integer.parseInt(rs.getString("liczba_dzieci"));
+            int liczba_doroslych = Integer.parseInt(rs.getString("liczba_doroslych"));
+            int uslugi_id = Integer.parseInt(rs.getString("dodatkowe_uslugi_id"));
+            String uslugi_nazwa = rs.getString("nazwa_uslugi");
+            double uslugi_cena = Double.parseDouble(rs.getString("cena_uslugi"));
+            int oplata_id = Integer.parseInt(rs.getString("oplata_id"));
+            String status = rs.getString("status_czy_oplacone");
+            double kwota = Double.parseDouble(rs.getString("kwota"));
+            int numer_pokoju = Integer.parseInt(rs.getString("numer_pokoju"));
+            int pietro = Integer.parseInt(rs.getString("pietro"));
+            int liczba_miejsc = Integer.parseInt(rs.getString("liczba_miejsc"));
+            String kategoria = rs.getString("nazwa_kategorii");
+            int pokoj_cena = Integer.parseInt(rs.getString("cena_od_osoby"));
+            a.add(new GetMojeRezerwacjeInfo(rezerwacja_id,uzytkownik_id,pokoj_id,od_kiedy,do_kiedy,data_rezerwacji,liczba_dzieci,liczba_doroslych, uslugi_id, uslugi_nazwa, uslugi_cena,oplata_id,status, kwota, numer_pokoju, pietro,liczba_miejsc, kategoria, pokoj_cena));
+        }
+        rs.close();
+        pst.close();    
+        return a;
+      }
+      catch(SQLException e)  {
+          System.out.println("Blad podczas przetwarzania danych:"+e) ;
+          return new ArrayList<GetMojeRezerwacjeInfo>();
+      }
+  }
+
+  public String oplacRezerwacje(int id){
+    try{
+      PreparedStatement pst1 = c.prepareStatement("SELECT projekt.oplataZaplac("+id+")");
+      // pst1.executeUpdate();
+      pst1.executeQuery();
+      pst1.close();  
+      
+      return "Pomyslnie oplacono rezerwacje!";
+      }
+      catch(SQLException e)  {
+          System.out.println("Blad podczas przetwarzania danych:"+e) ;
+          String powod = e.getMessage();
+          String[] powod_tab = powod.split("[||]");
+          return "Blad przy oplacaniu rezerwacji! " +powod_tab[2];
+      }
+  }
+
+  public String rezygnujRezerwacje(int id){
+    try{
+      PreparedStatement pst1 = c.prepareStatement("SELECT projekt.oplataRezygnuj("+id+")");
+      // pst1.executeUpdate();
+      pst1.executeQuery();
+      pst1.close();  
+      
+      return "Pomyslnie zrezygnowano z rezerwacji!";
+      }
+      catch(SQLException e)  {
+          System.out.println("Blad podczas przetwarzania danych:"+e) ;
+          String powod = e.getMessage();
+          String[] powod_tab = powod.split("[||]");
+          return "Blad przy rezygnacji z rezerwacji! " +powod_tab[2];
+      }
+  }
+
+  public String getUserName(int id){
+    try { 
+      PreparedStatement pst = c.prepareStatement("SELECT imie ||\' \'|| nazwisko AS result FROM projekt.uzytkownik WHERE uzytkownik_id="+id,ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
+      ResultSet rs = pst.executeQuery();
+      String dane = "";
+      while (rs.next())  {
+            dane = rs.getString("result");
+      }
+      rs.close();
+      pst.close();    
+      return dane;
+      }
+      catch(SQLException e)  {
+          System.out.println("Blad podczas przetwarzania danych:"+e) ;
+          return "";
+      }
+  }
+
+  public Boolean czyZbanowany(int id){
+    try { 
+      int a = -1;
+      PreparedStatement pst = c.prepareStatement("SELECT * FROM projekt.ZbanowanyCheck("+id+")",ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
+      ResultSet rs = pst.executeQuery();
+      while (rs.next())  {
+            a = Integer.parseInt(rs.getString("ZbanowanyCheck"));
+      }
+      rs.close();
+      pst.close();    
+      return a != 0;
+      }
+      catch(SQLException e)  {
+          System.out.println("Blad podczas przetwarzania danych:"+e) ;
+          return false;
+      }
+  }
+
+  public String getPowod(int id){
+    try { 
+      String powod = "";
+      PreparedStatement pst = c.prepareStatement("SELECT powod FROM projekt.czarna_lista WHERE uzytkownik_id = "+id,ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
+      ResultSet rs = pst.executeQuery();
+      while (rs.next())  {
+            powod = rs.getString("powod");
+      }
+      rs.close();
+      pst.close();    
+      return powod;
+      }
+      catch(SQLException e)  {
+          System.out.println("Blad podczas przetwarzania danych:"+e) ;
+          return "";
+      }
+  }
+
+  public void BazaUpdate(){
+    try { 
+      PreparedStatement pst1 = c.prepareStatement("SELECT projekt.StartUpdate()");
+      pst1.executeQuery();
+      pst1.close();      
+      }
+      catch(SQLException e)  {
+          System.out.println("Blad podczas przetwarzania danych:"+e) ;
+      }
+  }
 }

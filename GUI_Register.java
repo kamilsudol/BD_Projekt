@@ -4,7 +4,7 @@ import java.awt.event.*;
 
 public class GUI_Register{
     public GUI_Login mainWindow;
-    public JFrame registerFrame;
+    // public JFrame registerFrame;
     public JPanel registerPanel;
     public JButton confirm;
     public JButton back;
@@ -27,7 +27,7 @@ public class GUI_Register{
     public GUI_Register(Polaczenie p, GUI_Login mainWindow){
         this.mainWindow = mainWindow;
         a = p;
-        registerFrame = new JFrame();
+        // registerFrame = new JFrame();
         registerPanel = new JPanel();
         confirm = new JButton("Zatwierdz");
         back = new JButton("Powrot");
@@ -86,18 +86,19 @@ public class GUI_Register{
 
         back.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e){
+                GUI_Login_Wrapper m = new GUI_Login_Wrapper(a, mainWindow);
                 mainWindow.frame.getContentPane().removeAll();
-                mainWindow.frame.add(mainWindow.panel, BorderLayout.CENTER);
+                mainWindow.frame.add(m.panel, BorderLayout.CENTER);
                 mainWindow.frame.setTitle("BD PROJEKT - Zaloguj");
                 mainWindow.frame.validate();
             }
         });
 
 
-        registerFrame.add(registerPanel, BorderLayout.CENTER);
-        registerFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        // registerFrame.setTitle("BD PROJEKT - Zarejestruj");
-        registerFrame.pack();
-        // registerFrame.setVisible(true);
+        // registerFrame.add(registerPanel, BorderLayout.CENTER);
+        // registerFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        // // registerFrame.setTitle("BD PROJEKT - Zarejestruj");
+        // registerFrame.pack();
+        // // registerFrame.setVisible(true);
     }
 }

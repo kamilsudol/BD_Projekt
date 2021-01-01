@@ -40,7 +40,7 @@ CREATE TABLE "kategoria" (
 CREATE TABLE "oplata" (
   "oplata_id" serial PRIMARY KEY,
   "rezerwacja_id" int,
-  "status_czy_oplacone" boolean,
+  "status_czy_oplacone" text,
   "kwota" numeric
 );
 
@@ -54,13 +54,19 @@ CREATE TABLE "dodatkowe_uslugi" (
 CREATE TABLE "zakwaterowani_goscie_info" (
   "info_id" serial PRIMARY KEY,
   "rezerwacja_id" int,
-  "status_czy_zakwaterowany" boolean
+  "status_czy_zakwaterowany" text
 );
 
 CREATE TABLE "czarna_lista" (
   "info_id" serial PRIMARY KEY,
   "uzytkownik_id" int,
-  "powod" varchar
+  "powod" text
+);
+
+CREATE TABLE "rezygnacja_z_rezerwacji_info" (
+  "info_id" serial PRIMARY KEY,
+  "rezerwacja_id" int,
+  "uzytkownik_id" int
 );
 
 ALTER TABLE "rezerwacje" ADD FOREIGN KEY ("uzytkownik_id") REFERENCES "uzytkownik" ("uzytkownik_id");
@@ -78,6 +84,8 @@ ALTER TABLE "zakwaterowani_goscie_info" ADD FOREIGN KEY ("rezerwacja_id") REFERE
 ALTER TABLE "panel" ADD FOREIGN KEY ("uzyt_id") REFERENCES "uzytkownik" ("uzytkownik_id");
 
 ALTER TABLE "czarna_lista" ADD FOREIGN KEY ("uzytkownik_id") REFERENCES "uzytkownik" ("uzytkownik_id");
+
+ALTER TABLE "rezygnacja_z_rezerwacji_info" ADD FOREIGN KEY ("rezerwacja_id") REFERENCES "rezerwacje" ("rezerwacja_id");
 
 
 INSERT INTO "uzytkownik" VALUES (0, 'ADMIN', 'ADMIN', 'TEST@TEST.COM', 999999999);
@@ -210,9 +218,11 @@ DECLARE
     rec RECORD;
 BEGIN
     liczba_dni := projekt.get_liczba_dni(NEW.od_kiedy, NEW.do_kiedy);
-    SELECT liczba_miejsc, cena_od_osoby INTO rec FROM projekt.pokojeView;
+    SELECT liczba_miejsc, cena_od_osoby INTO rec FROM projekt.pokojeView WHERE pokoj_id = NEW.pokoj_id;
     cena := liczba_dni*rec.cena_od_osoby*(NEW.liczba_doroslych + 0.5*NEW.liczba_dzieci + 0.25*(rec.liczba_miejsc - NEW.liczba_dzieci - NEW.liczba_doroslych));
-    INSERT INTO projekt.oplata("rezerwacja_id", "status_czy_oplacone", "kwota") VALUES(NEW.rezerwacja_id, FALSE, cena);
+    RAISE NOTICE 'PLATNOSC REZERWACJA: %', cena;
+    RAISE NOTICE 'LICZBA DNI: %', liczba_dni;
+    INSERT INTO projekt.oplata("rezerwacja_id", "status_czy_oplacone", "kwota") VALUES(NEW.rezerwacja_id, 'Nieoplacone', cena);
     RETURN NEW;
 END;
 $$LANGUAGE 'plpgsql';
@@ -226,9 +236,10 @@ DECLARE
     r_id INT;
     dodatkowa_kwota NUMERIC;
 BEGIN
-    r_id := latest_rezerwacja_id();
+    r_id := projekt.latest_rezerwacja_id();
     SELECT liczba_doroslych, liczba_dzieci INTO rec FROM projekt.rezerwacje WHERE rezerwacja_id = r_id;
     dodatkowa_kwota := NEW.cena_od_osoby*(rec.liczba_doroslych + 0.5*rec.liczba_dzieci);
+    RAISE NOTICE 'CENA USLUGI: %', dodatkowa_kwota;
     UPDATE projekt.oplata SET kwota = kwota + dodatkowa_kwota WHERE rezerwacja_id = r_id;
     RETURN NEW;
 END;
@@ -253,3 +264,136 @@ BEGIN;
     INSERT INTO projekt.rezerwacje("uzytkownik_id","pokoj_id","data_rezerwacji","od_kiedy","do_kiedy","liczba_dzieci","liczba_doroslych") VALUES(0, 13,NOW(), CAST('2021-01-01' AS DATE),CAST('2021-01-02' AS DATE), 0,5);
     INSERT INTO projekt.dodatkowe_uslugi("nazwa_uslugi", "cena_od_osoby", "rezerwacja_id") VALUES('TEST - BRAK', 0.0, latest_rezerwacja_id());
 COMMIT;
+
+------debug
+BEGIN;
+    INSERT INTO projekt.rezerwacje("uzytkownik_id","pokoj_id","data_rezerwacji","od_kiedy","do_kiedy","liczba_dzieci","liczba_doroslych") VALUES(0, 12,NOW(), CAST('2020-12-31' AS DATE),CAST('2021-01-31' AS DATE), 1,3);
+    INSERT INTO projekt.dodatkowe_uslugi("nazwa_uslugi", "cena_od_osoby", "rezerwacja_id") VALUES('TEST - BRAK', 0.0, latest_rezerwacja_id());
+COMMIT;
+
+CREATE VIEW pokojeRezerwacjeView AS SELECT r.*, p.numer_pokoju, p.pietro, p.liczba_miejsc, p.nazwa_kategorii, p.cena_od_osoby FROM rezerwacje r JOIN pokojeView p ON r.pokoj_id = p.pokoj_id;
+-- SELECT * FROM pokojeRezerwacjeView;
+CREATE VIEW uslugiPokojeRezerwacjeView AS SELECT r.*, u.dodatkowe_uslugi_id, u.nazwa_uslugi, u.cena_od_osoby AS cena_uslugi FROM pokojeRezerwacjeView r JOIN dodatkowe_uslugi u ON r.rezerwacja_id = u.rezerwacja_id;
+SELECT * FROM uslugiPokojeRezerwacjeView;
+
+CREATE VIEW RezerwacjeInfoView AS SELECT r.*, o.oplata_id, o.status_czy_oplacone, o.kwota FROM uslugiPokojeRezerwacjeView r JOIN oplata o ON r.rezerwacja_id = o.rezerwacja_id;
+SELECT * FROM RezerwacjeInfoView;
+
+---------------------------------------------
+
+CREATE OR REPLACE FUNCTION oplataZaplac(id int) RETURNS void AS $$
+BEGIN
+    UPDATE projekt.oplata SET status_czy_oplacone = 'Oplacone' WHERE oplata_id = id;
+END;
+$$LANGUAGE 'plpgsql';
+-------------------------------------------
+CREATE OR REPLACE FUNCTION oplataRezygnuj(id int) RETURNS void AS $$
+BEGIN
+    UPDATE projekt.oplata SET status_czy_oplacone = 'Nieoplacone - rezygnacja' WHERE oplata_id = id;
+END;
+$$LANGUAGE 'plpgsql';
+
+------------------------------------------- TO MOZE SIE GRYZC Z AKTUALIZOWANIEM CENY Z USLUG
+CREATE OR REPLACE FUNCTION oplataStatus() RETURNS TRIGGER AS $$
+DECLARE
+    rec RECORD;
+BEGIN
+    SELECT * INTO rec FROM projekt.rezerwacje r WHERE OLD.rezerwacja_id = r.rezerwacja_id;
+    IF OLD.kwota <> NEW.kwota THEN
+        RETURN NEW;
+    ELSE
+        IF OLD.status_czy_oplacone LIKE 'Nieoplacone' THEN
+            IF NEW.status_czy_oplacone LIKE 'Oplacone' THEN
+                INSERT INTO projekt.zakwaterowani_goscie_info("rezerwacja_id","status_czy_zakwaterowany") VALUES(rec.rezerwacja_id, 'Oczekiwanie na zakwaterowanie');
+            ELSIF NEW.status_czy_oplacone LIKE 'Nieoplacone - rezygnacja' THEN
+                INSERT INTO projekt.rezygnacja_z_rezerwacji_info("rezerwacja_id", "uzytkownik_id") VALUES(rec.rezerwacja_id, rec.uzytkownik_id);
+            END IF;
+            RETURN NEW;
+        ELSE
+            RAISE EXCEPTION '||Nie mozna ponownie zmienic wczesniej zmienionego statusu oplaty rezerwacji!||';
+            RETURN NULL;
+        END IF;
+    END IF;
+END;
+$$LANGUAGE 'plpgsql';
+
+CREATE TRIGGER trigger_platnosc_status BEFORE UPDATE ON projekt.oplata FOR EACH ROW EXECUTE PROCEDURE oplataStatus();
+
+-----------------------------------------------
+CREATE OR REPLACE FUNCTION RezerwacjaNaTydzienPrzed() RETURNS TRIGGER AS $$
+BEGIN
+    IF NEW.od_kiedy - CAST(NOW() AS DATE) >= 7 THEN
+        RETURN NEW;
+    ELSE
+        RAISE EXCEPTION '||Wybrany poczatek zakwaterowania zaczyna sie wczesniej, niz za 7 dni - prosze wybrac pozniejszy termin!||';
+        RETURN NULL;
+    END IF;
+END;
+$$LANGUAGE 'plpgsql';
+
+CREATE TRIGGER trigger_RezerwacjaNaTydzienPrzed BEFORE INSERT ON projekt.rezerwacje FOR EACH ROW EXECUTE PROCEDURE RezerwacjaNaTydzienPrzed();
+---------------------------------------------
+CREATE OR REPLACE FUNCTION RezerwacjaOsobyValidator() RETURNS TRIGGER AS $$
+BEGIN
+    IF NEW.liczba_dzieci = 0 AND NEW.liczba_doroslych = 0 THEN
+        RAISE EXCEPTION '||Nie mozna zrealizowac rezerwacji dla braku zadeklarowanych osob!||';
+        RETURN NULL;
+    ELSE
+        RETURN NEW;
+    END IF;
+END;
+$$LANGUAGE 'plpgsql';
+
+CREATE TRIGGER trigger_RezerwacjaOsobyValidator BEFORE INSERT ON projekt.rezerwacje FOR EACH ROW EXECUTE PROCEDURE RezerwacjaOsobyValidator();
+-----------------------------------------
+CREATE OR REPLACE FUNCTION ZbanowanyCheck(id int) RETURNS int AS $$
+DECLARE
+    rec RECORD;
+    flag INT;
+BEGIN
+    SELECT COUNT(*) AS c INTO rec FROM projekt.czarna_lista WHERE uzytkownik_id = id;
+    flag := rec.c;
+    RETURN flag;
+END;
+$$LANGUAGE 'plpgsql';
+----------------------------------------
+CREATE OR REPLACE VIEW OplataRezerwacje AS SELECT o.*, r.uzytkownik_id, r.od_kiedy, r.do_kiedy FROM projekt.oplata o JOIN projekt.rezerwacje r ON o.rezerwacja_id = r.rezerwacja_id;
+
+CREATE OR REPLACE FUNCTION StartUpdate() RETURNS void AS $$
+DECLARE
+    rec RECORD;
+    kursor_check CURSOR FOR SELECT * FROM projekt.OplataRezerwacje;
+BEGIN
+    OPEN kursor_check;
+    LOOP
+        FETCH kursor_check INTO rec;
+        EXIT WHEN NOT FOUND;
+
+        IF rec.od_kiedy - CAST(NOW() AS DATE) <= 0 THEN
+            IF rec.status_czy_oplacone LIKE 'Oplacone' THEN
+                UPDATE projekt.zakwaterowani_goscie_info SET status_czy_zakwaterowany='Zakwaterowany' WHERE rezerwacja_id = rec.rezerwacja_id;
+            ELSIF rec.status_czy_oplacone LIKE 'Nieplacone' THEN
+                INSERT INTO projekt.czarna_lista("uzytkownik_id","powod") VALUES(rec.uzytkownik_id, 'Nieoplacenie rezerwacji w terminie.');
+            END IF;
+        ELSIF rec.do_kiedy - CAST(NOW() AS DATE) <= 0 AND rec.status_czy_oplacone LIKE 'Oplacone' THEN
+            UPDATE projekt.zakwaterowani_goscie_info SET status_czy_zakwaterowany='Wykwaterowany' WHERE rezerwacja_id = rec.rezerwacja_id;
+        END IF;
+    END LOOP;
+    CLOSE kursor_check;
+    RETURN;
+END;
+$$LANGUAGE 'plpgsql';
+-------------------------------------
+CREATE OR REPLACE FUNCTION RezygnacjaChecker() RETURNS TRIGGER AS $$
+DECLARE
+    rec RECORD;
+BEGIN
+    SELECT COUNT(*) AS c INTO rec FROM projekt.rezygnacja_z_rezerwacji_info WHERE uzytkownik_id = NEW.uzytkownik_id;
+    IF rec.c >= 5 THEN
+        INSERT INTO projekt.czarna_lista("uzytkownik_id","powod") VALUES(NEW.uzytkownik_id, 'Ciagle rezygnowanie ze skladanych rezerwacji.');
+    END IF;
+    RETURN NEW;
+END;
+$$LANGUAGE 'plpgsql';
+
+CREATE TRIGGER trigger_RezygnacjaChecker AFTER INSERT ON projekt.rezygnacja_z_rezerwacji_info FOR EACH ROW EXECUTE PROCEDURE RezygnacjaChecker();
