@@ -3,7 +3,7 @@ public class Main{
         Polaczenie p = new Polaczenie();
         p.BazaUpdate();
         GUI_Login f = new GUI_Login(p);
-        GUI_Login_Wrapper window = new GUI_Login_Wrapper(p, f);
-        window.start();
+        // GUI_Login_Wrapper window = new GUI_Login_Wrapper(p, f);
+        // window.start();
     }
 }

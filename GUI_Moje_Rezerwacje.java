@@ -35,7 +35,7 @@ public class GUI_Moje_Rezerwacje{
         moje_rezerwacje_Uppanel.setBorder(BorderFactory.createEmptyBorder(100,100,100,100));
         moje_rezerwacje_Uppanel.setLayout(new GridLayout(0,1));
 
-        title = new JLabel("Prosze wybrac rezerwacje:");
+        title = new JLabel("Prosze wybrac rezerwacje:", SwingConstants.CENTER);
         moje_rezerwacje_Uppanel.add(title);
         // dodajSegment(7);
         
@@ -44,7 +44,7 @@ public class GUI_Moje_Rezerwacje{
         JButton infoButton = new JButton("Szczegoly rezerwacji");
         infoButton.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e){
-                if(chosen_oplata_id != 1){
+                if(chosen_oplata_id != -1){
                     Object item = rezerwacjeComboBox.getSelectedItem();
                     GetMojeRezerwacjeInfo chosen_rezerwacja = (GetMojeRezerwacjeInfo)item;
                     GUI_Moje_Rezerwacje_Szczegoly m = new GUI_Moje_Rezerwacje_Szczegoly(a, mainWindow, login_id, chosen_rezerwacja);

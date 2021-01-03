@@ -7,13 +7,13 @@ public class GUI_Menu{
     public Boolean czy_zbanowany;
     public GUI_Login mainWindow;
     public Polaczenie a;
-    // public JFrame menuFrame;
     public JPanel menuPanel;
     public JLabel menuLabel;
     public JLabel helloLabel;
     public JLabel infoLabel;
     public JButton rezerwacja;
     public JButton moje_rezerwacje;
+    public JButton zablokuj;
     public JButton podglad_tabel;
     public JButton wyloguj;
     
@@ -27,15 +27,18 @@ public class GUI_Menu{
 
         czy_zbanowany = a.czyZbanowany(login_id);
 
-        helloLabel = new JLabel("Witaj "+a.getUserName(login_id)+"!");
+        helloLabel = new JLabel("Witaj "+a.getUserName(login_id)+"!", SwingConstants.CENTER);
+        helloLabel.setFont(new Font("Arial", Font.PLAIN, 17));
         menuPanel.add(helloLabel);
 
         if(czy_zbanowany){
-            infoLabel = new JLabel("Twoje konto zostalo zawieszone na czas nieokreslony. Powod: " + a.getPowod(login_id));
+            infoLabel = new JLabel("Twoje konto zostalo zawieszone na czas nieokreslony. Powod: " + a.getPowod(login_id), SwingConstants.CENTER);
+            infoLabel.setFont(new Font("Arial", Font.PLAIN, 17));
             menuPanel.add(infoLabel);
         }
 
-        menuLabel = new JLabel("Menu:");
+        menuLabel = new JLabel("Menu:", SwingConstants.CENTER);
+        menuLabel.setFont(new Font("Arial", Font.PLAIN, 17));
         menuPanel.add(menuLabel);
 
         if(!czy_zbanowany){
@@ -66,17 +69,33 @@ public class GUI_Menu{
         });
         menuPanel.add(moje_rezerwacje);
 
-        podglad_tabel = new JButton("Podglad tabel");
-        podglad_tabel.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e){
-                GUI_Podglad p = new GUI_Podglad(a, mainWindow, login_id);
-                mainWindow.frame.getContentPane().removeAll();
-                mainWindow.frame.add(p.podgladPanel, BorderLayout.CENTER);
-                mainWindow.frame.setTitle("BD PROJEKT - Podglad tabel");
-                mainWindow.frame.validate();
-            }
-        });
-        if(login_id == 0){
+        if(a.czyAdmin(login_id) == 1){
+            zablokuj = new JButton("Zablokuj uzytkownika");
+            zablokuj.addActionListener(new ActionListener(){
+                public void actionPerformed(ActionEvent e){
+                    GUI_Zablokuj m = new GUI_Zablokuj(a, mainWindow, login_id);
+                    mainWindow.frame.getContentPane().removeAll();
+                    mainWindow.frame.add(m.panelUp, BorderLayout.NORTH);
+                    mainWindow.frame.add(m.panelCenter, BorderLayout.CENTER);
+                    mainWindow.frame.add(m.panelDown, BorderLayout.SOUTH);
+                    mainWindow.frame.setTitle("BD PROJEKT - Zablokuj uzytkownika");
+                    mainWindow.frame.validate();
+                }
+            });
+
+            menuPanel.add(zablokuj);
+
+            podglad_tabel = new JButton("Podglad tabel");
+            podglad_tabel.addActionListener(new ActionListener(){
+                public void actionPerformed(ActionEvent e){
+                    GUI_Podglad p = new GUI_Podglad(a, mainWindow, login_id);
+                    mainWindow.frame.getContentPane().removeAll();
+                    mainWindow.frame.add(p.podgladPanel, BorderLayout.CENTER);
+                    mainWindow.frame.setTitle("BD PROJEKT - Podglad tabel");
+                    mainWindow.frame.validate();
+                }
+            });
+
             menuPanel.add(podglad_tabel);
         }
 

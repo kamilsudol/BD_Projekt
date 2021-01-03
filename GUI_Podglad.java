@@ -11,6 +11,7 @@ public class GUI_Podglad{
     public JButton rezerwacjeButton;
     public JButton uslugiButton;
     public JButton czarna_listaButton;
+    public JButton rezygnacjaButton;
     public JButton zakwaterowaniButton;
     public JButton pokojeButton;
     public JButton oplataButton;
@@ -108,6 +109,20 @@ public class GUI_Podglad{
             }
         });
         podgladPanel.add(zakwaterowaniButton);
+
+        rezygnacjaButton = new JButton("Tabela \'rezygnacja z rezerwacji info\'");
+        rezygnacjaButton.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e){
+                GUI_Podglad_Zakwaterowani m = new GUI_Podglad_Zakwaterowani(a, mainWindow, login_id);
+                mainWindow.frame.getContentPane().removeAll();
+                mainWindow.frame.getContentPane().add(m.podgladPanel, BorderLayout.CENTER);
+                // mainWindow.frame.getContentPane().add(new JSeparator(), BorderLayout.CENTER);
+                mainWindow.frame.getContentPane().add(m.podgladButtonPanel, BorderLayout.SOUTH);
+                mainWindow.frame.setTitle("BD PROJEKT - Podglad - Tabela \'rezygnacja z rezerwacji info\'");
+                mainWindow.frame.validate();
+            }
+        });
+        podgladPanel.add(rezygnacjaButton);
 
         czarna_listaButton = new JButton("Tabela \'czarna lista\'");
         czarna_listaButton.addActionListener(new ActionListener(){

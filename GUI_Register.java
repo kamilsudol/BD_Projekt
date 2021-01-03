@@ -31,19 +31,19 @@ public class GUI_Register{
         registerPanel = new JPanel();
         confirm = new JButton("Zatwierdz");
         back = new JButton("Powrot");
-        imieText = new JTextField(16);
-        nazwiskoText= new JTextField(16);
-        emailText= new JTextField(16);
-        telefonText= new JTextField(16);;
-        loginText= new JTextField(16);
-        hasloText= new JTextField(16);
+        imieText = new JTextField(32);
+        nazwiskoText= new JTextField(32);
+        emailText= new JTextField(32);
+        telefonText= new JTextField(32);;
+        loginText= new JTextField(32);
+        hasloText= new JTextField(32);
         imieLabel = new JLabel("Podaj imie:");
         nazwiskoLabel = new JLabel("Podaj nazwisko:");
         emailLabel = new JLabel("Podaj e-email:");
         telefonLabel = new JLabel("Podaj telefon:");
         loginLabel = new JLabel("Podaj login:");
         hasloLabel = new JLabel("Podaj haslo:");
-        confirmLabel = new JLabel("");
+        confirmLabel = new JLabel("", SwingConstants.CENTER);
         confirmLabel.setVisible(false);
 
         registerPanel.setBorder(BorderFactory.createEmptyBorder(100,100,100,100));

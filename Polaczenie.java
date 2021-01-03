@@ -97,7 +97,7 @@ public class Polaczenie {
           counted_id.close();
 
           // PreparedStatement pst1 = c.prepareStatement("INSERT INTO projekt.uzytkownik VALUES("+id+",\'"+imie+"\',\'"+nazwisko+"\',\'"+email+"\',"+Integer.parseInt(telefon)+" )");
-          PreparedStatement pst1 = c.prepareStatement("INSERT INTO projekt.uzytkownik VALUES("+id+",\'"+imie+"\',\'"+nazwisko+"\',\'"+email+"\',\'"+telefon+"\' )");
+          PreparedStatement pst1 = c.prepareStatement("INSERT INTO projekt.uzytkownik VALUES("+id+",\'"+imie+"\',\'"+nazwisko+"\',\'"+email+"\',\'"+telefon+"\','Klient' )");
           int ok = pst1.executeUpdate();
           pst1.close();    
           if(ok != 0){
@@ -601,6 +601,65 @@ public class Polaczenie {
       }
       catch(SQLException e)  {
           System.out.println("Blad podczas przetwarzania danych:"+e) ;
+      }
+  }
+  
+  public String Zbanuj(int id, String reason){
+    try { 
+      PreparedStatement pst = c.prepareStatement("INSERT INTO projekt.czarna_lista(\"uzytkownik_id\",\"powod\") VALUES("+id+",\'"+reason+"\')");
+      pst.executeUpdate();
+      pst.close();  
+      return "Pomyslnie zablokowano uzytkownika!";
+      }
+      catch(SQLException e)  {
+          System.out.println("Blad podczas przetwarzania danych:"+e) ;
+          String powod = e.getMessage();
+          String[] powod_tab = powod.split("[||]");
+          // for(int i = 0; i < powod_tab.length; i++){
+          //   System.out.println(powod_tab[i]);
+          // }
+          return "Blad przy probie zablokowania uzytkownika! " + powod_tab[2];
+      }
+  }
+
+  public int czyAdmin(int id){
+    int a = -1;
+    try { 
+    PreparedStatement pst = c.prepareStatement("SELECT * FROM projekt.Autoryzacja("+id+")",ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
+      ResultSet rs = pst.executeQuery();
+      while (rs.next())  {
+            a = Integer.parseInt(rs.getString("Autoryzacja"));
+      }
+      rs.close();
+      pst.close();    
+      return a;
+      }
+      catch(SQLException e)  {
+          System.out.println("Blad podczas przetwarzania danych:"+e) ;
+          return -1;
+      }
+  }
+
+  public ArrayList<ComboUserInsert> getUsers(){
+    try {
+      PreparedStatement pst = c.prepareStatement("SELECT * FROM projekt.uzytkownik u WHERE (SELECT uzytkownik_id FROM projekt.czarna_lista WHERE uzytkownik_id = u.uzytkownik_id) IS NULL",ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
+      ResultSet rs = pst.executeQuery();
+      ArrayList<ComboUserInsert> records = new ArrayList<>();
+
+      while (rs.next())  {
+            String id = rs.getString("uzytkownik_id");
+            String im = rs.getString("imie");
+            String naz = rs.getString("nazwisko");
+            String typ = rs.getString("typ");
+            records.add(new ComboUserInsert(Integer.parseInt(id), im, naz, typ));
+      }
+       rs.close();
+       pst.close();    
+      return records;
+      }
+      catch(SQLException e)  {
+          System.out.println("Blad podczas przetwarzania danych:"+e) ;
+          return new ArrayList<ComboUserInsert>();
       }
   }
 }

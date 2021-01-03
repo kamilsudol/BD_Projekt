@@ -9,7 +9,8 @@ CREATE TABLE "uzytkownik" (
   "imie" varchar,
   "nazwisko" varchar,
   "e_mail" text,
-  "numer" text
+  "numer" text,
+  "typ" text
 );
 
 CREATE TABLE "rezerwacje" (
@@ -88,12 +89,12 @@ ALTER TABLE "czarna_lista" ADD FOREIGN KEY ("uzytkownik_id") REFERENCES "uzytkow
 ALTER TABLE "rezygnacja_z_rezerwacji_info" ADD FOREIGN KEY ("rezerwacja_id") REFERENCES "rezerwacje" ("rezerwacja_id");
 
 
-INSERT INTO "uzytkownik" VALUES (0, 'ADMIN', 'ADMIN', 'TEST@TEST.COM', 999999999);
+INSERT INTO "uzytkownik" VALUES (0, 'ADMIN', 'ADMIN', 'TEST@TEST.COM', 999999999, 'HeadAdmin');
 INSERT INTO "panel" VALUES (0, 'admin', 'admin');
 CREATE VIEW uzytkownicy AS SELECT * FROM uzytkownik u JOIN panel p ON u.uzytkownik_id = p.uzyt_id;
 CREATE VIEW pokojeView AS SELECT pokoj_id, numer_pokoju, pietro, liczba_miejsc, p.kategoria_id, nazwa_kategorii, cena_od_osoby FROM pokoj p JOIN kategoria k ON p.kategoria_id = k.kategoria_id;
 -- CREATE VIEW mojeRezerwacje1 AS SELECT * FROM 
-SELECT * FROM uzytkownik u JOIN panel p ON u.uzytkownik_id = p.uzyt_id;
+-- SELECT * FROM uzytkownik u JOIN panel p ON u.uzytkownik_id = p.uzyt_id;
 
 -------------------------------------------------------------
 
@@ -139,6 +140,7 @@ CREATE TRIGGER trigger_register_validator BEFORE INSERT ON uzytkownik FOR EACH R
 INSERT INTO kategoria VALUES(0, 'Dla osob specjalnej troski', 50);
 INSERT INTO kategoria VALUES(1, 'Pakiet podstawowy', 40);
 INSERT INTO kategoria VALUES(2, 'Pakiet premium', 100);
+INSERT INTO kategoria VALUES(3, 'Pakiet ekstra-premium', 150);
 
 INSERT INTO pokoj VALUES(0, 1, 1, 0, 5);
 INSERT INTO pokoj VALUES(1, 2, 1, 0, 3);
@@ -155,6 +157,11 @@ INSERT INTO pokoj VALUES(11, 12, 3, 2, 4);
 INSERT INTO pokoj VALUES(12, 13, 3, 2, 5);
 INSERT INTO pokoj VALUES(13, 14, 3, 2, 6);
 INSERT INTO pokoj VALUES(14, 15, 3, 2, 3);
+INSERT INTO pokoj VALUES(15, 16, 4, 3, 1);
+INSERT INTO pokoj VALUES(16, 17, 4, 3, 2);
+INSERT INTO pokoj VALUES(17, 18, 4, 3, 3);
+INSERT INTO pokoj VALUES(18, 19, 4, 3, 4);
+INSERT INTO pokoj VALUES(19, 10, 4, 3, 5);
 
 
 -----------------------------------------
@@ -181,11 +188,11 @@ BEGIN
 END;
 $$LANGUAGE 'plpgsql';
 
-select * from get_pokoje(5, CAST('2020-12-31' AS DATE), CAST('2021-01-03' AS DATE));
-select * from get_pokoje(5,'2020-12-31', '2021-01-03');
+-- select * from get_pokoje(5, CAST('2020-12-31' AS DATE), CAST('2021-01-03' AS DATE));
+-- select * from get_pokoje(5,'2020-12-31', '2021-01-03');
 INSERT INTO rezerwacje("uzytkownik_id","pokoj_id","data_rezerwacji","od_kiedy","do_kiedy","liczba_dzieci","liczba_doroslych") VALUES(0, 8, NOW(),CAST('2021-01-01' AS DATE),CAST('2021-01-02' AS DATE), 0,5);
 INSERT INTO rezerwacje("uzytkownik_id","pokoj_id","data_rezerwacji","od_kiedy","do_kiedy","liczba_dzieci","liczba_doroslych") VALUES(0, 13, NOW(),CAST('2021-01-01' AS DATE),CAST('2021-01-02' AS DATE), 0,5);
-select * from get_pokoje(5,'2021-01-04', '2021-01-08');
+-- select * from get_pokoje(5,'2021-01-04', '2021-01-08');
 
 --------------------------
 CREATE OR REPLACE FUNCTION get_liczba_dni(data_start DATE, data_stop DATE) RETURNS int AS $$
@@ -260,24 +267,24 @@ CREATE TRIGGER trigger_platnosc_update AFTER INSERT ON projekt.dodatkowe_uslugi 
 -- select * from dokonaj_rezerwacji(0, 13, CAST('2021-01-01' AS DATE),CAST('2021-01-02' AS DATE), 0,5, 'TEST - BRAK', 0.0);
 
 ------------------------------
-BEGIN;
-    INSERT INTO projekt.rezerwacje("uzytkownik_id","pokoj_id","data_rezerwacji","od_kiedy","do_kiedy","liczba_dzieci","liczba_doroslych") VALUES(0, 13,NOW(), CAST('2021-01-01' AS DATE),CAST('2021-01-02' AS DATE), 0,5);
-    INSERT INTO projekt.dodatkowe_uslugi("nazwa_uslugi", "cena_od_osoby", "rezerwacja_id") VALUES('TEST - BRAK', 0.0, latest_rezerwacja_id());
-COMMIT;
+-- BEGIN;
+--     INSERT INTO projekt.rezerwacje("uzytkownik_id","pokoj_id","data_rezerwacji","od_kiedy","do_kiedy","liczba_dzieci","liczba_doroslych") VALUES(0, 13,NOW(), CAST('2021-01-01' AS DATE),CAST('2021-01-02' AS DATE), 0,5);
+--     INSERT INTO projekt.dodatkowe_uslugi("nazwa_uslugi", "cena_od_osoby", "rezerwacja_id") VALUES('TEST - BRAK', 0.0, latest_rezerwacja_id());
+-- COMMIT;
 
-------debug
-BEGIN;
-    INSERT INTO projekt.rezerwacje("uzytkownik_id","pokoj_id","data_rezerwacji","od_kiedy","do_kiedy","liczba_dzieci","liczba_doroslych") VALUES(0, 12,NOW(), CAST('2020-12-31' AS DATE),CAST('2021-01-31' AS DATE), 1,3);
-    INSERT INTO projekt.dodatkowe_uslugi("nazwa_uslugi", "cena_od_osoby", "rezerwacja_id") VALUES('TEST - BRAK', 0.0, latest_rezerwacja_id());
-COMMIT;
+-- ------debug
+-- BEGIN;
+--     INSERT INTO projekt.rezerwacje("uzytkownik_id","pokoj_id","data_rezerwacji","od_kiedy","do_kiedy","liczba_dzieci","liczba_doroslych") VALUES(0, 12,NOW(), CAST('2020-12-31' AS DATE),CAST('2021-01-31' AS DATE), 1,3);
+--     INSERT INTO projekt.dodatkowe_uslugi("nazwa_uslugi", "cena_od_osoby", "rezerwacja_id") VALUES('TEST - BRAK', 0.0, latest_rezerwacja_id());
+-- COMMIT;
 
 CREATE VIEW pokojeRezerwacjeView AS SELECT r.*, p.numer_pokoju, p.pietro, p.liczba_miejsc, p.nazwa_kategorii, p.cena_od_osoby FROM rezerwacje r JOIN pokojeView p ON r.pokoj_id = p.pokoj_id;
 -- SELECT * FROM pokojeRezerwacjeView;
 CREATE VIEW uslugiPokojeRezerwacjeView AS SELECT r.*, u.dodatkowe_uslugi_id, u.nazwa_uslugi, u.cena_od_osoby AS cena_uslugi FROM pokojeRezerwacjeView r JOIN dodatkowe_uslugi u ON r.rezerwacja_id = u.rezerwacja_id;
-SELECT * FROM uslugiPokojeRezerwacjeView;
+-- SELECT * FROM uslugiPokojeRezerwacjeView;
 
 CREATE VIEW RezerwacjeInfoView AS SELECT r.*, o.oplata_id, o.status_czy_oplacone, o.kwota FROM uslugiPokojeRezerwacjeView r JOIN oplata o ON r.rezerwacja_id = o.rezerwacja_id;
-SELECT * FROM RezerwacjeInfoView;
+-- SELECT * FROM RezerwacjeInfoView;
 
 ---------------------------------------------
 
@@ -372,7 +379,7 @@ BEGIN
         IF rec.od_kiedy - CAST(NOW() AS DATE) <= 0 THEN
             IF rec.status_czy_oplacone LIKE 'Oplacone' THEN
                 UPDATE projekt.zakwaterowani_goscie_info SET status_czy_zakwaterowany='Zakwaterowany' WHERE rezerwacja_id = rec.rezerwacja_id;
-            ELSIF rec.status_czy_oplacone LIKE 'Nieplacone' THEN
+            ELSIF rec.status_czy_oplacone LIKE 'Nieoplacone' THEN
                 INSERT INTO projekt.czarna_lista("uzytkownik_id","powod") VALUES(rec.uzytkownik_id, 'Nieoplacenie rezerwacji w terminie.');
             END IF;
         ELSIF rec.do_kiedy - CAST(NOW() AS DATE) <= 0 AND rec.status_czy_oplacone LIKE 'Oplacone' THEN
@@ -397,3 +404,36 @@ END;
 $$LANGUAGE 'plpgsql';
 
 CREATE TRIGGER trigger_RezygnacjaChecker AFTER INSERT ON projekt.rezygnacja_z_rezerwacji_info FOR EACH ROW EXECUTE PROCEDURE RezygnacjaChecker();
+---------------------------
+CREATE OR REPLACE FUNCTION Autoryzacja(id int) RETURNS int AS $$
+DECLARE
+    rec RECORD;
+    flag int;
+BEGIN
+    SELECT typ INTO rec FROM projekt.uzytkownik WHERE uzytkownik_id = id;
+    IF rec.typ LIKE 'HeadAdmin' OR rec.typ LIKE 'Pracownik' THEN
+        flag := 1;
+    ELSE
+        flag := 0;
+    END IF;
+    RETURN flag;
+END;
+$$LANGUAGE 'plpgsql';
+-------------------------------
+CREATE OR REPLACE FUNCTION CzarnaListaChecker() RETURNS TRIGGER AS $$
+DECLARE
+    rec RECORD;
+BEGIN
+    SELECT typ INTO rec FROM projekt.uzytkownik WHERE uzytkownik_id = NEW.uzytkownik_id;
+    IF NEW.powod LIKE '' THEN
+        RAISE EXCEPTION '||Nie mozna zablokowac uzytkownika bez podania przyczyny!||';
+        RETURN NULL;
+    ELSIF rec.typ LIKE 'HeadAdmin' OR rec.typ LIKE 'Pracownik' THEN
+        RAISE EXCEPTION '||Nie mozna zablokowac administratora!||';
+        RETURN NULL;
+    END IF;
+    RETURN NEW;
+END;
+$$LANGUAGE 'plpgsql';
+
+CREATE TRIGGER trigger_CzarnaListaChecker BEFORE INSERT ON projekt.czarna_lista FOR EACH ROW EXECUTE PROCEDURE CzarnaListaChecker();

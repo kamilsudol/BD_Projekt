@@ -99,7 +99,7 @@ public class GUI_Rezerwacja{
         rezerwacjaPanel.setBorder(BorderFactory.createEmptyBorder(100,100,100,100));
         rezerwacjaPanel.setLayout(new GridLayout(0,1));
 
-        odKiedyLabel = new JLabel("Prosze wybrac termin zakwaterowania (nie wczesniej, niz 7 dni od dnia dzisiejszego):");
+        odKiedyLabel = new JLabel("Prosze wybrac termin zakwaterowania (jednak nie wczesniej, niz 7 dni od dnia dzisiejszego):", SwingConstants.CENTER);
         rezerwacjaPanel.add(odKiedyLabel);
 
         year_odKiedyDropList = new JComboBox<>();
@@ -167,7 +167,7 @@ public class GUI_Rezerwacja{
         });
         rezerwacjaPanel.add(day_odKiedyDropList);
 
-        doKiedyLabel = new JLabel("Prosze wybrac termin wykwaterowania:");
+        doKiedyLabel = new JLabel("Prosze wybrac termin wykwaterowania:", SwingConstants.CENTER);
         rezerwacjaPanel.add(doKiedyLabel);
 
         year_doKiedyDropList = new JComboBox<>();
@@ -230,7 +230,7 @@ public class GUI_Rezerwacja{
         });
         rezerwacjaPanel.add(day_doKiedyDropList);
 
-        liczbaDoroslychLabel = new JLabel("Prosze podac liczbe doroslych (100% ceny od osoby):");
+        liczbaDoroslychLabel = new JLabel("Prosze podac liczbe doroslych (100% ceny od osoby):", SwingConstants.CENTER);
         rezerwacjaPanel.add(liczbaDoroslychLabel);
 
         dorosliDropList = new JComboBox<>();
@@ -257,7 +257,7 @@ public class GUI_Rezerwacja{
         });
         rezerwacjaPanel.add(dorosliDropList);
 
-        liczbaDzieciLabel = new JLabel("Prosze podac liczbe dzieci (50% ceny od osoby):");
+        liczbaDzieciLabel = new JLabel("Prosze podac liczbe dzieci (50% ceny od osoby):", SwingConstants.CENTER);
         rezerwacjaPanel.add(liczbaDzieciLabel);
 
         dzieciDropList = new JComboBox<>();
@@ -282,8 +282,8 @@ public class GUI_Rezerwacja{
         });
         rezerwacjaPanel.add(dzieciDropList);
 
-        pokojLabel1 = new JLabel("Prosze wybrac jeden z dostepnych pokoi (w przypadku wyboru pokoju z wieksza liczba miejsc,");
-        pokojLabel2 = new JLabel("niz zadeklarowana, wowczas pobrana bedzie oplata wysokosci 25% kwoty za pokoj od kazdego nadmiarowego miejsca):");
+        pokojLabel1 = new JLabel("Prosze wybrac jeden z dostepnych pokoi (w przypadku wyboru pokoju z wieksza liczba miejsc,", SwingConstants.CENTER);
+        pokojLabel2 = new JLabel("niz zadeklarowana, wowczas pobrana bedzie oplata wysokosci 25% kwoty za pokoj od kazdego nadmiarowego miejsca):", SwingConstants.CENTER);
         rezerwacjaPanel.add(pokojLabel1);
         rezerwacjaPanel.add(pokojLabel2);
 
@@ -308,7 +308,7 @@ public class GUI_Rezerwacja{
         });
         rezerwacjaPanel.add(pokojeDropList);
 
-        uslugiLabel = new JLabel("Prosze wybrac dodatkowe uslugi (opcjonalnie):");
+        uslugiLabel = new JLabel("Prosze wybrac dodatkowe uslugi (opcjonalnie):", SwingConstants.CENTER);
         rezerwacjaPanel.add(uslugiLabel);
 
         uslugaSilownia = new JCheckBox("Dostep do silowni - koszt 5 zl od osoby (w przypadku dzieci obowiazuje ulga 50%)");
@@ -375,7 +375,7 @@ public class GUI_Rezerwacja{
         });
         rezerwacjaPanel.add(uslugaKregielnia);
 
-        kwotaLabel = new JLabel("Calkowity koszt: "+(kwota_z_uslug+kwota_z_pokoi) + " zl");
+        kwotaLabel = new JLabel("Calkowity koszt: "+(kwota_z_uslug+kwota_z_pokoi) + " zl", SwingConstants.CENTER);
         rezerwacjaPanel.add(kwotaLabel);
 
         zatwierdzButton = new JButton("Potwierdz rezerwacje");

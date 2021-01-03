@@ -3,7 +3,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 
-public class GUI_Podglad_Uzytkownicy{
+public class GUI_Podglad_Rezygnacja{
     public int login_id;
     public GUI_Login mainWindow;
     public Polaczenie a;
@@ -12,11 +12,11 @@ public class GUI_Podglad_Uzytkownicy{
     public JButton podgladButton;
     public ArrayList<ArrayList<String>> records;
 
-    public GUI_Podglad_Uzytkownicy(Polaczenie p, GUI_Login mainWindow, int id){
+    public GUI_Podglad_Rezygnacja(Polaczenie p, GUI_Login mainWindow, int id){
         login_id = id;
         this.mainWindow = mainWindow;
         a = p;
-        records =  a.getTableUzytkownicy();
+        records =  a.getTableBlacklist();
         podgladPanel = new JPanel();
         podgladPanel.setBorder(BorderFactory.createEmptyBorder(100,100,100,100));
         podgladPanel.setLayout(new GridLayout(0,records.get(0).size()));
@@ -37,7 +37,6 @@ public class GUI_Podglad_Uzytkownicy{
     }
 
     public void wypelnij(){
-
         String tmp;
         for(int i = 0; i < records.size(); i++){
             for(int j = 0; j <records.get(i).size(); j++){

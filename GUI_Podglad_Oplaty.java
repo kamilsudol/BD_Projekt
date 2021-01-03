@@ -16,10 +16,10 @@ public class GUI_Podglad_Oplaty{
         login_id = id;
         this.mainWindow = mainWindow;
         a = p;
+        records = a.getTableOplaty();
         podgladPanel = new JPanel();
         podgladPanel.setBorder(BorderFactory.createEmptyBorder(100,100,100,100));
-        podgladPanel.setLayout(new GridLayout(0,4));
-        records = new ArrayList<>();
+        podgladPanel.setLayout(new GridLayout(0,records.get(0).size()));
         wypelnij();
         podgladButton = new JButton("Powrot do podgladu tabel");
         podgladButton.addActionListener(new ActionListener(){
@@ -37,12 +37,17 @@ public class GUI_Podglad_Oplaty{
     }
 
     public void wypelnij(){
-        records =  a.getTableOplaty();
         String tmp;
         for(int i = 0; i < records.size(); i++){
             for(int j = 0; j <records.get(i).size(); j++){
                 tmp = records.get(i).get(j);
-                podgladPanel.add(new JLabel(tmp));
+                if(i==0){
+                    JLabel t = new JLabel(tmp);
+                    t.setFont(new Font("Arial", Font.PLAIN, 17));
+                    podgladPanel.add(t);
+                }else{
+                    podgladPanel.add(new JLabel(tmp));
+                }
             }
         }
     }

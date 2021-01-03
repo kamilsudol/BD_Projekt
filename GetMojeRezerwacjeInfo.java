@@ -74,6 +74,7 @@ public class GetMojeRezerwacjeInfo{
     public GetMojeRezerwacjeInfo(String s){
         this(false);
         status = s;
+        oplata_id = -1;
     }
 
     public String toString(){
@@ -85,16 +86,16 @@ public class GetMojeRezerwacjeInfo{
     }
 
     public void info(JPanel panel){
-        panel.add(new JLabel("Informacje o rezerwacji:"));
+        panel.add(new JLabel("Informacje o rezerwacji:", SwingConstants.CENTER));
         panel.add(new JLabel("Data zlozenia rezerwacji:   "+data_rezerwacji+"   Data zakwaterowania:   "+od_kiedy+"   Data wykwaterowania:   "+do_kiedy+"   Liczba doroslych:   "+String.valueOf(liczba_doroslych)+"   Liczba dzieci:   "+String.valueOf(liczba_dzieci)));
 
-        panel.add(new JLabel("Informacje o wybranym pokoju:"));
+        panel.add(new JLabel("Informacje o wybranym pokoju:", SwingConstants.CENTER));
         panel.add(new JLabel("Nazwa kategorii:   "+kategoria+"   Pietro:   "+String.valueOf(pietro)+"   Numer pokoju:   "+String.valueOf(numer_pokoju)+"   Maksymalna liczba miejsc:   "+String.valueOf(liczba_miejsc)+"   Cena od osoby:   "+String.valueOf(pokoj_cena)+ " zl"));
 
-        panel.add(new JLabel("Informacje o dodatkowych uslugach:"));
+        panel.add(new JLabel("Informacje o dodatkowych uslugach:", SwingConstants.CENTER));
         panel.add(new JLabel("Nazwy uslug:   "+uslugi_nazwa+"   Cena od osoby:   "+String.valueOf(uslugi_cena)+ " zl"));
 
-        panel.add(new JLabel("Informacje o platnosci:"));
+        panel.add(new JLabel("Informacje o platnosci:", SwingConstants.CENTER));
         panel.add(new JLabel("Status:   "+status+"   Kwota:   "+String.valueOf(kwota) + " zl"));
 
     }
