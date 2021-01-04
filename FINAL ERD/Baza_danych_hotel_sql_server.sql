@@ -10,7 +10,8 @@ CREATE TABLE [uzytkownik] (
   [imie] nvarchar(255),
   [nazwisko] nvarchar(255),
   [e_mail] text,
-  [numer] numeric
+  [numer] text,
+  [typ] text
 )
 GO
 
@@ -45,7 +46,7 @@ GO
 CREATE TABLE [oplata] (
   [oplata_id] serial PRIMARY KEY,
   [rezerwacja_id] int,
-  [status_czy_oplacone] boolean,
+  [status_czy_oplacone] text,
   [kwota] numeric
 )
 GO
@@ -61,14 +62,21 @@ GO
 CREATE TABLE [zakwaterowani_goscie_info] (
   [info_id] serial PRIMARY KEY,
   [rezerwacja_id] int,
-  [status_czy_zakwaterowany] boolean
+  [status_czy_zakwaterowany] text
 )
 GO
 
 CREATE TABLE [czarna_lista] (
   [info_id] serial PRIMARY KEY,
   [uzytkownik_id] int,
-  [powod] nvarchar(255)
+  [powod] text
+)
+GO
+
+CREATE TABLE [rezygnacja_z_rezerwacji_info] (
+  [info_id] serial PRIMARY KEY,
+  [rezerwacja_id] int,
+  [uzytkownik_id] int
 )
 GO
 
@@ -94,4 +102,7 @@ ALTER TABLE [uzytkownik] ADD FOREIGN KEY ([uzytkownik_id]) REFERENCES [panel] ([
 GO
 
 ALTER TABLE [uzytkownik] ADD FOREIGN KEY ([uzytkownik_id]) REFERENCES [czarna_lista] ([uzytkownik_id])
+GO
+
+ALTER TABLE [rezerwacje] ADD FOREIGN KEY ([rezerwacja_id]) REFERENCES [rezygnacja_z_rezerwacji_info] ([rezerwacja_id])
 GO

@@ -9,7 +9,8 @@ CREATE TABLE `uzytkownik` (
   `imie` varchar(255),
   `nazwisko` varchar(255),
   `e_mail` text,
-  `numer` numeric
+  `numer` text,
+  `typ` text
 );
 
 CREATE TABLE `rezerwacje` (
@@ -40,7 +41,7 @@ CREATE TABLE `kategoria` (
 CREATE TABLE `oplata` (
   `oplata_id` serial PRIMARY KEY,
   `rezerwacja_id` int,
-  `status_czy_oplacone` boolean,
+  `status_czy_oplacone` text,
   `kwota` numeric
 );
 
@@ -54,13 +55,19 @@ CREATE TABLE `dodatkowe_uslugi` (
 CREATE TABLE `zakwaterowani_goscie_info` (
   `info_id` serial PRIMARY KEY,
   `rezerwacja_id` int,
-  `status_czy_zakwaterowany` boolean
+  `status_czy_zakwaterowany` text
 );
 
 CREATE TABLE `czarna_lista` (
   `info_id` serial PRIMARY KEY,
   `uzytkownik_id` int,
-  `powod` varchar(255)
+  `powod` text
+);
+
+CREATE TABLE `rezygnacja_z_rezerwacji_info` (
+  `info_id` serial PRIMARY KEY,
+  `rezerwacja_id` int,
+  `uzytkownik_id` int
 );
 
 ALTER TABLE `rezerwacje` ADD FOREIGN KEY (`uzytkownik_id`) REFERENCES `uzytkownik` (`uzytkownik_id`);
@@ -78,3 +85,5 @@ ALTER TABLE `rezerwacje` ADD FOREIGN KEY (`rezerwacja_id`) REFERENCES `zakwatero
 ALTER TABLE `uzytkownik` ADD FOREIGN KEY (`uzytkownik_id`) REFERENCES `panel` (`uzyt_id`);
 
 ALTER TABLE `uzytkownik` ADD FOREIGN KEY (`uzytkownik_id`) REFERENCES `czarna_lista` (`uzytkownik_id`);
+
+ALTER TABLE `rezerwacje` ADD FOREIGN KEY (`rezerwacja_id`) REFERENCES `rezygnacja_z_rezerwacji_info` (`rezerwacja_id`);

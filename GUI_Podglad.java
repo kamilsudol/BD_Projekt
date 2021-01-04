@@ -141,10 +141,10 @@ public class GUI_Podglad{
         menuButton = new JButton("Powrot do menu");
         menuButton.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e){
-                GUI_Menu m = new GUI_Menu(a, mainWindow, login_id);
+                GUI_Menu_Admin m = new GUI_Menu_Admin(a, mainWindow, login_id);
                 mainWindow.frame.getContentPane().removeAll();
                 mainWindow.frame.add(m.menuPanel, BorderLayout.CENTER);
-                mainWindow.frame.setTitle("BD PROJEKT - Menu");
+                mainWindow.frame.setTitle("BD PROJEKT - Menu - Administrator");
                 mainWindow.frame.validate();
             }
         });

@@ -78,47 +78,92 @@ public class Polaczenie {
         }
   }
 
-  public String zarejestruj(String imie, String nazwisko, String email, String telefon, String login, String haslo){
-      try { 
-        PreparedStatement exist_prepare = c.prepareStatement("SELECT COUNT(*) AS exist FROM projekt.panel WHERE login = \'"+login+"\'",ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
-        ResultSet exist_result = exist_prepare.executeQuery();
-        exist_result.next();
-        int exist = Integer.parseInt(exist_result.getString("exist"));
-        exist_result.close();
-        exist_prepare.close();
-        if(exist==0){
-          PreparedStatement counted_id = c.prepareStatement("SELECT COUNT(uzyt_id) AS id FROM projekt.panel",ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
-          ResultSet result_count_id = counted_id.executeQuery();
-          result_count_id.next();
-          String string_id = result_count_id.getString("id");
-          int id = Integer.parseInt(string_id);
-          id++;
-          result_count_id.close();
-          counted_id.close();
+  public String zarejestruj(String imie, String nazwisko, String email, String telefon, String login, String haslo, String typ){
+    //   try { 
+    //     PreparedStatement exist_prepare = c.prepareStatement("SELECT COUNT(*) AS exist FROM projekt.panel WHERE login = \'"+login+"\'",ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
+    //     ResultSet exist_result = exist_prepare.executeQuery();
+    //     exist_result.next();
+    //     int exist = Integer.parseInt(exist_result.getString("exist"));
+    //     exist_result.close();
+    //     exist_prepare.close();
+    //     if(exist==0){
+    //       PreparedStatement counted_id = c.prepareStatement("SELECT COUNT(uzyt_id) AS id FROM projekt.panel",ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
+    //       ResultSet result_count_id = counted_id.executeQuery();
+    //       result_count_id.next();
+    //       String string_id = result_count_id.getString("id");
+    //       int id = Integer.parseInt(string_id);
+    //       id++;
+    //       result_count_id.close();
+    //       counted_id.close();
 
-          // PreparedStatement pst1 = c.prepareStatement("INSERT INTO projekt.uzytkownik VALUES("+id+",\'"+imie+"\',\'"+nazwisko+"\',\'"+email+"\',"+Integer.parseInt(telefon)+" )");
-          PreparedStatement pst1 = c.prepareStatement("INSERT INTO projekt.uzytkownik VALUES("+id+",\'"+imie+"\',\'"+nazwisko+"\',\'"+email+"\',\'"+telefon+"\','Klient' )");
-          int ok = pst1.executeUpdate();
-          pst1.close();    
-          if(ok != 0){
-            PreparedStatement pst2 = c.prepareStatement("INSERT INTO projekt.panel VALUES("+id+", \'"+login+"\',\'"+haslo+"\')");
+    //       // PreparedStatement pst1 = c.prepareStatement("INSERT INTO projekt.uzytkownik VALUES("+id+",\'"+imie+"\',\'"+nazwisko+"\',\'"+email+"\',"+Integer.parseInt(telefon)+" )");
+    //       PreparedStatement pst1 = c.prepareStatement("INSERT INTO projekt.uzytkownik VALUES("+id+",\'"+imie+"\',\'"+nazwisko+"\',\'"+email+"\',\'"+telefon+"\','Klient' )");
+    //       int ok = pst1.executeUpdate();
+    //       pst1.close();    
+    //       if(ok != 0){
+    //         PreparedStatement pst2 = c.prepareStatement("INSERT INTO projekt.panel VALUES("+id+", \'"+login+"\',\'"+haslo+"\')");
 
-            pst2.executeUpdate();
-            pst2.close();
-            return "Pomyslnie zarejestrowano uzytkownika!";
-          }else{
-            return "Prosze wprowadzic poprawne dane!";
-          }
-        }else{
-          return "Uzytkownik o podanym loginie juz istnieje!";
-        }
+    //         pst2.executeUpdate();
+    //         pst2.close();
+    //         return "Pomyslnie zarejestrowano uzytkownika!";
+    //       }else{
+    //         return "Prosze wprowadzic poprawne dane!";
+    //       }
+    //     }else{
+    //       return "Uzytkownik o podanym loginie juz istnieje!";
+    //     }
 
+    //   }
+    //  catch(SQLException e)  {
+    //       System.out.println("Blad podczas przetwarzania danych:"+e) ;
+    //       return "";
+    //     }
+    try {
+      PreparedStatement counted_id = c.prepareStatement("SELECT COUNT(uzyt_id) AS id FROM projekt.panel",ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
+      ResultSet result_count_id = counted_id.executeQuery();
+      result_count_id.next();
+      String string_id = result_count_id.getString("id");
+      int id = Integer.parseInt(string_id);
+      id++;
+      result_count_id.close();
+      counted_id.close();
+
+      PreparedStatement pst1 = c.prepareStatement("BEGIN");
+      PreparedStatement pst2 = c.prepareStatement("INSERT INTO projekt.uzytkownik VALUES("+id+",\'"+imie+"\',\'"+nazwisko+"\',\'"+email+"\',\'"+telefon+"\',\'"+typ+"\' )");
+      PreparedStatement pst3 = c.prepareStatement("INSERT INTO projekt.panel VALUES("+id+", \'"+login+"\',\'"+haslo+"\')");
+      PreparedStatement pst4 = c.prepareStatement("COMMIT");
+
+      pst1.executeUpdate();
+      pst2.executeUpdate();
+      pst3.executeUpdate();
+      pst4.executeUpdate();
+      
+      pst1.close();  
+      pst2.close();  
+      pst3.close();  
+      pst4.close();
+
+      return "Pomyslnie dodano nowego uzytkownika!";
       }
-     catch(SQLException e)  {
-          System.out.println("Blad podczas przetwarzania danych:"+e) ;
-          return "";
-        }
+      catch(SQLException e)  {
+          // System.out.println("Blad podczas przetwarzania danych:"+e) ;
+          try{
+            PreparedStatement pst5 = c.prepareStatement("ROLLBACK");
+            pst5.executeUpdate();
+            pst5.close();
+          }catch(SQLException d){
+            System.out.println("Blad podczas przetwarzania danych:"+d) ;
+            return "Blad przy dodawaniu nowego uzytkownika!";
+          }
+          String powod = e.getMessage();
+          String[] powod_tab = powod.split("[||]");
+          // for(int i = 0; i < powod_tab.length; i++){
+          //   System.out.println(powod_tab[i]);
+          // }
+          return "Blad przy dodawaniu nowego uzytkownika! " + powod_tab[2];
+      }
   }
+
   public ArrayList<ArrayList<String>> getTableUzytkownicy(){
       ArrayList<ArrayList<String>> records = new ArrayList<>();
       ArrayList<String> tmp = new ArrayList<>();

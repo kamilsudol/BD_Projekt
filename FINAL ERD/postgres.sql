@@ -116,24 +116,104 @@ CREATE OR REPLACE FUNCTION register_validator() RETURNS TRIGGER AS
 $$
 DECLARE
     flag INTEGER;
+    rec RECORD;
 BEGIN
     flag := 0;
+    SELECT * INTO rec FROM projekt.uzytkownik u WHERE u.e_mail = NEW.e_mail;
+
+    IF NEW.imie LIKE '' THEN
+        RAISE EXCEPTION '||Prosze wypelnic pole imie!||';
+        RETURN NULL;
+    ELSE
+        flag := flag + 1;
+    END IF;
+
+    IF NEW.nazwisko LIKE '' THEN
+        RAISE EXCEPTION '||Prosze wypelnic pole nazwisko!||';
+        RETURN NULL;
+    ELSE
+        flag := flag + 1;
+    END IF;
+
+    IF NEW.e_mail LIKE '' THEN
+        RAISE EXCEPTION '||Prosze wypelnic pole e-mail!||';
+        RETURN NULL;
+    ELSE
+        flag := flag + 1;
+    END IF;
+
     IF NEW.e_mail LIKE '%@%' THEN
         flag := flag + 1;
-    END IF;
-    IF projekt.numeric_check(NEW.numer) THEN
-        flag := flag + 1;
-    END IF;
-    IF flag = 2 THEN
-        RETURN NEW;
     ELSE
+        RAISE EXCEPTION '||Prosze podac poprawny adres e-mail!||';
         RETURN NULL;
     END IF;
+
+    IF rec IS NULL THEN
+        flag := flag + 1;
+    ELSE
+        RAISE EXCEPTION '||Uzytkownik o podanym e-mailu juz istnieje!||';
+        RETURN NULL;
+    END IF;
+
+    IF NEW.numer LIKE '' THEN
+        RAISE EXCEPTION '||Prosze wypelnic pole numer telefonu!||';
+        RETURN NULL;
+    ELSE
+        flag := flag + 1;
+    END IF;
+
+    IF projekt.numeric_check(NEW.numer) THEN
+        flag := flag + 1;
+    ELSE
+        RAISE EXCEPTION '||Prosze podac poprawny numer telefonu!||';
+        RETURN NULL;
+    END IF;
+    
+    RETURN NEW;
 
 END;
 $$LANGUAGE 'plpgsql';
 
-CREATE TRIGGER trigger_register_validator BEFORE INSERT ON uzytkownik FOR EACH ROW EXECUTE PROCEDURE register_validator();
+CREATE TRIGGER trigger_register_validator BEFORE INSERT ON projekt.uzytkownik FOR EACH ROW EXECUTE PROCEDURE register_validator();
+
+------------------------------------------------------------
+CREATE OR REPLACE FUNCTION panel_validator() RETURNS TRIGGER AS
+$$
+DECLARE
+    flag INTEGER;
+    rec RECORD;
+BEGIN
+    flag := 0;
+    SELECT * INTO rec FROM projekt.panel p WHERE p.login = NEW.login;
+
+    IF rec IS NULL THEN
+        flag := flag + 1;
+    ELSE
+        RAISE EXCEPTION '||Uzytkownik o podanym loginie juz istnieje!||';
+        RETURN NULL;
+    END IF;
+
+    IF NEW.login LIKE '' THEN
+        RAISE EXCEPTION '||Prosze wypelnic pole login!||';
+        RETURN NULL;
+    ELSE
+        flag := flag + 1;
+    END IF;
+
+    IF NEW.haslo LIKE '' THEN
+        RAISE EXCEPTION '||Prosze wypelnic pole haslo!||';
+        RETURN NULL;
+    ELSE
+        flag := flag + 1;
+    END IF;
+
+    RETURN NEW;
+
+END;
+$$LANGUAGE 'plpgsql';
+
+CREATE TRIGGER trigger_panel_validator BEFORE INSERT ON projekt.panel FOR EACH ROW EXECUTE PROCEDURE panel_validator();
 
 ------------------------------------------------------------
 

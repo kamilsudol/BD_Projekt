@@ -19,7 +19,8 @@ public class GUI_Rezerwacja_Result{
         rezerwacjaPanel.setBorder(BorderFactory.createEmptyBorder(100,100,100,100));
         rezerwacjaPanel.setLayout(new GridLayout(0,1));
 
-        statement = new JLabel(st);
+        statement = new JLabel(st, SwingConstants.CENTER);
+        statement.setFont(new Font("Arial", Font.PLAIN, 30));
         statement.setVisible(true);
         rezerwacjaPanel.add(statement);
 

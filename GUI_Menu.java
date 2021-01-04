@@ -13,8 +13,7 @@ public class GUI_Menu{
     public JLabel infoLabel;
     public JButton rezerwacja;
     public JButton moje_rezerwacje;
-    public JButton zablokuj;
-    public JButton podglad_tabel;
+    public JButton adminMenu;
     public JButton wyloguj;
     
     public GUI_Menu(Polaczenie p, GUI_Login mainWindow, int id){
@@ -40,6 +39,21 @@ public class GUI_Menu{
         menuLabel = new JLabel("Menu:", SwingConstants.CENTER);
         menuLabel.setFont(new Font("Arial", Font.PLAIN, 17));
         menuPanel.add(menuLabel);
+
+        if(a.czyAdmin(login_id) == 1){
+            adminMenu = new JButton("Panel administratora");
+            adminMenu.addActionListener(new ActionListener(){
+                public void actionPerformed(ActionEvent e){
+                    GUI_Menu_Admin m = new GUI_Menu_Admin(a, mainWindow, login_id);
+                    mainWindow.frame.getContentPane().removeAll();
+                    mainWindow.frame.add(m.menuPanel, BorderLayout.CENTER);
+                    mainWindow.frame.setTitle("BD PROJEKT - Menu - Administrator");
+                    mainWindow.frame.validate();
+                }
+            });
+
+            menuPanel.add(adminMenu);
+        }
 
         if(!czy_zbanowany){
             rezerwacja = new JButton("Dokonaj rezerwacji");
@@ -68,36 +82,6 @@ public class GUI_Menu{
             }
         });
         menuPanel.add(moje_rezerwacje);
-
-        if(a.czyAdmin(login_id) == 1){
-            zablokuj = new JButton("Zablokuj uzytkownika");
-            zablokuj.addActionListener(new ActionListener(){
-                public void actionPerformed(ActionEvent e){
-                    GUI_Zablokuj m = new GUI_Zablokuj(a, mainWindow, login_id);
-                    mainWindow.frame.getContentPane().removeAll();
-                    mainWindow.frame.add(m.panelUp, BorderLayout.NORTH);
-                    mainWindow.frame.add(m.panelCenter, BorderLayout.CENTER);
-                    mainWindow.frame.add(m.panelDown, BorderLayout.SOUTH);
-                    mainWindow.frame.setTitle("BD PROJEKT - Zablokuj uzytkownika");
-                    mainWindow.frame.validate();
-                }
-            });
-
-            menuPanel.add(zablokuj);
-
-            podglad_tabel = new JButton("Podglad tabel");
-            podglad_tabel.addActionListener(new ActionListener(){
-                public void actionPerformed(ActionEvent e){
-                    GUI_Podglad p = new GUI_Podglad(a, mainWindow, login_id);
-                    mainWindow.frame.getContentPane().removeAll();
-                    mainWindow.frame.add(p.podgladPanel, BorderLayout.CENTER);
-                    mainWindow.frame.setTitle("BD PROJEKT - Podglad tabel");
-                    mainWindow.frame.validate();
-                }
-            });
-
-            menuPanel.add(podglad_tabel);
-        }
 
         wyloguj = new JButton("Wyloguj");
         wyloguj.addActionListener(new ActionListener(){

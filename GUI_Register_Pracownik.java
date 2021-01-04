@@ -2,12 +2,13 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
-public class GUI_Register{
+public class GUI_Register_Pracownik{
+    public int login_id;
     public GUI_Login mainWindow;
     // public JFrame registerFrame;
     public JPanel registerPanel;
     public JButton confirm;
-    public JButton back;
+    public JButton menuButton;
     public JTextField imieText;
     public JTextField nazwiskoText;
     public JTextField emailText;
@@ -24,25 +25,25 @@ public class GUI_Register{
     public JLabel confirmLabel;
 
 
-    public GUI_Register(Polaczenie p, GUI_Login mainWindow){
+    public GUI_Register_Pracownik(Polaczenie p, GUI_Login mainWindow, int id){
+        login_id = id;
         this.mainWindow = mainWindow;
         a = p;
         // registerFrame = new JFrame();
         registerPanel = new JPanel();
         confirm = new JButton("Zatwierdz");
-        back = new JButton("Powrot");
         imieText = new JTextField(32);
         nazwiskoText= new JTextField(32);
         emailText= new JTextField(32);
         telefonText= new JTextField(32);;
         loginText= new JTextField(32);
         hasloText= new JTextField(32);
-        imieLabel = new JLabel("Podaj imie:");
-        nazwiskoLabel = new JLabel("Podaj nazwisko:");
-        emailLabel = new JLabel("Podaj e-email:");
-        telefonLabel = new JLabel("Podaj telefon:");
-        loginLabel = new JLabel("Podaj login:");
-        hasloLabel = new JLabel("Podaj haslo:");
+        imieLabel = new JLabel("Podaj imie pracownika:");
+        nazwiskoLabel = new JLabel("Podaj nazwisko pracownika:");
+        emailLabel = new JLabel("Podaj e-email pracownika:");
+        telefonLabel = new JLabel("Podaj telefon pracownika:");
+        loginLabel = new JLabel("Podaj login pracownika:");
+        hasloLabel = new JLabel("Podaj haslo pracownika:");
         confirmLabel = new JLabel("", SwingConstants.CENTER);
         confirmLabel.setVisible(false);
 
@@ -62,7 +63,6 @@ public class GUI_Register{
         registerPanel.add(hasloText);
         registerPanel.add(confirm);
         registerPanel.add(confirmLabel);
-        registerPanel.add(back);
 
         confirm.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e){
@@ -73,22 +73,23 @@ public class GUI_Register{
                 String log = loginText.getText();
                 String pass = hasloText.getText();
 
-                String flag = a.zarejestruj(im, nw, em, tel, log, pass, "Klient");
+                String flag = a.zarejestruj(im, nw, em, tel, log, pass, "Pracownik");
                 confirmLabel.setText(flag);
                 confirmLabel.setVisible(true);
             }
         });
 
-        back.addActionListener(new ActionListener(){
+        menuButton = new JButton("Powrot do menu");
+        menuButton.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e){
-                GUI_Login_Wrapper m = new GUI_Login_Wrapper(a, mainWindow);
+                GUI_Menu_Admin m = new GUI_Menu_Admin(a, mainWindow, login_id);
                 mainWindow.frame.getContentPane().removeAll();
-                mainWindow.frame.add(m.panel, BorderLayout.CENTER);
-                mainWindow.frame.setTitle("BD PROJEKT - Zaloguj");
+                mainWindow.frame.add(m.menuPanel, BorderLayout.CENTER);
+                mainWindow.frame.setTitle("BD PROJEKT - Menu");
                 mainWindow.frame.validate();
             }
         });
-
+        registerPanel.add(menuButton);
 
     }
 }
