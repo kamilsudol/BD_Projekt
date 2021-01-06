@@ -2,6 +2,12 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
+/**
+ * Klasa GUI_Register
+ * Jest ona odpowiedzialna za procedure rejestracji nowych
+ * uzytkownikow.
+ */
+
 public class GUI_Register{
     public GUI_Login mainWindow;
     // public JFrame registerFrame;
@@ -23,7 +29,12 @@ public class GUI_Register{
     public JLabel hasloLabel;
     public JLabel confirmLabel;
 
-
+    /**
+     * Kontstruktor domyslny, przyjmujacy polaczenie do bazy danych oraz odniesienie do
+     * okna glownego.
+     * @param p
+     * @param mainWindow
+     */
     public GUI_Register(Polaczenie p, GUI_Login mainWindow){
         this.mainWindow = mainWindow;
         a = p;
@@ -64,7 +75,7 @@ public class GUI_Register{
         registerPanel.add(confirmLabel);
         registerPanel.add(back);
 
-        confirm.addActionListener(new ActionListener(){
+        confirm.addActionListener(new ActionListener(){  // Przycisk zatwierdzajacy rejestracje, wysylajacy informacje do bazy.
             public void actionPerformed(ActionEvent e){
                 String im = imieText.getText();
                 String nw = nazwiskoText.getText();
@@ -79,7 +90,7 @@ public class GUI_Register{
             }
         });
 
-        back.addActionListener(new ActionListener(){
+        back.addActionListener(new ActionListener(){  //Przycisk realizujacy powrot do okna logowania.
             public void actionPerformed(ActionEvent e){
                 GUI_Login_Wrapper m = new GUI_Login_Wrapper(a, mainWindow);
                 mainWindow.frame.getContentPane().removeAll();

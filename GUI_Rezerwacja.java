@@ -4,6 +4,13 @@ import java.awt.event.*;
 import java.util.*;
 import java.text.*;
 
+/**
+ * Klasa GUI_Rezerwacja
+ * Realizuje ona proces rezerwacji pokoi, umozliwiajac
+ * przy tym wybor pokoju z dodatkowymi uslugami na
+ * okreslony termin w zaleznosci od liczby osob.
+ */
+
 public class GUI_Rezerwacja{
     public int login_id;
     public GUI_Login mainWindow;
@@ -74,6 +81,14 @@ public class GUI_Rezerwacja{
     public GetUslugi kregielnia;
     public GetUslugi calosc;
 
+    /**
+     * Konstruktor domyslny, przyjmujacy polaczenie do bazy, odniesienie do okna glownego
+     * oraz id obecnie zalogowanego uzytkownika.
+     * @param p
+     * @param mainWindow
+     * @param id
+     */
+
     public GUI_Rezerwacja(Polaczenie p, GUI_Login mainWindow, int id){
         silownia = new GetUslugi("Silownia ", 5);
         kregielnia = new GetUslugi("Kregielnia ", 25);
@@ -98,6 +113,8 @@ public class GUI_Rezerwacja{
         rezerwacjaPanel = new JPanel();
         rezerwacjaPanel.setBorder(BorderFactory.createEmptyBorder(100,100,100,100));
         rezerwacjaPanel.setLayout(new GridLayout(0,1));
+
+        //Sekcja wyboru daty zakwaterowania
 
         odKiedyLabel = new JLabel("Prosze wybrac termin zakwaterowania (jednak nie wczesniej, niz 7 dni od dnia dzisiejszego):", SwingConstants.CENTER);
         rezerwacjaPanel.add(odKiedyLabel);
@@ -167,6 +184,8 @@ public class GUI_Rezerwacja{
         });
         rezerwacjaPanel.add(day_odKiedyDropList);
 
+        //Sekcja wyboru daty wykwaterowania
+
         doKiedyLabel = new JLabel("Prosze wybrac termin wykwaterowania:", SwingConstants.CENTER);
         rezerwacjaPanel.add(doKiedyLabel);
 
@@ -230,6 +249,8 @@ public class GUI_Rezerwacja{
         });
         rezerwacjaPanel.add(day_doKiedyDropList);
 
+        //Sekcja uzgodnienia liczby osob
+
         liczbaDoroslychLabel = new JLabel("Prosze podac liczbe doroslych (100% ceny od osoby):", SwingConstants.CENTER);
         rezerwacjaPanel.add(liczbaDoroslychLabel);
 
@@ -282,6 +303,8 @@ public class GUI_Rezerwacja{
         });
         rezerwacjaPanel.add(dzieciDropList);
 
+        //Sekcja wyboru pokoju
+
         pokojLabel1 = new JLabel("Prosze wybrac jeden z dostepnych pokoi (w przypadku wyboru pokoju z wieksza liczba miejsc,", SwingConstants.CENTER);
         pokojLabel2 = new JLabel("niz zadeklarowana, wowczas pobrana bedzie oplata wysokosci 25% kwoty za pokoj od kazdego nadmiarowego miejsca):", SwingConstants.CENTER);
         rezerwacjaPanel.add(pokojLabel1);
@@ -307,6 +330,8 @@ public class GUI_Rezerwacja{
             }
         });
         rezerwacjaPanel.add(pokojeDropList);
+
+        //Sekcja wyboru dodatkowych uslug
 
         uslugiLabel = new JLabel("Prosze wybrac dodatkowe uslugi (opcjonalnie):", SwingConstants.CENTER);
         rezerwacjaPanel.add(uslugiLabel);
@@ -375,10 +400,12 @@ public class GUI_Rezerwacja{
         });
         rezerwacjaPanel.add(uslugaKregielnia);
 
+        //Sekcja wyswietlajaca sumaryczny koszt za rezerwacje
+
         kwotaLabel = new JLabel("Calkowity koszt: "+(kwota_z_uslug+kwota_z_pokoi) + " zl", SwingConstants.CENTER);
         rezerwacjaPanel.add(kwotaLabel);
 
-        zatwierdzButton = new JButton("Potwierdz rezerwacje");
+        zatwierdzButton = new JButton("Potwierdz rezerwacje"); //Przycisk realizujacy zlozenie rezerwacji
         zatwierdzButton.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e){
                 if(data_flag && osoby_flag && pokoj_flag){
@@ -396,7 +423,7 @@ public class GUI_Rezerwacja{
         });
         rezerwacjaPanel.add(zatwierdzButton);
 
-        menuButton = new JButton("Powrot do menu");
+        menuButton = new JButton("Powrot do menu");  //Przycisk realizujacy powrot do okna menu.
         menuButton.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e){
                 GUI_Menu m = new GUI_Menu(a, mainWindow, login_id);
@@ -409,19 +436,36 @@ public class GUI_Rezerwacja{
         rezerwacjaPanel.add(menuButton);
     }
 
+    /**
+     * Metoda aktualizujaca JLabel wyswietlajacy sumaryczny koszt/
+     */
+
     public void kwotaUpdate(){
         kwotaLabel.setText("Calkowity koszt: " + (kwota_z_uslug+kwota_z_pokoi) + " zl");
     }
 
+    /**
+     * Metoda obliczajaca sumaryczny koszt rezerwacji.
+     */
+
     public void kwotaPokojeCompute(){
         int liczba_dni = okresPobytu();
-        // System.out.println("Liczba dni:" + liczba_dni);
         if(chosen_adult_people == 0 && chosen_kiddo_people == 0){
             kwota_z_pokoi = 0;
         }else{
             kwota_z_pokoi = liczba_dni*chosen_pokoj_cena*(chosen_adult_people + 0.5*chosen_kiddo_people + 0.25*(chosen_pokoj_liczba_miejsc - chosen_adult_people - chosen_kiddo_people));
         }
     }
+
+    /**
+     * Metoda realizujaca wypelnienie droplisty wyboru dnia.
+     * @param x
+     * @param day
+     * @param month_start
+     * @param month_stop
+     * @param year_start
+     * @param year_stop
+     */
 
     public void dayDropListFill(JComboBox<ComboInsert> x, int day, int month_start, int month_stop, int year_start, int year_stop){
         int days_per_month = miesiac.resolveDays(month_stop, year_stop);
@@ -436,6 +480,14 @@ public class GUI_Rezerwacja{
         }
     }
 
+    /**
+     * Metoda realizujaca wypelnienie droplisty wyboru miesiaca.
+     * @param x
+     * @param month
+     * @param year_start
+     * @param year_stop
+     */
+
     public void monthDropListFill(JComboBox<ComboInsert> x, int month, int year_start, int year_stop){
         if(year_start == year_stop){
             for(int i = month; i < 13; i++){
@@ -447,11 +499,22 @@ public class GUI_Rezerwacja{
             }
         }
     }
+
+    /**
+     * Metoda realizujaca wypelnienie droplisty wyboru roku.
+     * @param x
+     * @param year
+     */
+
     public void yearDropListFill(JComboBox<ComboInsert> x, int year){
         for(int i = year; i < year + 3; i++){
             x.addItem(new ComboInsert(String.valueOf(i),i));
         }
     }
+
+    /**
+     * Metoda ustalajaca aktualny dzien, miesiac oraz rok;
+     */
 
     private void ustal_aktualna_date(){
         Date d = new Date();
@@ -464,6 +527,11 @@ public class GUI_Rezerwacja{
         current_year = Integer.parseInt(rok.format(d));
     }
 
+    /**
+     * Pomocnicza metoda czyszczaca wybrana dropliste, pomijajaca pierwszy element.
+     * @param x
+     */
+
     protected void myClear(JComboBox<ComboInsert> x){
         if(x.getItemCount()>1){
             for(int i=x.getItemCount()-1;i>0;i--){
@@ -472,17 +540,31 @@ public class GUI_Rezerwacja{
         }
     }
 
+    /**
+     * Metoda realizujaca wypelnienie droplisty ustalajacej liczbe osob.
+     * @param x - droplista
+     * @param left - ile wolnych miejsc zostalo
+     */
+
     public void fillPeopleDropList(JComboBox<ComboInsert> x, int left){
         for(int i = 0; i < max_people - left + 1; i++){
             x.addItem(new ComboInsert(String.valueOf(i),i));
         }
     }
 
+    /**
+     * Metoda resetujaca wartosci kwot.
+     */
+
     public void kwotaReset(){
         kwota_z_pokoi = 0;
         kwota_z_uslug = 0;
         kwotaUpdate();
     }
+
+    /**
+     * Metoda odznaczajaca wszystkie checkboxy dodatkowych uslug.
+     */
 
     public void uslugiReset(){
         uslugaBasen.setSelected(false);
@@ -491,15 +573,27 @@ public class GUI_Rezerwacja{
         uslugaSilownia.setSelected(false);
     }
 
+    /**
+     * Pomocnicza metoda konwetujaca daty do formatu przyjaznego dla bazy danych.
+     */
+
     public void przedzialRezerwacjiCompute(){
         start_rezerwacji = chosen_start_year+"-"+chosen_start_month+"-"+chosen_start_day;
         stop_rezerwacji = chosen_end_year+"-"+chosen_end_month+"-"+chosen_end_day;
     }
 
+    /**
+     * Metoda resetujaca zmiennie przechowujace daty.
+     */
+
     public void przedzialRezerwacjiReset(){
         start_rezerwacji = "";
         stop_rezerwacji = "";
     }
+
+    /**
+     * Metoda realizujaca wyswietlanie wybor pokoi w zaleznosci, czy poprzednie dane zostaly wprowadzone.
+     */
 
     public void pokojeDropListCheck(){
         if(osoby_flag && data_flag){
@@ -512,6 +606,10 @@ public class GUI_Rezerwacja{
         }
     }
 
+    /**
+     * Metoda realizujaca wypelnienie droplisty wyboru pokoi.
+     */
+
     public void wypelnijPokojeDropList(){
         GetWolnePokoje pokoje = new GetWolnePokoje(a);
         pokoje.dostepnePokoje(chosen_adult_people+chosen_kiddo_people, start_rezerwacji, stop_rezerwacji);
@@ -521,50 +619,30 @@ public class GUI_Rezerwacja{
         } 
     }
 
+    /**
+     * Pomocnicza metoda czyszczaca dropliste pokoi;
+     */
+
     public void wyczyscPokojeDropList(){
         for(int i=pokojeDropList.getItemCount()-1;i>0;i--){
                 pokojeDropList.removeItemAt(i);
         }
     }
 
+    /**
+     * Prosta metoda realizujaca wyznaczenie okresu pobytu dla danej rezewacji.
+     * @return - liczba dni
+     */
+
     public int okresPobytu(){
         int count = 0;
-        // int count_months = 0;
-
-        // for(int i = chosen_start_year; i <= chosen_end_year; i++){
-        //     if(i == chosen_start_year){
-        //         count_months += 12 - chosen_start_month + 1;
-        //     }else if(i == chosen_end_year){
-        //         count_months += chosen_end_month;
-        //     }else{
-        //         count_months +=12;
-        //     }
-        // }
-
-        // int k = 0;
-        // int month_start_copy = chosen_start_month;
-
-        // for(int i = 1; i <= count_months; i++){
-        //     if(month_start_copy == chosen_start_month && i == 1){
-        //         count += miesiac.resolveDays(month_start_copy, chosen_start_year + k) - chosen_start_day + 1;
-        //     }else if(i == count_months){
-        //         count += chosen_end_day;
-        //         System.out.println(chosen_end_day);
-        //     }else{
-        //         count += miesiac.resolveDays(month_start_copy, chosen_start_year + k);
-        //     }
-        //     if(month_start_copy == 12){
-        //         k++;
-        //         month_start_copy = 1;
-        //     }else{
-        //         month_start_copy++;
-        //     }
-        // }
-
         count = a.okres_zakwaterowania(start_rezerwacji, stop_rezerwacji);
-        // System.out.println(count);
         return count;
     }
+
+    /**
+     * Metoda ustalajaca wybrane uslugi wraz z ichniejszymi cenami.
+     */
 
     public void computeUslugi(){
         String koncowy_opis = "";

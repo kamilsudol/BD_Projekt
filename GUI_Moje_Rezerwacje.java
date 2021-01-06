@@ -3,6 +3,14 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 
+/**
+ * Klasa GUI_Moje_Rezerwacje
+ * Klasa realizujaca podglad wszystkich rezerwacji
+ * dokonanych przez zalogowanego uzytkownika,
+ * dajac mu mozliwosc oplaty badz rezygnacji
+ * z rezerwacji.
+ */
+
 public class GUI_Moje_Rezerwacje{
     public Polaczenie a;
     public GUI_Login mainWindow;
@@ -17,6 +25,13 @@ public class GUI_Moje_Rezerwacje{
     public JComboBox<GetMojeRezerwacjeInfo> rezerwacjeComboBox;
     private int chosen_oplata_id;
 
+    /**
+     * Konstruktor domyslny, przyjmujacy polaczenie do bazy, odniesienie do okna glownego
+     * oraz id obecnie zalogowanego uzytkownika.
+     * @param p
+     * @param mainWindow
+     * @param id
+     */
 
     public GUI_Moje_Rezerwacje(Polaczenie p, GUI_Login mainWindow, int id){
         a = p;
@@ -41,7 +56,7 @@ public class GUI_Moje_Rezerwacje{
         
         wypelnij();
         dodajSegment(3);
-        JButton infoButton = new JButton("Szczegoly rezerwacji");
+        JButton infoButton = new JButton("Szczegoly rezerwacji"); //Przycisk realizujacy wyswietlenie informacji o danej rezerwacji.
         infoButton.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e){
                 if(chosen_oplata_id != -1){
@@ -58,7 +73,7 @@ public class GUI_Moje_Rezerwacje{
         });
         moje_rezerwacje_panel.add(infoButton);
 
-        final JButton zaplacButton = new JButton("Zaplac");
+        final JButton zaplacButton = new JButton("Zaplac"); //Przycisk realizujacy oplate za wskazana rezerwacje.
         zaplacButton.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e){
                 if(chosen_oplata_id != -1){
@@ -73,7 +88,7 @@ public class GUI_Moje_Rezerwacje{
         });
         moje_rezerwacje_panel.add(zaplacButton);
 
-        final JButton rezygnujButton = new JButton("Zrezygnuj");
+        final JButton rezygnujButton = new JButton("Zrezygnuj");//Przycisk realizujacy rezygnacje ze wskazanek rezerwacji.
         rezygnujButton.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e){
                 if(chosen_oplata_id != -1){
@@ -90,7 +105,7 @@ public class GUI_Moje_Rezerwacje{
         
         dodajSegment(3);
 
-        menuButton = new JButton("Powrot do menu");
+        menuButton = new JButton("Powrot do menu"); //Przycisk realizujacy powrot do okna menu.
         menuButton.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e){
                 GUI_Menu m = new GUI_Menu(a, mainWindow, login_id);
@@ -103,6 +118,11 @@ public class GUI_Moje_Rezerwacje{
         moje_rezerwacje_Buttonpanel.add(menuButton);
 
     }
+
+    /**
+     * Metoda wypelniajaca dropliste rezerwacjami zlozonymi przez
+     * aktualnie zalogowanego uzytkownika.
+     */
 
     public void wypelnij(){
         moje_rezerwacje = a.getMojeRezerwacjeInfo(login_id);
@@ -125,6 +145,12 @@ public class GUI_Moje_Rezerwacje{
         moje_rezerwacje_Uppanel.add(rezerwacjeComboBox);
         // dodajSegment(3);
     }
+
+    /**
+     * Pomocnicza metoda wypelniajaca okno GUI labelami
+     * @param x - rzadana liczba labeli
+     */
+
     public void dodajSegment(int x){
         for(int i = 0; i < x; i++){
             moje_rezerwacje_panel.add(new JLabel(""));

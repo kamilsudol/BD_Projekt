@@ -2,6 +2,12 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
+/**
+ * Klasa GUI_Menu
+ * Klasa realizujaca udostepnienie funkcjonalnosci
+ * projektu dla kazdego uzytkownika.
+ */
+
 public class GUI_Menu{
     public int login_id;
     public Boolean czy_zbanowany;
@@ -15,6 +21,14 @@ public class GUI_Menu{
     public JButton moje_rezerwacje;
     public JButton adminMenu;
     public JButton wyloguj;
+
+    /**
+     * Konstruktor domyslny, przyjmujacy polaczenie do bazy, odniesienie do okna glownego
+     * oraz id obecnie zalogowanego uzytkownika.
+     * @param p
+     * @param mainWindow
+     * @param id
+     */
     
     public GUI_Menu(Polaczenie p, GUI_Login mainWindow, int id){
         login_id = id;
@@ -26,9 +40,13 @@ public class GUI_Menu{
 
         czy_zbanowany = a.czyZbanowany(login_id);
 
+        //Segment witajacy uzytkownika
+
         helloLabel = new JLabel("Witaj "+a.getUserName(login_id)+"!", SwingConstants.CENTER);
         helloLabel.setFont(new Font("Arial", Font.PLAIN, 17));
         menuPanel.add(helloLabel);
+
+        //Segment sprawdzajacy, czy uzytkownik zostal zablokowany
 
         if(czy_zbanowany){
             infoLabel = new JLabel("Twoje konto zostalo zawieszone na czas nieokreslony. Powod: " + a.getPowod(login_id), SwingConstants.CENTER);
@@ -39,6 +57,8 @@ public class GUI_Menu{
         menuLabel = new JLabel("Menu:", SwingConstants.CENTER);
         menuLabel.setFont(new Font("Arial", Font.PLAIN, 17));
         menuPanel.add(menuLabel);
+
+        //Segment dedykowany dla administratorow hotelu
 
         if(a.czyAdmin(login_id) == 1){
             adminMenu = new JButton("Panel administratora");
@@ -55,8 +75,10 @@ public class GUI_Menu{
             menuPanel.add(adminMenu);
         }
 
-        if(!czy_zbanowany){
-            rezerwacja = new JButton("Dokonaj rezerwacji");
+
+
+        if(!czy_zbanowany){//Sprawdzenie, czy aktualnie zalogowany uzytkownik moze dokonac rezerwacji
+            rezerwacja = new JButton("Dokonaj rezerwacji"); //Przycisk realizujacy udostepnienie mozliwosci dodokania rezerwacji
             rezerwacja.addActionListener(new ActionListener(){
                 public void actionPerformed(ActionEvent e){
                     GUI_Rezerwacja p = new GUI_Rezerwacja(a, mainWindow, login_id);
@@ -69,7 +91,7 @@ public class GUI_Menu{
             menuPanel.add(rezerwacja);
         }
 
-        moje_rezerwacje = new JButton("Moje rezerwacje");
+        moje_rezerwacje = new JButton("Moje rezerwacje");//Przycik realizujacy udostepnienie mozliwosci podgladu swoich rezerwacji.
         moje_rezerwacje.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e){
                 GUI_Moje_Rezerwacje m = new GUI_Moje_Rezerwacje(a, mainWindow, login_id);
@@ -83,7 +105,7 @@ public class GUI_Menu{
         });
         menuPanel.add(moje_rezerwacje);
 
-        wyloguj = new JButton("Wyloguj");
+        wyloguj = new JButton("Wyloguj");//Przycisk realizujacy wylogowanie sie ze swojego konta.
         wyloguj.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e){
                 GUI_Login_Wrapper m = new GUI_Login_Wrapper(a, mainWindow);

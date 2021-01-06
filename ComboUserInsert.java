@@ -1,8 +1,22 @@
+/**
+ * Klasa ComboUserInsert
+ * Pomocnicza klasa realizuajaca przechowywanie danych uzytkownikow,
+ * dedykowana dla JComboBox.
+ */
+
 public class ComboUserInsert{
     public int id;
     public String imie;
     public String nazwisko;
     public String typ;
+
+    /**
+     * Konstruktor ustawiajacy podane wartosci.
+     * @param i
+     * @param im
+     * @param naz
+     * @param t
+     */
 
     public ComboUserInsert(int i, String im, String naz, String t){
         id = i;
@@ -10,6 +24,10 @@ public class ComboUserInsert{
         nazwisko = naz;
         typ = t;
     }
+
+    /**
+     * Konstruktor bezparametrowy.
+     */
 
     public ComboUserInsert(){
         id = -1;

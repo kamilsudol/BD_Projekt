@@ -3,6 +3,12 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 
+/**
+ * Klasa GetMojeRezerwacjeInfo
+ * Pomocnicza klasa przechowujaca wszystkie
+ * informacje na temat danej rezerwacji.
+ */
+
 public class GetMojeRezerwacjeInfo{
     public  int rezerwacja_id;
     public  int uzytkownik_id;
@@ -24,6 +30,29 @@ public class GetMojeRezerwacjeInfo{
     public  String kategoria;
     public  int pokoj_cena;
     public  Boolean flag;
+
+    /**
+     * Konstruktor ustawiajacy odpowiednie wartosci.
+     * @param r_id
+     * @param u_id
+     * @param p_id
+     * @param start
+     * @param stop
+     * @param when
+     * @param dzieci
+     * @param dorosli
+     * @param us_id
+     * @param u_nazw
+     * @param u_cena
+     * @param o_id
+     * @param stat
+     * @param cena_calosc
+     * @param p_nr
+     * @param p_p
+     * @param p_lm
+     * @param kat
+     * @param p_cen
+     */
 
     public GetMojeRezerwacjeInfo(int r_id, int u_id, int p_id, String start, String stop, String when, int dzieci, int dorosli, int us_id, String u_nazw, double u_cena, int o_id, String stat, double cena_calosc, int p_nr, int p_p, int p_lm, String kat, int p_cen){
         rezerwacja_id = r_id;
@@ -48,6 +77,11 @@ public class GetMojeRezerwacjeInfo{
         flag = true;
     }
 
+    /**
+     * Pomocniczy konstruktor.
+     * @param f
+     */
+
     public GetMojeRezerwacjeInfo(Boolean f){
         flag = f;
         rezerwacja_id = 0;
@@ -71,6 +105,11 @@ public class GetMojeRezerwacjeInfo{
         pokoj_cena = 0;
     }
 
+    /**
+     * Konstruktor dla "pustego" obiektu.
+     * @param s
+     */
+
     public GetMojeRezerwacjeInfo(String s){
         this(false);
         status = s;
@@ -84,6 +123,11 @@ public class GetMojeRezerwacjeInfo{
             return status;
         }
     }
+
+    /**
+     * Metoda ralizujaca wyswietlenie wszystkich informacji.
+     * @param panel
+     */
 
     public void info(JPanel panel){
         panel.add(new JLabel("Informacje o rezerwacji:", SwingConstants.CENTER));

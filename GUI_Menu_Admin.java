@@ -2,6 +2,13 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
+/**
+ * Klasa GUI_Menu_Admin
+ * Klasa wyswietlajaca panel administratora.
+ * Funckjonalosc ta jest dostepna tylko dla
+ * administratorow hotelu.
+ */
+
 public class GUI_Menu_Admin{
     public int login_id;
     public GUI_Login mainWindow;
@@ -12,6 +19,14 @@ public class GUI_Menu_Admin{
     public JButton podglad_tabel;
     public JButton menuButton;
     public JButton dodajPracownika;
+
+    /**
+     * Konstruktor domyslny, przyjmujacy polaczenie do bazy, odniesienie do okna glownego
+     * oraz id obecnie zalogowanego uzytkownika.
+     * @param p
+     * @param mainWindow
+     * @param id
+     */
     
     public GUI_Menu_Admin(Polaczenie p, GUI_Login mainWindow, int id){
         login_id = id;
@@ -25,7 +40,7 @@ public class GUI_Menu_Admin{
         menuLabel.setFont(new Font("Arial", Font.PLAIN, 17));
         menuPanel.add(menuLabel);
 
-        dodajPracownika = new JButton("Dodaj nowego pracownika");
+        dodajPracownika = new JButton("Dodaj nowego pracownika"); //Przycisk realizujacy mozliwosc dodania nowego pracownika hotelu
         dodajPracownika.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e){
                 GUI_Register_Pracownik f = new GUI_Register_Pracownik(a, mainWindow, login_id);
@@ -37,7 +52,7 @@ public class GUI_Menu_Admin{
         });
         menuPanel.add(dodajPracownika);
         
-        zablokuj = new JButton("Zablokuj uzytkownika");
+        zablokuj = new JButton("Zablokuj uzytkownika");//Przycisk realizujacy mozliwosc zablokowania danego uzytkownika
         zablokuj.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e){
                 GUI_Zablokuj m = new GUI_Zablokuj(a, mainWindow, login_id);
@@ -52,7 +67,7 @@ public class GUI_Menu_Admin{
 
         menuPanel.add(zablokuj);
 
-        podglad_tabel = new JButton("Podglad tabel");
+        podglad_tabel = new JButton("Podglad tabel");//Przycisk realuzujacy mozliwosc podlgadu tabel bazy danych
         podglad_tabel.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e){
                 GUI_Podglad p = new GUI_Podglad(a, mainWindow, login_id);
@@ -66,7 +81,7 @@ public class GUI_Menu_Admin{
         menuPanel.add(podglad_tabel);
         
 
-        menuButton = new JButton("Powrot do menu");
+        menuButton = new JButton("Powrot do menu");//Przycisk realizujacy powrot do okna menu.
         menuButton.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e){
                 GUI_Menu m = new GUI_Menu(a, mainWindow, login_id);

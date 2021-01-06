@@ -2,6 +2,12 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
+/**
+ * Klasa GUI_Login_Wrapper
+ * Klasa realizujaca mozliwosc zalogowania
+ * sie do aplikacji.
+ */
+
 public class GUI_Login_Wrapper{
     public GUI_Login mainWindow;
     public JPanel panel;
@@ -12,6 +18,14 @@ public class GUI_Login_Wrapper{
     public JButton zarejestruj;
     public Polaczenie a;
     public int login_id;
+
+    /**
+     * Konstruktor domyslny, przyjmujacy polaczenie do bazy oraz glowne
+     * okno aplikacji.
+     * @param p
+     * @param mainWindow
+     */
+
     public GUI_Login_Wrapper(Polaczenie p, GUI_Login mainWindow){
         this.mainWindow = mainWindow;
         login_id = -1;
@@ -32,7 +46,7 @@ public class GUI_Login_Wrapper{
         panel.add(pass);
 
         panel.add(zaloguj);
-        zaloguj.addActionListener(new ActionListener(){
+        zaloguj.addActionListener(new ActionListener(){ //Przycisk realizujacy operacje logowania
             public void actionPerformed(ActionEvent e){
                 String l = log.getText();
                 String ps = pass.getText();
@@ -52,7 +66,7 @@ public class GUI_Login_Wrapper{
 
         panel.add(zarejestruj);
 
-        zarejestruj.addActionListener(new ActionListener(){
+        zarejestruj.addActionListener(new ActionListener(){//Przycisk udostepniajacy mozliwosc rejestracji w aplikacji
             public void actionPerformed(ActionEvent e){
                 GUI_Register f = new GUI_Register(a, mainWindow);
                 mainWindow.frame.getContentPane().removeAll();

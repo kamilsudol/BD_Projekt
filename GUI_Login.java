@@ -2,6 +2,11 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
+/**
+ * Klasa GUI_Login
+ * Klasa realizujaca wyswietlanie GUI aplikacji.
+ */
+
 public class GUI_Login{
     public JFrame frame;
     public JPanel panel;
@@ -9,13 +14,18 @@ public class GUI_Login{
     public JLabel autor;
     public JButton start;
     public Polaczenie a;
-    public int login_id;
-    public GUI_Login(Polaczenie p){
-        login_id = -1;
-        a = p;
-        frame = new JFrame();
-        // frame.setSize(1200, 800);
 
+    /**
+     * Konstruktor domyslny, przyjmujacy polaczenie do bazy danych.
+     * @param p
+     */
+
+    public GUI_Login(Polaczenie p){
+        a = p;
+
+        //Segment witajacy
+
+        frame = new JFrame();
         panel = new JPanel();
         label = new JLabel("Baza danych - Hotel", SwingConstants.CENTER);
         label.setFont(new Font("Arial", Font.PLAIN, 40));
@@ -30,7 +40,7 @@ public class GUI_Login{
 
         GUI_Login tmp = this;
 
-        start.addActionListener(new ActionListener(){
+        start.addActionListener(new ActionListener(){//Przycik realizujacy start aplikacji
             public void actionPerformed(ActionEvent e){
                 GUI_Login_Wrapper m = new GUI_Login_Wrapper(a, tmp);
                 frame.getContentPane().removeAll();

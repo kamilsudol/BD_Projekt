@@ -1,34 +1,23 @@
 import java.sql.*;
 import java.util.*;
 
+/**
+ * Klasa Polaczenie
+ * Klasa ta realizuje wszelkie polaczenia z baza danych.
+ */
+
 public class Polaczenie {
     public String my_record;
     public Connection c;
-    public Polaczenie(){
 
-  //   public static void main(String[] argv) {
-    /*
-    System.out.println("Sprawdzenie czy sterownik jest zarejestrowany w menadzerze");
-    try {
-      Class.forName("org.postgresql.Driver");
-    } catch (ClassNotFoundException cnfe) {
-      System.out.println("Nie znaleziono sterownika!");
-      System.out.println("Wyduk sledzenia bledu i zakonczenie.");
-      cnfe.printStackTrace();
-      System.exit(1);
-    }
-    System.out.println("Zarejstrowano sterownik - OK, kolejny krok nawiazanie polaczenia z baza danych.");
-    */
+    /**
+     * Konstruktor domyslny laczacy sie z baza.
+     */
+
+    public Polaczenie(){
     c = null;
-      
     try {
-      // Wymagane parametry polaczenia z baza danych:
-      // Pierwszy - URL do bazy danych:
-      //        jdbc:dialekt SQL:serwer(adres + port)/baza w naszym przypadku:
-      //        jdbc:postgres://pascal.fis.agh.edu.pl:5432/baza
-      // Drugi i trzeci parametr: uzytkownik bazy i haslo do bazy 
-      c = DriverManager.getConnection("jdbc:postgresql://pascal.fis.agh.edu.pl:5432/u8sudol",
-                                      "u8sudol", "8sudol");
+      c = DriverManager.getConnection("jdbc:postgresql://pascal.fis.agh.edu.pl:5432/u8sudol", "u8sudol", "8sudol");
     } catch (SQLException se) {
       System.out.println("Brak polaczenia z baza danych, wydruk logu sledzenia i koniec.");
       se.printStackTrace();
@@ -42,28 +31,21 @@ public class Polaczenie {
       
   }
 
-  String getStr(){
-      return my_record;
-  }
+    /**
+     * Metoda sprawdzajaca dane logowania, w przypadku powodzenia zwracajaca id uzytkownika.
+     * @param login
+     * @param password
+     * @return
+     */
 
   int checkPasswd(String login, String password){
-    try { 
-      //  Wykonanie zapytania SELSECT do bazy danych
-      //  Wykorzystane elementy: prepareStatement(), executeQuery()
-            //wydruk rekordow zawartych w zwroconym kursorze  ( zbior rekordow - ResultSet )
+    try {
        PreparedStatement pst = c.prepareStatement("SELECT uzyt_id, haslo FROM projekt.panel WHERE login = \'" + login+"\'",ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
        ResultSet rs = pst.executeQuery();
        String haslo;
-      //  while (rs.next())  {
-            rs.next();//
+            rs.next();
             haslo = rs.getString("haslo") ;
             int id = Integer.parseInt(rs.getString("uzyt_id"));
-            // String nazwisko    = rs.getString("lname") ;
-            // System.out.print("Zwrocone kolumny  ");
-            // System.out.println(imie+" "+nazwisko) ;
-            // System.out.println(imie) ;
-            // my_record = "Zwrocone kolumny  " + imie;
-          //  }
        rs.close();
        pst.close();    
       if(password.equals(haslo)){
@@ -78,46 +60,20 @@ public class Polaczenie {
         }
   }
 
+    /**
+     * Metoda realizujaca procedure rejestracji uzytkownika jako transakcje. W przypadku niepowowodzenia
+     * wywolywany jest ROLLBACK oraz wypisywany jest powod niepowodzenia.
+     * @param imie
+     * @param nazwisko
+     * @param email
+     * @param telefon
+     * @param login
+     * @param haslo
+     * @param typ
+     * @return
+     */
+
   public String zarejestruj(String imie, String nazwisko, String email, String telefon, String login, String haslo, String typ){
-    //   try { 
-    //     PreparedStatement exist_prepare = c.prepareStatement("SELECT COUNT(*) AS exist FROM projekt.panel WHERE login = \'"+login+"\'",ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
-    //     ResultSet exist_result = exist_prepare.executeQuery();
-    //     exist_result.next();
-    //     int exist = Integer.parseInt(exist_result.getString("exist"));
-    //     exist_result.close();
-    //     exist_prepare.close();
-    //     if(exist==0){
-    //       PreparedStatement counted_id = c.prepareStatement("SELECT COUNT(uzyt_id) AS id FROM projekt.panel",ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
-    //       ResultSet result_count_id = counted_id.executeQuery();
-    //       result_count_id.next();
-    //       String string_id = result_count_id.getString("id");
-    //       int id = Integer.parseInt(string_id);
-    //       id++;
-    //       result_count_id.close();
-    //       counted_id.close();
-
-    //       // PreparedStatement pst1 = c.prepareStatement("INSERT INTO projekt.uzytkownik VALUES("+id+",\'"+imie+"\',\'"+nazwisko+"\',\'"+email+"\',"+Integer.parseInt(telefon)+" )");
-    //       PreparedStatement pst1 = c.prepareStatement("INSERT INTO projekt.uzytkownik VALUES("+id+",\'"+imie+"\',\'"+nazwisko+"\',\'"+email+"\',\'"+telefon+"\','Klient' )");
-    //       int ok = pst1.executeUpdate();
-    //       pst1.close();    
-    //       if(ok != 0){
-    //         PreparedStatement pst2 = c.prepareStatement("INSERT INTO projekt.panel VALUES("+id+", \'"+login+"\',\'"+haslo+"\')");
-
-    //         pst2.executeUpdate();
-    //         pst2.close();
-    //         return "Pomyslnie zarejestrowano uzytkownika!";
-    //       }else{
-    //         return "Prosze wprowadzic poprawne dane!";
-    //       }
-    //     }else{
-    //       return "Uzytkownik o podanym loginie juz istnieje!";
-    //     }
-
-    //   }
-    //  catch(SQLException e)  {
-    //       System.out.println("Blad podczas przetwarzania danych:"+e) ;
-    //       return "";
-    //     }
     try {
       PreparedStatement counted_id = c.prepareStatement("SELECT COUNT(uzyt_id) AS id FROM projekt.panel",ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
       ResultSet result_count_id = counted_id.executeQuery();
@@ -157,12 +113,14 @@ public class Polaczenie {
           }
           String powod = e.getMessage();
           String[] powod_tab = powod.split("[||]");
-          // for(int i = 0; i < powod_tab.length; i++){
-          //   System.out.println(powod_tab[i]);
-          // }
           return "Blad przy dodawaniu nowego uzytkownika! " + powod_tab[2];
       }
   }
+
+    /**
+     * Metoda zwracajaca zawartosc tabeli uzytkownicy
+     * @return
+     */
 
   public ArrayList<ArrayList<String>> getTableUzytkownicy(){
       ArrayList<ArrayList<String>> records = new ArrayList<>();
@@ -196,10 +154,15 @@ public class Polaczenie {
       return records;
       }
       catch(SQLException e)  {
-          System.out.println("Blad podczas przetwarzania danych:"+e) ;
+//          System.out.println("Blad podczas przetwarzania danych:"+e) ;
           return records;
       }
   }
+
+    /**
+     * Metoda zwracajaca zawartosc tabeli rezerwacje.
+     * @return
+     */
 
   public ArrayList<ArrayList<String>> getTableRezerwacje(){
       ArrayList<ArrayList<String>> records = new ArrayList<>();
@@ -235,10 +198,15 @@ public class Polaczenie {
       return records;
       }
       catch(SQLException e)  {
-          System.out.println("Blad podczas przetwarzania danych:"+e) ;
+//          System.out.println("Blad podczas przetwarzania danych:"+e) ;
           return records;
       }
   }
+
+    /**
+     * Metoda zwracajaca zawartosc tabeli oplaty.
+     * @return
+     */
 
   public ArrayList<ArrayList<String>> getTableOplaty(){
       ArrayList<ArrayList<String>> records = new ArrayList<>();
@@ -266,10 +234,15 @@ public class Polaczenie {
       return records;
       }
       catch(SQLException e)  {
-          System.out.println("Blad podczas przetwarzania danych:"+e) ;
+//          System.out.println("Blad podczas przetwarzania danych:"+e) ;
           return records;
       }
   }
+
+    /**
+     * Metoda zwracajaca zawartosc tabeli dodatkowe_uslugi_info
+     * @return
+     */
 
   public ArrayList<ArrayList<String>> getTableUslugi(){
       ArrayList<ArrayList<String>> records = new ArrayList<>();
@@ -297,10 +270,15 @@ public class Polaczenie {
       return records;
       }
       catch(SQLException e)  {
-          System.out.println("Blad podczas przetwarzania danych:"+e) ;
+//          System.out.println("Blad podczas przetwarzania danych:"+e) ;
           return records;
       }
   }
+
+    /**
+     * Metoda zwracajaca zawartosc tabeli pokoje.
+     * @return
+     */
 
   public ArrayList<ArrayList<String>> getTablePokoje(){
       ArrayList<ArrayList<String>> records = new ArrayList<>();
@@ -334,10 +312,15 @@ public class Polaczenie {
       return records;
       }
       catch(SQLException e)  {
-          System.out.println("Blad podczas przetwarzania danych:"+e) ;
+//          System.out.println("Blad podczas przetwarzania danych:"+e) ;
           return records;
       }
   }
+
+    /**
+     * Metoda zwracajaca zawartosc tabeli zakwaterowani_goscie_info.
+     * @return
+     */
   
   public ArrayList<ArrayList<String>> getTableZakwaterowani(){
       ArrayList<ArrayList<String>> records = new ArrayList<>();
@@ -363,10 +346,15 @@ public class Polaczenie {
       return records;
       }
       catch(SQLException e)  {
-          System.out.println("Blad podczas przetwarzania danych:"+e) ;
+//          System.out.println("Blad podczas przetwarzania danych:"+e) ;
           return records;
       }
   }
+
+    /**
+     * Metoda zwracajaca zawartosc tabeli czarna_lista.
+     * @return
+     */
  
   public ArrayList<ArrayList<String>> getTableBlacklist(){
       ArrayList<ArrayList<String>> records = new ArrayList<>();
@@ -392,10 +380,15 @@ public class Polaczenie {
       return records;
       }
       catch(SQLException e)  {
-          System.out.println("Blad podczas przetwarzania danych:"+e) ;
+//          System.out.println("Blad podczas przetwarzania danych:"+e) ;
           return records;
       }
   }
+
+    /**
+     * Metoda zwracajaca maksymalna liczbe miejsc sposrod wszystkich pokoi.
+     * @return
+     */
 
   public int getMaxPeople(){
     try { 
@@ -410,10 +403,18 @@ public class Polaczenie {
       return max;
       }
       catch(SQLException e)  {
-          System.out.println("Blad podczas przetwarzania danych:"+e) ;
+//          System.out.println("Blad podczas przetwarzania danych:"+e) ;
           return -1;
       }
   }
+
+    /**
+     * Metoda zwracajaca informacje na temat wolnych pokoi w podanym terminie.
+     * @param liczba_osob
+     * @param od_kiedy
+     * @param do_kiedy
+     * @return
+     */
 
   public ArrayList<Integer> getWolnePokoje(int liczba_osob, String od_kiedy, String do_kiedy){
     ArrayList<Integer> lista_pokoi = new ArrayList<>();
@@ -428,10 +429,16 @@ public class Polaczenie {
       return lista_pokoi;
       }
       catch(SQLException e)  {
-          System.out.println("Blad podczas przetwarzania danych:"+e) ;
+//          System.out.println("Blad podczas przetwarzania danych:"+e) ;
           return lista_pokoi;
       }
   }
+
+    /**
+     * Metoda zwracajaca informacje pokoju o zadanym id.
+     * @param id
+     * @return
+     */
 
   public ComboRoomInsert getPokojInfo(int id){
     ComboRoomInsert info = new ComboRoomInsert();
@@ -453,10 +460,17 @@ public class Polaczenie {
       return info;
       }
       catch(SQLException e)  {
-          System.out.println("Blad podczas przetwarzania danych:"+e) ;
+//          System.out.println("Blad podczas przetwarzania danych:"+e) ;
           return info;
       }
   }
+
+    /**
+     * Metoda wysylajaca zapytanie do bazy w celu ustalenia dlugosci okresu pobytu w hotelu.
+     * @param od_kiedy
+     * @param do_kiedy
+     * @return
+     */
 
   public int okres_zakwaterowania(String od_kiedy, String do_kiedy){
     int a = -1;
@@ -471,10 +485,23 @@ public class Polaczenie {
       return a;
       }
       catch(SQLException e)  {
-          System.out.println("Blad podczas przetwarzania danych:"+e) ;
+//          System.out.println("Blad podczas przetwarzania danych:"+e) ;
           return a;
       }
   }
+
+    /**
+     * Metoda realizujaca proces zatwierdzenia rezerwacji jako transakcja. W przypadku niepowodzenia wyswietlany jest powod
+     * oraz wywolywany jest ROLLBACK.
+     * @param uzyt_id
+     * @param pokoj_id
+     * @param adult_people
+     * @param kiddo_people
+     * @param start
+     * @param stop
+     * @param calosc
+     * @return
+     */
 
   public String dokonaj_rezerwacji(int uzyt_id, int pokoj_id, int adult_people, int kiddo_people, String start, String stop, GetUslugi calosc){
     try { 
@@ -501,17 +528,20 @@ public class Polaczenie {
             pst5.executeUpdate();
             pst5.close();
           }catch(SQLException d){
-            System.out.println("Blad podczas przetwarzania danych:"+d) ;
+//            System.out.println("Blad podczas przetwarzania danych:"+d) ;
             return "Blad przy dodawaniu rezerwacji!";
           }
           String powod = e.getMessage();
           String[] powod_tab = powod.split("[||]");
-          // for(int i = 0; i < powod_tab.length; i++){
-          //   System.out.println(powod_tab[i]);
-          // }
           return "Blad przy dodawaniu rezerwacji! " + powod_tab[2];
       }
   }
+
+    /**
+     * Metoda zwracajaca informacje na temat wszystkich rezerwacji zlozonych przez uzytkownika o podanym id.
+     * @param id
+     * @return
+     */
 
   public ArrayList<GetMojeRezerwacjeInfo> getMojeRezerwacjeInfo(int id){
       try { 
@@ -545,10 +575,16 @@ public class Polaczenie {
         return a;
       }
       catch(SQLException e)  {
-          System.out.println("Blad podczas przetwarzania danych:"+e) ;
+//          System.out.println("Blad podczas przetwarzania danych:"+e) ;
           return new ArrayList<GetMojeRezerwacjeInfo>();
       }
   }
+
+    /**
+     * Metoda realizujaca oplate rezerwacji.
+     * @param id
+     * @return
+     */
 
   public String oplacRezerwacje(int id){
     try{
@@ -567,22 +603,33 @@ public class Polaczenie {
       }
   }
 
+    /**
+     * Metoda realizujaca rezygnacje z rezerwacji.
+     * @param id
+     * @return
+     */
+
   public String rezygnujRezerwacje(int id){
     try{
       PreparedStatement pst1 = c.prepareStatement("SELECT projekt.oplataRezygnuj("+id+")");
-      // pst1.executeUpdate();
       pst1.executeQuery();
       pst1.close();  
       
       return "Pomyslnie zrezygnowano z rezerwacji!";
       }
       catch(SQLException e)  {
-          System.out.println("Blad podczas przetwarzania danych:"+e) ;
+//          System.out.println("Blad podczas przetwarzania danych:"+e) ;
           String powod = e.getMessage();
           String[] powod_tab = powod.split("[||]");
           return "Blad przy rezygnacji z rezerwacji! " +powod_tab[2];
       }
   }
+
+    /**
+     * Metoda wysylajaca zapytanie do bazy odnosnie danych personalnych aktualnie zalogowanego uzytkownika.
+     * @param id
+     * @return
+     */
 
   public String getUserName(int id){
     try { 
@@ -597,10 +644,16 @@ public class Polaczenie {
       return dane;
       }
       catch(SQLException e)  {
-          System.out.println("Blad podczas przetwarzania danych:"+e) ;
+//          System.out.println("Blad podczas przetwarzania danych:"+e) ;
           return "";
       }
   }
+
+    /**
+     * Metoda sprawdzajaca, czy uzytkownik o podanym id zostal zablokowany.
+     * @param id
+     * @return
+     */
 
   public Boolean czyZbanowany(int id){
     try { 
@@ -615,10 +668,16 @@ public class Polaczenie {
       return a != 0;
       }
       catch(SQLException e)  {
-          System.out.println("Blad podczas przetwarzania danych:"+e) ;
+//          System.out.println("Blad podczas przetwarzania danych:"+e) ;
           return false;
       }
   }
+
+    /**
+     * Metoda zwracajaca powod zablokowania uzytkownika o podanym id.
+     * @param id
+     * @return
+     */
 
   public String getPowod(int id){
     try { 
@@ -633,10 +692,14 @@ public class Polaczenie {
       return powod;
       }
       catch(SQLException e)  {
-          System.out.println("Blad podczas przetwarzania danych:"+e) ;
+//          System.out.println("Blad podczas przetwarzania danych:"+e) ;
           return "";
       }
   }
+
+    /**
+     * Metoda wywolujaca aktualizacje bazy przy starcie aplikacji.
+     */
 
   public void BazaUpdate(){
     try { 
@@ -645,10 +708,17 @@ public class Polaczenie {
       pst1.close();      
       }
       catch(SQLException e)  {
-          System.out.println("Blad podczas przetwarzania danych:"+e) ;
+//          System.out.println("Blad podczas przetwarzania danych:"+e) ;
       }
   }
-  
+
+    /**
+     * Metoda realizujaca procez blokady uzytkownika.
+     * @param id
+     * @param reason
+     * @return
+     */
+
   public String Zbanuj(int id, String reason){
     try { 
       PreparedStatement pst = c.prepareStatement("INSERT INTO projekt.czarna_lista(\"uzytkownik_id\",\"powod\") VALUES("+id+",\'"+reason+"\')");
@@ -657,15 +727,18 @@ public class Polaczenie {
       return "Pomyslnie zablokowano uzytkownika!";
       }
       catch(SQLException e)  {
-          System.out.println("Blad podczas przetwarzania danych:"+e) ;
+//          System.out.println("Blad podczas przetwarzania danych:"+e) ;
           String powod = e.getMessage();
           String[] powod_tab = powod.split("[||]");
-          // for(int i = 0; i < powod_tab.length; i++){
-          //   System.out.println(powod_tab[i]);
-          // }
           return "Blad przy probie zablokowania uzytkownika! " + powod_tab[2];
       }
   }
+
+    /**
+     * Metoda sprawdzajaca, czy uzytkownik o padanym id jest administratorem hotelu.
+     * @param id
+     * @return
+     */
 
   public int czyAdmin(int id){
     int a = -1;
@@ -680,10 +753,15 @@ public class Polaczenie {
       return a;
       }
       catch(SQLException e)  {
-          System.out.println("Blad podczas przetwarzania danych:"+e) ;
+//          System.out.println("Blad podczas przetwarzania danych:"+e) ;
           return -1;
       }
   }
+
+    /**
+     * Metoda zwracajaca informacje o uzytkownikach, ktorzy nie zostali zablokowani.
+     * @return
+     */
 
   public ArrayList<ComboUserInsert> getUsers(){
     try {
@@ -703,7 +781,7 @@ public class Polaczenie {
       return records;
       }
       catch(SQLException e)  {
-          System.out.println("Blad podczas przetwarzania danych:"+e) ;
+//          System.out.println("Blad podczas przetwarzania danych:"+e) ;
           return new ArrayList<ComboUserInsert>();
       }
   }

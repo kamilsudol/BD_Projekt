@@ -1,3 +1,10 @@
+/**
+ * Klasa GetMiesiac
+ * Statyczna klasa realizuaja ustalenie nazwy miesiaca
+ * oraz liczby dni dla danego miesiaca uwzgledniajac
+ * lata przestepne.
+ */
+
 public class GetMiesiac{
     static public String nazwa(int i){
         String name = "";

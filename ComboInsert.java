@@ -1,3 +1,8 @@
+/**
+ *  Pomocnicza klasa ComboInsert dedykowana dla JComboBox,
+ *  przechhowujaca odpowiednia wartosc.
+ */
+
 public class ComboInsert{
     private String name;
     private int value;
@@ -5,6 +10,7 @@ public class ComboInsert{
         name = n;
         value = v;
     }
+
     @Override
     public String toString(){
         return name;

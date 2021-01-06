@@ -1,3 +1,9 @@
+/**
+ * Klasa ComboRoomInsert
+ * Klasa ta realizuje przechowywanie danych pokoi,
+ * dedykowana dla JComboBox.
+ */
+
 public class ComboRoomInsert{
     private int id;
     private int cena_od_osoby;
@@ -27,17 +33,52 @@ public class ComboRoomInsert{
         miejsca = 0;
     }
 
+    /**
+     * Getter id pokoju
+     * @return
+     */
+
     public int getId(){return id;}
+
+    /**
+     * Getter ceny od osoby
+     * @return
+     */
 
     public int getCena(){return cena_od_osoby;}
 
+    /**
+     * Getter pietra
+     * @return
+     */
+
     public int getPietro(){return pietro;}
+
+    /**
+     * Getter numeru pokoju
+     * @return
+     */
 
     public int getNumer(){return numer_pokoju;}
 
+    /**
+     * Getter nazy kategorii pokoju
+     * @return
+     */
+
     public String getKategoria(){return kategoria;}
 
+    /**
+     * Getter liczby miejsc w pokoju
+     * @return
+     */
+
     public int getMiejsca(){return miejsca;}
+
+    /**
+     * Setter ustawiajacy podane wartosci.
+     * @return
+     */
 
     public void setNew(int new_id, int new_pietro, int new_numer, String new_kategoria, int new_cena, int new_miejsca){
         id = new_id;
