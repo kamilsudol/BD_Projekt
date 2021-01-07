@@ -17,6 +17,7 @@ public class GUI_Menu_Admin{
     public JLabel menuLabel;
     public JButton zablokuj;
     public JButton podglad_tabel;
+    public JButton podglad_raportow;
     public JButton menuButton;
     public JButton dodajPracownika;
 
@@ -79,8 +80,20 @@ public class GUI_Menu_Admin{
         });
 
         menuPanel.add(podglad_tabel);
-        
 
+        podglad_raportow = new JButton("Podglad raportow");//Przycisk realuzujacy mozliwosc podlgadu raportow
+        podglad_raportow.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e){
+                GUI_Raport p = new GUI_Raport(a, mainWindow, login_id);
+                mainWindow.frame.getContentPane().removeAll();
+                mainWindow.frame.add(p.podgladPanel, BorderLayout.CENTER);
+                mainWindow.frame.setTitle("BD PROJEKT - Podglad raportow");
+                mainWindow.frame.validate();
+            }
+        });
+
+        menuPanel.add(podglad_raportow);
+        
         menuButton = new JButton("Powrot do menu");//Przycisk realizujacy powrot do okna menu.
         menuButton.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e){

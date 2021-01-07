@@ -15,6 +15,7 @@ public class GUI_Podglad{
     public GUI_Login mainWindow;
     public Polaczenie a;
     public JPanel podgladPanel;
+    public JButton panelButton;
     public JButton uzytkownikButton;
     public JButton rezerwacjeButton;
     public JButton uslugiButton;
@@ -22,6 +23,7 @@ public class GUI_Podglad{
     public JButton rezygnacjaButton;
     public JButton zakwaterowaniButton;
     public JButton pokojeButton;
+    public JButton kategoriaButton;
     public JButton oplataButton;
     public JButton menuButton;
 
@@ -41,6 +43,19 @@ public class GUI_Podglad{
         podgladPanel = new JPanel();
         podgladPanel.setBorder(BorderFactory.createEmptyBorder(100,100,100,100));
         podgladPanel.setLayout(new GridLayout(0,1));
+
+        panelButton = new JButton("Tabela \'panel\'"); //Przycisk realizujacy podglad tabeli panel
+        panelButton.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e){
+                GUI_Podglad_Panel m = new GUI_Podglad_Panel(a, mainWindow, login_id);
+                mainWindow.frame.getContentPane().removeAll();
+                mainWindow.frame.getContentPane().add(m.podgladPanel, BorderLayout.CENTER);
+                mainWindow.frame.getContentPane().add(m.podgladButtonPanel, BorderLayout.SOUTH);
+                mainWindow.frame.setTitle("BD PROJEKT - Podglad - Tabela \'panel\'");
+                mainWindow.frame.validate();
+            }
+        });
+        podgladPanel.add(panelButton);
 
         uzytkownikButton = new JButton("Tabela \'uzytkownicy\'"); //Przycisk realizujacy podglad tabeli uzytkownikow
         uzytkownikButton.addActionListener(new ActionListener(){
@@ -94,6 +109,19 @@ public class GUI_Podglad{
         });
         podgladPanel.add(uslugiButton);
 
+        kategoriaButton = new JButton("Tabela \'kategoria\'"); //Przycisk realizujacy podglad tabeli kategorii
+        kategoriaButton.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e){
+                GUI_Podglad_Kategoria m = new GUI_Podglad_Kategoria(a, mainWindow, login_id);
+                mainWindow.frame.getContentPane().removeAll();
+                mainWindow.frame.getContentPane().add(m.podgladPanel, BorderLayout.CENTER);
+                mainWindow.frame.getContentPane().add(m.podgladButtonPanel, BorderLayout.SOUTH);
+                mainWindow.frame.setTitle("BD PROJEKT - Podglad - Tabela \'kategoria\'");
+                mainWindow.frame.validate();
+            }
+        });
+        podgladPanel.add(kategoriaButton);
+
         pokojeButton = new JButton("Tabela \'lista pokoi\'"); //Przycisk realizyjacy podglad tabeli pokoi
         pokojeButton.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e){
@@ -123,7 +151,7 @@ public class GUI_Podglad{
         rezygnacjaButton = new JButton("Tabela \'rezygnacja z rezerwacji info\'"); //Przycisk realizujacy podglad tabeli klientow, ktorzy zrezygnowali z rezerwacji
         rezygnacjaButton.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e){
-                GUI_Podglad_Zakwaterowani m = new GUI_Podglad_Zakwaterowani(a, mainWindow, login_id);
+                GUI_Podglad_Rezygnacja m = new GUI_Podglad_Rezygnacja(a, mainWindow, login_id);
                 mainWindow.frame.getContentPane().removeAll();
                 mainWindow.frame.getContentPane().add(m.podgladPanel, BorderLayout.CENTER);
                 mainWindow.frame.getContentPane().add(m.podgladButtonPanel, BorderLayout.SOUTH);

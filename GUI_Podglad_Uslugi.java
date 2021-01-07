@@ -32,6 +32,7 @@ public class GUI_Podglad_Uslugi{
             }
         });
         podgladButtonPanel = new JPanel();
+        podgladButtonPanel.setBorder(BorderFactory.createEmptyBorder(100,100,100,100));
         podgladButtonPanel.setLayout(new GridLayout(0,1));
         podgladButtonPanel.add(podgladButton);
     }

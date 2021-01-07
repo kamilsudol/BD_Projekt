@@ -16,7 +16,7 @@ public class GUI_Podglad_Rezygnacja{
         login_id = id;
         this.mainWindow = mainWindow;
         a = p;
-        records =  a.getTableBlacklist();
+        records =  a.getTableRezygnacja();
         podgladPanel = new JPanel();
         podgladPanel.setBorder(BorderFactory.createEmptyBorder(100,100,100,100));
         podgladPanel.setLayout(new GridLayout(0,records.get(0).size()));
@@ -32,6 +32,7 @@ public class GUI_Podglad_Rezygnacja{
             }
         });
         podgladButtonPanel = new JPanel();
+        podgladButtonPanel.setBorder(BorderFactory.createEmptyBorder(100,100,100,100));
         podgladButtonPanel.setLayout(new GridLayout(0,1));
         podgladButtonPanel.add(podgladButton);
     }

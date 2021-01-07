@@ -102,7 +102,7 @@ public class Polaczenie {
       return "Pomyslnie dodano nowego uzytkownika!";
       }
       catch(SQLException e)  {
-          // System.out.println("Blad podczas przetwarzania danych:"+e) ;
+          System.out.println("Blad podczas przetwarzania danych:"+e) ;
           try{
             PreparedStatement pst5 = c.prepareStatement("ROLLBACK");
             pst5.executeUpdate();
@@ -117,8 +117,42 @@ public class Polaczenie {
       }
   }
 
+  /**
+     * Metoda zwracajaca zawartosc tabeli panel
+     * @return
+     */
+
+    public ArrayList<ArrayList<String>> getTablePanel(){
+      ArrayList<ArrayList<String>> records = new ArrayList<>();
+      ArrayList<String> tmp = new ArrayList<>();
+      try { 
+
+       PreparedStatement pst = c.prepareStatement("SELECT * FROM projekt.panel",ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
+       ResultSet rs = pst.executeQuery();
+      tmp.add("ID:");
+      tmp.add("LOGIN:");
+      tmp.add("HASLO:");
+      records.add(tmp);
+
+      while (rs.next())  {
+            tmp = new ArrayList<>();
+            tmp.add(rs.getString("uzyt_id"));
+            tmp.add(rs.getString("login"));
+            tmp.add(rs.getString("haslo"));
+            records.add(tmp);
+      }
+       rs.close();
+       pst.close();    
+      return records;
+      }
+      catch(SQLException e)  {
+//          System.out.println("Blad podczas przetwarzania danych:"+e) ;
+          return records;
+      }
+  }
+
     /**
-     * Metoda zwracajaca zawartosc tabeli uzytkownicy
+     * Metoda zwracajaca zawartosc tabeli uzytkownik
      * @return
      */
 
@@ -127,26 +161,24 @@ public class Polaczenie {
       ArrayList<String> tmp = new ArrayList<>();
       try { 
 
-       PreparedStatement pst = c.prepareStatement("SELECT * FROM projekt.uzytkownicy",ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
+       PreparedStatement pst = c.prepareStatement("SELECT * FROM projekt.uzytkownik",ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
        ResultSet rs = pst.executeQuery();
       tmp.add("ID:");
-      tmp.add("LOGIN:");
-      tmp.add("HASLO:");
       tmp.add("IMIE:");
       tmp.add("NAZWISKO:");
       tmp.add("E-MAIL:");
       tmp.add("TELEFON:");
+      tmp.add("TYP KONTA:");
       records.add(tmp);
 
       while (rs.next())  {
             tmp = new ArrayList<>();
-            tmp.add(rs.getString("uzyt_id"));
-            tmp.add(rs.getString("login"));
-            tmp.add(rs.getString("haslo"));
+            tmp.add(rs.getString("uzytkownik_id"));
             tmp.add(rs.getString("imie"));
             tmp.add(rs.getString("nazwisko"));
             tmp.add(rs.getString("e_mail"));
             tmp.add(rs.getString("numer"));
+            tmp.add(rs.getString("typ"));
             records.add(tmp);
       }
        rs.close();
@@ -275,6 +307,41 @@ public class Polaczenie {
       }
   }
 
+
+    /**
+     * Metoda zwracajaca zawartosc tabeli kategoria.
+     * @return
+     */
+
+    public ArrayList<ArrayList<String>> getTableKategoria(){
+      ArrayList<ArrayList<String>> records = new ArrayList<>();
+      ArrayList<String> tmp = new ArrayList<>();
+      try { 
+
+       PreparedStatement pst = c.prepareStatement("SELECT * FROM projekt.kategoria",ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
+       ResultSet rs = pst.executeQuery();
+      tmp.add("ID KATEGORII:");
+      tmp.add("NAZWA KATEGORII:");
+      tmp.add("CENA OD OSOBY:");
+      records.add(tmp);
+
+      while (rs.next())  {
+            tmp = new ArrayList<>();
+            tmp.add(rs.getString("kategoria_id"));
+            tmp.add(rs.getString("nazwa_kategorii"));
+            tmp.add(rs.getString("cena_od_osoby"));
+            records.add(tmp);
+      }
+       rs.close();
+       pst.close();    
+      return records;
+      }
+      catch(SQLException e)  {
+//          System.out.println("Blad podczas przetwarzania danych:"+e) ;
+          return records;
+      }
+  }
+
     /**
      * Metoda zwracajaca zawartosc tabeli pokoje.
      * @return
@@ -285,15 +352,13 @@ public class Polaczenie {
       ArrayList<String> tmp = new ArrayList<>();
       try { 
 
-       PreparedStatement pst = c.prepareStatement("SELECT * FROM projekt.pokojeView",ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
+       PreparedStatement pst = c.prepareStatement("SELECT * FROM projekt.pokoj",ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
        ResultSet rs = pst.executeQuery();
       tmp.add("ID POKOJU:");
       tmp.add("NUMER POKOJU:");
       tmp.add("PIETRO:");
       tmp.add("LICZBA MIEJSC:");
       tmp.add("ID KATEGORII:");
-      tmp.add("NAZWA KATEGORII:");
-      tmp.add("CENA OD OSOBY:");
       records.add(tmp);
 
       while (rs.next())  {
@@ -303,8 +368,40 @@ public class Polaczenie {
             tmp.add(rs.getString("pietro"));
             tmp.add(rs.getString("liczba_miejsc"));
             tmp.add(rs.getString("kategoria_id"));
-            tmp.add(rs.getString("nazwa_kategorii"));
-            tmp.add(rs.getString("cena_od_osoby"));
+            records.add(tmp);
+      }
+       rs.close();
+       pst.close();    
+      return records;
+      }
+      catch(SQLException e)  {
+//          System.out.println("Blad podczas przetwarzania danych:"+e) ;
+          return records;
+      }
+  }
+
+  /**
+     * Metoda zwracajaca zawartosc tabeli rezygnacja_z_rezerwacji_info.
+     * @return
+     */
+  
+    public ArrayList<ArrayList<String>> getTableRezygnacja(){
+      ArrayList<ArrayList<String>> records = new ArrayList<>();
+      ArrayList<String> tmp = new ArrayList<>();
+      try { 
+
+      PreparedStatement pst = c.prepareStatement("SELECT * FROM projekt.rezygnacja_z_rezerwacji_info",ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
+       ResultSet rs = pst.executeQuery();
+      tmp.add("ID INFORMACJI:");
+      tmp.add("ID REZERWACJI:");
+      tmp.add("ID UZYTKOWNIKA:");
+      records.add(tmp);
+
+      while (rs.next())  {
+            tmp = new ArrayList<>();
+            tmp.add(rs.getString("info_id"));
+            tmp.add(rs.getString("rezerwacja_id"));
+            tmp.add(rs.getString("uzytkownik_id"));
             records.add(tmp);
       }
        rs.close();
@@ -522,13 +619,13 @@ public class Polaczenie {
       return "Pomyslnie dodano rezerwacje!";
       }
       catch(SQLException e)  {
-          // System.out.println("Blad podczas przetwarzania danych:"+e) ;
+          System.out.println("Blad podczas przetwarzania danych:"+e) ;
           try{
             PreparedStatement pst5 = c.prepareStatement("ROLLBACK");
             pst5.executeUpdate();
             pst5.close();
           }catch(SQLException d){
-//            System.out.println("Blad podczas przetwarzania danych:"+d) ;
+           System.out.println("Blad podczas przetwarzania danych:"+d) ;
             return "Blad przy dodawaniu rezerwacji!";
           }
           String powod = e.getMessage();
@@ -783,6 +880,96 @@ public class Polaczenie {
       catch(SQLException e)  {
 //          System.out.println("Blad podczas przetwarzania danych:"+e) ;
           return new ArrayList<ComboUserInsert>();
+      }
+  }
+
+  public RaportWrapper getRaportUzytkownicy(){
+    try {
+      PreparedStatement pst = c.prepareStatement("SELECT * FROM projekt.uzytkownicy",ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
+      ResultSet rs = pst.executeQuery();
+      ArrayList<ArrayList<String>> records = new ArrayList<>();
+      ArrayList<String> tmp;
+      ArrayList<String> atrybuty = new ArrayList<>(Arrays.asList("uzyt_id","login","haslo", "imie", "nazwisko","e_mail","numer","typ"));
+      ArrayList<String> grupowalne = new ArrayList<>(Arrays.asList("imie", "nazwisko", "typ"));
+
+      records.add(atrybuty);
+
+      while (rs.next())  {
+          tmp = new ArrayList<>();
+          tmp.add(rs.getString("uzyt_id"));
+          tmp.add(rs.getString("login"));
+          tmp.add(rs.getString("haslo"));
+          tmp.add(rs.getString("imie"));
+          tmp.add(rs.getString("nazwisko"));
+          tmp.add(rs.getString("e_mail"));
+          tmp.add(rs.getString("numer"));
+          tmp.add(rs.getString("typ"));
+          records.add(tmp);
+      }
+       rs.close();
+       pst.close();    
+      return new RaportWrapper(records, atrybuty, grupowalne);
+      }
+      catch(SQLException e)  {
+         System.out.println("Blad podczas przetwarzania danych:"+e) ;
+          return new RaportWrapper();
+      }
+  }
+  ArrayList<ArrayList<String>> uzytkownicyExecuteRaportQuery1(String query, String nam){
+    try {
+      PreparedStatement pst = c.prepareStatement(query, ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
+      ResultSet rs = pst.executeQuery();
+      ArrayList<ArrayList<String>> records = new ArrayList<>();
+      ArrayList<String> tmp;
+      ArrayList<String> atrybuty = new ArrayList<>(Arrays.asList(nam.toUpperCase(), "ZLICZ"));
+
+      records.add(atrybuty);
+
+      while (rs.next())  {
+          tmp = new ArrayList<>();
+          tmp.add(rs.getString(nam));
+          tmp.add(rs.getString("zlicz"));
+          records.add(tmp);
+      }
+       rs.close();
+       pst.close();    
+      return records;
+      }
+      catch(SQLException e)  {
+         System.out.println("Blad podczas przetwarzania danych:"+e) ;
+          return new ArrayList<ArrayList<String>>();
+      }
+  }
+
+  ArrayList<ArrayList<String>> uzytkownicyExecuteRaportQuery2(String query){
+    try {
+      PreparedStatement pst = c.prepareStatement(query, ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
+      ResultSet rs = pst.executeQuery();
+      ArrayList<ArrayList<String>> records = new ArrayList<>();
+      ArrayList<String> tmp;
+      ArrayList<String> atrybuty = new ArrayList<>(Arrays.asList("UZYT_ID","LOGIN","HASLO", "IMIE", "NAZWISKO","E_MAIL","NUMER","TYP"));
+
+      records.add(atrybuty);
+
+      while (rs.next())  {
+          tmp = new ArrayList<>();
+          tmp.add(rs.getString("uzyt_id"));
+          tmp.add(rs.getString("login"));
+          tmp.add(rs.getString("haslo"));
+          tmp.add(rs.getString("imie"));
+          tmp.add(rs.getString("nazwisko"));
+          tmp.add(rs.getString("e_mail"));
+          tmp.add(rs.getString("numer"));
+          tmp.add(rs.getString("typ"));
+          records.add(tmp);
+      }
+       rs.close();
+       pst.close();    
+      return records;
+      }
+      catch(SQLException e)  {
+         System.out.println("Blad podczas przetwarzania danych:"+e) ;
+          return new ArrayList<ArrayList<String>>();
       }
   }
 }

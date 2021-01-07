@@ -3,7 +3,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 
-public class GUI_Podglad_Zakwaterowani{
+public class GUI_Podglad_Kategoria{
     public int login_id;
     public GUI_Login mainWindow;
     public Polaczenie a;
@@ -12,11 +12,11 @@ public class GUI_Podglad_Zakwaterowani{
     public JButton podgladButton;
     public ArrayList<ArrayList<String>> records;
 
-    public GUI_Podglad_Zakwaterowani(Polaczenie p, GUI_Login mainWindow, int id){
+    public GUI_Podglad_Kategoria(Polaczenie p, GUI_Login mainWindow, int id){
         login_id = id;
         this.mainWindow = mainWindow;
         a = p;
-        records =  a.getTableZakwaterowani();
+        records =  a.getTableKategoria();
         podgladPanel = new JPanel();
         podgladPanel.setBorder(BorderFactory.createEmptyBorder(100,100,100,100));
         podgladPanel.setLayout(new GridLayout(0,records.get(0).size()));
