@@ -89,7 +89,7 @@ ALTER TABLE "czarna_lista" ADD FOREIGN KEY ("uzytkownik_id") REFERENCES "uzytkow
 ALTER TABLE "rezygnacja_z_rezerwacji_info" ADD FOREIGN KEY ("rezerwacja_id") REFERENCES "rezerwacje" ("rezerwacja_id");
 
 
-INSERT INTO "uzytkownik"("imie","nazwisko","e_mail","numer","typ") VALUES (0, 'ADMIN', 'ADMIN', 'TEST@TEST.COM', 999999999, 'HeadAdmin');
+INSERT INTO "uzytkownik"("imie","nazwisko","e_mail","numer","typ") VALUES ('ADMIN', 'ADMIN', 'TEST@TEST.COM', 999999999, 'HeadAdmin');
 INSERT INTO "panel" VALUES (latest_uzytkownik_id(), 'admin', 'admin');
 CREATE VIEW uzytkownicy AS SELECT * FROM uzytkownik u JOIN panel p ON u.uzytkownik_id = p.uzyt_id;
 CREATE VIEW pokojeView AS SELECT pokoj_id, numer_pokoju, pietro, liczba_miejsc, p.kategoria_id, nazwa_kategorii, cena_od_osoby FROM pokoj p JOIN kategoria k ON p.kategoria_id = k.kategoria_id;
@@ -296,7 +296,7 @@ BEGIN
 END;
 $$LANGUAGE 'plpgsql';
 
-SELECT * FROM get_liczba_dni('2021-01-04', '2021-01-08');
+-- SELECT * FROM get_liczba_dni('2021-01-04', '2021-01-08');
 ----------------------------
 CREATE OR REPLACE FUNCTION latest_rezerwacja_id() RETURNS int AS $$
 DECLARE 
