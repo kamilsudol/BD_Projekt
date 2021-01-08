@@ -54,24 +54,26 @@ public class GUI_Raport{
         });
         podgladPanel.add(uzytkownicyButton);
 
-        rezerwacjeButton = new JButton("Raport o rezerwacjach"); //Przyckisk realizujacy podglad raportu o rezerwacjach
-        rezerwacjeButton.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e){
-                GUI_Podglad_Rezerwacje m = new GUI_Podglad_Rezerwacje(a, mainWindow, login_id);
-                mainWindow.frame.getContentPane().removeAll();
-                mainWindow.frame.getContentPane().add(m.podgladPanel, BorderLayout.CENTER);
-                mainWindow.frame.getContentPane().add(m.podgladButtonPanel, BorderLayout.SOUTH);
-                mainWindow.frame.setTitle("BD PROJEKT - Podglad raportow - Raport o rezerwacjach");
-                mainWindow.frame.validate();
-            }
-        });
-        podgladPanel.add(rezerwacjeButton);
+//        rezerwacjeButton = new JButton("Raport o rezerwacjach"); //Przyckisk realizujacy podglad raportu o rezerwacjach
+//        rezerwacjeButton.addActionListener(new ActionListener(){
+//            public void actionPerformed(ActionEvent e){
+//                GUI_Raport_Rezerwacje m = new GUI_Raport_Rezerwacje(a, mainWindow, login_id);
+//                mainWindow.frame.getContentPane().removeAll();
+//                mainWindow.frame.getContentPane().add(m.podgladUpPanel, BorderLayout.NORTH);
+//                mainWindow.frame.getContentPane().add(m.podgladPanel, BorderLayout.CENTER);
+//                mainWindow.frame.getContentPane().add(m.podgladButtonPanel, BorderLayout.SOUTH);
+//                mainWindow.frame.setTitle("BD PROJEKT - Podglad raportow - Raport o rezerwacjach");
+//                mainWindow.frame.validate();
+//            }
+//        });
+//        podgladPanel.add(rezerwacjeButton);
 
         pokojeButton = new JButton("Raport o pokojach"); //Przycisk realizyjacy podglad raportu o pokojach
         pokojeButton.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e){
-                GUI_Podglad_Pokoje m = new GUI_Podglad_Pokoje(a, mainWindow, login_id);
+                GUI_Raport_Pokoje m = new GUI_Raport_Pokoje(a, mainWindow, login_id);
                 mainWindow.frame.getContentPane().removeAll();
+                mainWindow.frame.getContentPane().add(m.podgladUpPanel, BorderLayout.NORTH);
                 mainWindow.frame.getContentPane().add(m.podgladPanel, BorderLayout.CENTER);
                 mainWindow.frame.getContentPane().add(m.podgladButtonPanel, BorderLayout.SOUTH);
                 mainWindow.frame.setTitle("BD PROJEKT - Podglad raportow - Raport o pokojach");
@@ -80,44 +82,47 @@ public class GUI_Raport{
         });
         podgladPanel.add(pokojeButton);
 
-        zakwaterowaniButton = new JButton("Raport o zakwaterowanych gosciach"); //Przycisk realizujacy podglad raportu o zakwaterowanych gosciach
-        zakwaterowaniButton.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e){
-                GUI_Podglad_Zakwaterowani m = new GUI_Podglad_Zakwaterowani(a, mainWindow, login_id);
-                mainWindow.frame.getContentPane().removeAll();
-                mainWindow.frame.getContentPane().add(m.podgladPanel, BorderLayout.CENTER);
-                mainWindow.frame.getContentPane().add(m.podgladButtonPanel, BorderLayout.SOUTH);
-                mainWindow.frame.setTitle("BD PROJEKT - Podglad raportow - Raport o zakwaterowanych gosciach");
-                mainWindow.frame.validate();
-            }
-        });
-        podgladPanel.add(zakwaterowaniButton);
-
-        rezygnacjeButton = new JButton("Raport o rezygnacjach z rezerwacji"); //Przycisk realizujacy podglad raportu o rezygnacjach
-        rezygnacjeButton.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e){
-                GUI_Podglad_Oplaty m = new GUI_Podglad_Oplaty(a, mainWindow, login_id);
-                mainWindow.frame.getContentPane().removeAll();
-                mainWindow.frame.getContentPane().add(m.podgladPanel, BorderLayout.CENTER);
-                mainWindow.frame.getContentPane().add(m.podgladButtonPanel, BorderLayout.SOUTH);
-                mainWindow.frame.setTitle("BD PROJEKT - Podglad raportow - Raport o rezygnacjach z rezerwacji");
-                mainWindow.frame.validate();
-            }
-        });
-        podgladPanel.add(rezygnacjeButton);
-
-        czarnalistaButton = new JButton("Raport o zablokowanych uzytkownikach"); //Przycisk realizujacy podglad raportu o zablokowanych uzytkownikach
-        czarnalistaButton.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e){
-                GUI_Podglad_Kategoria m = new GUI_Podglad_Kategoria(a, mainWindow, login_id);
-                mainWindow.frame.getContentPane().removeAll();
-                mainWindow.frame.getContentPane().add(m.podgladPanel, BorderLayout.CENTER);
-                mainWindow.frame.getContentPane().add(m.podgladButtonPanel, BorderLayout.SOUTH);
-                mainWindow.frame.setTitle("BD PROJEKT - Podglad raportow - Raport o zablokowanych uzytkownikach");
-                mainWindow.frame.validate();
-            }
-        });
-        podgladPanel.add(czarnalistaButton);
+//        zakwaterowaniButton = new JButton("Raport o zakwaterowanych gosciach"); //Przycisk realizujacy podglad raportu o zakwaterowanych gosciach
+//        zakwaterowaniButton.addActionListener(new ActionListener(){
+//            public void actionPerformed(ActionEvent e){
+//                GUI_Raport_Zakwaterowani m = new GUI_Raport_Zakwaterowani(a, mainWindow, login_id);
+//                mainWindow.frame.getContentPane().removeAll();
+//                mainWindow.frame.getContentPane().add(m.podgladUpPanel, BorderLayout.NORTH);
+//                mainWindow.frame.getContentPane().add(m.podgladPanel, BorderLayout.CENTER);
+//                mainWindow.frame.getContentPane().add(m.podgladButtonPanel, BorderLayout.SOUTH);
+//                mainWindow.frame.setTitle("BD PROJEKT - Podglad raportow - Raport o zakwaterowanych gosciach");
+//                mainWindow.frame.validate();
+//            }
+//        });
+//        podgladPanel.add(zakwaterowaniButton);
+//
+//        rezygnacjeButton = new JButton("Raport o rezygnacjach z rezerwacji"); //Przycisk realizujacy podglad raportu o rezygnacjach
+//        rezygnacjeButton.addActionListener(new ActionListener(){
+//            public void actionPerformed(ActionEvent e){
+//                GUI_Raport_Rezygnacje m = new GUI_Raport_Rezygnacje(a, mainWindow, login_id);
+//                mainWindow.frame.getContentPane().removeAll();
+//                mainWindow.frame.getContentPane().add(m.podgladUpPanel, BorderLayout.NORTH);
+//                mainWindow.frame.getContentPane().add(m.podgladPanel, BorderLayout.CENTER);
+//                mainWindow.frame.getContentPane().add(m.podgladButtonPanel, BorderLayout.SOUTH);
+//                mainWindow.frame.setTitle("BD PROJEKT - Podglad raportow - Raport o rezygnacjach z rezerwacji");
+//                mainWindow.frame.validate();
+//            }
+//        });
+//        podgladPanel.add(rezygnacjeButton);
+//
+//        czarnalistaButton = new JButton("Raport o zablokowanych uzytkownikach"); //Przycisk realizujacy podglad raportu o zablokowanych uzytkownikach
+//        czarnalistaButton.addActionListener(new ActionListener(){
+//            public void actionPerformed(ActionEvent e){
+//                GUI_Raport_Zablokowani m = new GUI_Raport_Zablokowani(a, mainWindow, login_id);
+//                mainWindow.frame.getContentPane().removeAll();
+//                mainWindow.frame.getContentPane().add(m.podgladUpPanel, BorderLayout.NORTH);
+//                mainWindow.frame.getContentPane().add(m.podgladPanel, BorderLayout.CENTER);
+//                mainWindow.frame.getContentPane().add(m.podgladButtonPanel, BorderLayout.SOUTH);
+//                mainWindow.frame.setTitle("BD PROJEKT - Podglad raportow - Raport o zablokowanych uzytkownikach");
+//                mainWindow.frame.validate();
+//            }
+//        });
+//        podgladPanel.add(czarnalistaButton);
 
         menuButton = new JButton("Powrot do menu"); //Przycisk realizujacy powrot do okna menu
         menuButton.addActionListener(new ActionListener(){

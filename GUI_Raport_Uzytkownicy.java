@@ -334,7 +334,7 @@ public class GUI_Raport_Uzytkownicy{
         if(sortHowBox.isSelected()){
             query += " DESC";
         }
-        aktualizujCentralnyPanel(a.uzytkownicyExecuteRaportQuery1(query, nam));
+        aktualizujCentralnyPanel(a.executeRaportQuery1(query, nam));
     }
 
     /**
