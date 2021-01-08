@@ -4,11 +4,11 @@ import java.awt.event.*;
 import java.util.*;
 
 /**
- * Klasa GUI_Raport_Uzytkownicy
- * Klasa realizujaca podglad raportu o uzytkownikach
+ * Klasa GUI_Raport_Rezygnacje
+ * Klasa realizujaca podglad raportu o rezygnacjach
  */
 
-public class GUI_Raport_Uzytkownicy{
+public class GUI_Raport_Rezygnacje{
     public int login_id;
     public GUI_Login mainWindow;
     public Polaczenie a;
@@ -46,7 +46,7 @@ public class GUI_Raport_Uzytkownicy{
      * @param id
      */
 
-    public GUI_Raport_Uzytkownicy(Polaczenie p, GUI_Login mainWindow, int id){
+    public GUI_Raport_Rezygnacje(Polaczenie p, GUI_Login mainWindow, int id){
         login_id = id;
         this.mainWindow = mainWindow;
         a = p;
@@ -261,7 +261,7 @@ public class GUI_Raport_Uzytkownicy{
      */
 
     public void resolve(){
-        RaportWrapper wartosci = a.getRaportUzytkownicy();
+        RaportWrapper wartosci = a.getRaportRezygnacje();
         records = wartosci.calosc;
         atrybuty = wartosci.atrybuty;
         countable = wartosci.countable;
@@ -322,7 +322,7 @@ public class GUI_Raport_Uzytkownicy{
         Object item = groupBox.getSelectedItem();
         String nam = ((ComboInsert)item).getName();
 
-        String query = "SELECT "+nam+", COUNT("+nam+") AS zlicz FROM projekt.uzytkownicy GROUP BY " + nam;
+        String query = "SELECT "+nam+", COUNT("+nam+") AS zlicz FROM projekt.rezygnacjeView GROUP BY " + nam;
         if(varCheck.isSelected()){
             query+=" HAVING " + nam +" LIKE \'%"+varField.getText() +"%\'";
         }
@@ -334,7 +334,7 @@ public class GUI_Raport_Uzytkownicy{
         if(sortHowBox.isSelected()){
             query += " DESC";
         }
-        aktualizujCentralnyPanel(a.uzytkownicyExecuteRaportQuery1(query, nam));
+        aktualizujCentralnyPanel(a.executeRaportQuery1(query, nam));
     }
 
     /**
@@ -347,7 +347,7 @@ public class GUI_Raport_Uzytkownicy{
 
         String what = searchField.getText();
 
-        String query = "SELECT * FROM projekt.uzytkownicy WHERE "+nam+" = \'" + what + "\'";
+        String query = "SELECT * FROM projekt.rezygnacjeView WHERE "+nam+" = \'" + what + "\'";
 
         if(searchSortCheck.isSelected()){
             item = searchSortBox.getSelectedItem();
@@ -357,7 +357,7 @@ public class GUI_Raport_Uzytkownicy{
         if(searchSortHowBox.isSelected()){
             query += " DESC";
         }
-        aktualizujCentralnyPanel(a.uzytkownicyExecuteRaportQuery2(query));
+        aktualizujCentralnyPanel(a.rezygnacjeExecuteRaportQuery2(query));
     }
 
     /**

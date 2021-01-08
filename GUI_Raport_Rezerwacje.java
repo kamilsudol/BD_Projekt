@@ -4,11 +4,11 @@ import java.awt.event.*;
 import java.util.*;
 
 /**
- * Klasa GUI_Raport_Uzytkownicy
- * Klasa realizujaca podglad raportu o uzytkownikach
+ * Klasa GUI_Raport_Rezerwacje
+ * Klasa realizujaca podglad raportu o rezerwacjach
  */
 
-public class GUI_Raport_Uzytkownicy{
+public class GUI_Raport_Rezerwacje{
     public int login_id;
     public GUI_Login mainWindow;
     public Polaczenie a;
@@ -19,8 +19,9 @@ public class GUI_Raport_Uzytkownicy{
     public ArrayList<ArrayList<String>> records;
     public ArrayList<String> atrybuty;
     public ArrayList<String> countable;
+    public ArrayList<String> agregaty;
     public JButton resetujButton;
-    public JCheckBox groupCheck;
+    public JComboBox<ComboInsert> groupCheck;
     public JComboBox<ComboInsert> groupBox;
     public JCheckBox varCheck;
     public JTextField varField;
@@ -46,7 +47,7 @@ public class GUI_Raport_Uzytkownicy{
      * @param id
      */
 
-    public GUI_Raport_Uzytkownicy(Polaczenie p, GUI_Login mainWindow, int id){
+    public GUI_Raport_Rezerwacje(Polaczenie p, GUI_Login mainWindow, int id){
         login_id = id;
         this.mainWindow = mainWindow;
         a = p;
@@ -119,7 +120,7 @@ public class GUI_Raport_Uzytkownicy{
         podgladUpPanel.setBorder(BorderFactory.createEmptyBorder(20,20,20,20));
         podgladUpPanel.setLayout(new GridLayout(0,8));
 
-        groupCheck = new JCheckBox("Zlicz elementy po: ");
+        groupCheck = new JComboBox<>();
         groupCheck.setSelected(false);
         groupCheck.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e){
@@ -261,10 +262,11 @@ public class GUI_Raport_Uzytkownicy{
      */
 
     public void resolve(){
-        RaportWrapper wartosci = a.getRaportUzytkownicy();
+        RaportWrapper wartosci = a.getRaportRezerwacje();
         records = wartosci.calosc;
         atrybuty = wartosci.atrybuty;
         countable = wartosci.countable;
+        agregaty = wartosci.agregaty;
     }
 
     /**
@@ -285,9 +287,11 @@ public class GUI_Raport_Uzytkownicy{
 
     public void initialInserts(){
         clearDropList(sortWhatBox);
+        clearDropList(groupCheck);
         clearDropList(groupBox);
         clearDropList(searchBox);
         clearDropList(searchSortBox);
+        wypelnijDropList(groupCheck, agregaty);
         wypelnijDropList(groupBox, countable);
         wypelnijDropList(searchBox, atrybuty);
         wypelnijDropList(searchSortBox, atrybuty);
@@ -317,12 +321,19 @@ public class GUI_Raport_Uzytkownicy{
     /**
      * Metoda tworzaca zapytanie GROUP BY
      */
-
+ ////////////////////////////////////////////zmienic ta metode./...............//////////////////
     public void resloveQuery1(){
         Object item = groupBox.getSelectedItem();
         String nam = ((ComboInsert)item).getName();
+        item = groupCheck.getSelectedItem();
+        String fun = ((ComboInsert)item).getName();
 
-        String query = "SELECT "+nam+", COUNT("+nam+") AS zlicz FROM projekt.uzytkownicy GROUP BY " + nam;
+        String query = "";
+        if(fun.equals("COUNT")){
+            query += "SELECT "+nam+", COUNT(kwota) FROM projekt.RezerwacjeInfoView GROUP BY " + nam;
+        }else{
+            query+= "SELECT "+nam+", "+fun+"("+nam+") FROM projekt.RezerwacjeInfoView GROUP BY " + nam;
+        }
         if(varCheck.isSelected()){
             query+=" HAVING " + nam +" LIKE \'%"+varField.getText() +"%\'";
         }
@@ -334,7 +345,7 @@ public class GUI_Raport_Uzytkownicy{
         if(sortHowBox.isSelected()){
             query += " DESC";
         }
-        aktualizujCentralnyPanel(a.uzytkownicyExecuteRaportQuery1(query, nam));
+        aktualizujCentralnyPanel(a.rezerwacjeExecuteRaportQuery1(query, nam, fun));
     }
 
     /**
@@ -347,7 +358,7 @@ public class GUI_Raport_Uzytkownicy{
 
         String what = searchField.getText();
 
-        String query = "SELECT * FROM projekt.uzytkownicy WHERE "+nam+" = \'" + what + "\'";
+        String query = "SELECT * FROM projekt.RezerwacjeInfoView WHERE "+nam+" = \'" + what + "\'";
 
         if(searchSortCheck.isSelected()){
             item = searchSortBox.getSelectedItem();
@@ -357,7 +368,7 @@ public class GUI_Raport_Uzytkownicy{
         if(searchSortHowBox.isSelected()){
             query += " DESC";
         }
-        aktualizujCentralnyPanel(a.uzytkownicyExecuteRaportQuery2(query));
+        aktualizujCentralnyPanel(a.rezerwacjeExecuteRaportQuery2(query));
     }
 
     /**

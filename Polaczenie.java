@@ -75,15 +75,6 @@ public class Polaczenie {
 
   public String zarejestruj(String imie, String nazwisko, String email, String telefon, String login, String haslo, String typ){
     try {
-//      PreparedStatement counted_id = c.prepareStatement("SELECT COUNT(uzyt_id) AS id FROM projekt.panel",ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
-//      ResultSet result_count_id = counted_id.executeQuery();
-//      result_count_id.next();
-//      String string_id = result_count_id.getString("id");
-//      int id = Integer.parseInt(string_id);
-//      id++;
-//      result_count_id.close();
-//      counted_id.close();
-
       PreparedStatement pst1 = c.prepareStatement("BEGIN");
       PreparedStatement pst2 = c.prepareStatement("INSERT INTO projekt.uzytkownik(\"imie\",\"nazwisko\",\"e_mail\",\"numer\",\"typ\") VALUES(\'"+imie+"\',\'"+nazwisko+"\',\'"+email+"\',\'"+telefon+"\',\'"+typ+"\' )");
       PreparedStatement pst3 = c.prepareStatement("INSERT INTO projekt.panel VALUES(projekt.latest_uzytkownik_id(), \'"+login+"\',\'"+haslo+"\')");
@@ -913,7 +904,7 @@ public class Polaczenie {
       }
        rs.close();
        pst.close();    
-      return new RaportWrapper(records, atrybuty, grupowalne, null, null);
+      return new RaportWrapper(records, atrybuty, grupowalne, null);
       }
       catch(SQLException e)  {
          System.out.println("Blad podczas przetwarzania danych:"+e) ;
@@ -1022,7 +1013,7 @@ public class Polaczenie {
             }
             rs.close();
             pst.close();
-            return new RaportWrapper(records, atrybuty, grupowalne, null, null);
+            return new RaportWrapper(records, atrybuty, grupowalne, null);
         }
         catch(SQLException e)  {
             System.out.println("Blad podczas przetwarzania danych:"+e) ;
@@ -1031,7 +1022,7 @@ public class Polaczenie {
     }
 
     /**
-     * Metoda egzekwujaca drugie zapytanie z raportu o uzytkownikach.
+     * Metoda egzekwujaca drugie zapytanie z raportu o pokojach.
      * @param query
      * @param nam
      * @return
@@ -1056,6 +1047,352 @@ public class Polaczenie {
                 tmp.add(rs.getString("kategoria_id"));
                 tmp.add(rs.getString("nazwa_kategorii"));
                 tmp.add(rs.getString("cena_od_osoby"));
+                records.add(tmp);
+            }
+            rs.close();
+            pst.close();
+            return records;
+        }
+        catch(SQLException e)  {
+            System.out.println("Blad podczas przetwarzania danych:"+e) ;
+            return new ArrayList<ArrayList<String>>();
+        }
+    }
+
+    /**
+     * Metoda zwracajaca wartosci dla podlgadu raportu o zakwaterowanych.
+     * @return
+     */
+
+    public RaportWrapper getRaportZakwaterowani(){
+        try {
+            PreparedStatement pst = c.prepareStatement("SELECT * FROM projekt.zakwaterowaniView",ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
+            ResultSet rs = pst.executeQuery();
+            ArrayList<ArrayList<String>> records = new ArrayList<>();
+            ArrayList<String> tmp;
+            ArrayList<String> atrybuty = new ArrayList<>(Arrays.asList("info_id","status_czy_zakwaterowany","imie","nazwisko","rezerwacja_id","od_kiedy","do_kiedy","liczba_dzieci","liczba_doroslych","numer_pokoju"));
+            ArrayList<String> grupowalne = new ArrayList<>(Arrays.asList("status_czy_zakwaterowany", "numer_pokoju", "od_kiedy","do_kiedy"));
+
+            records.add(atrybuty);
+
+            while (rs.next())  {
+                tmp = new ArrayList<>();
+                tmp.add(rs.getString("info_id"));
+                tmp.add(rs.getString("status_czy_zakwaterowany"));
+                tmp.add(rs.getString("imie"));
+                tmp.add(rs.getString("nazwisko"));
+                tmp.add(rs.getString("rezerwacja_id"));
+                tmp.add(rs.getString("od_kiedy"));
+                tmp.add(rs.getString("do_kiedy"));
+                tmp.add(rs.getString("liczba_dzieci"));
+                tmp.add(rs.getString("liczba_doroslych"));
+                tmp.add(rs.getString("numer_pokoju"));
+                records.add(tmp);
+            }
+            rs.close();
+            pst.close();
+            return new RaportWrapper(records, atrybuty, grupowalne, null);
+        }
+        catch(SQLException e)  {
+            System.out.println("Blad podczas przetwarzania danych:"+e) ;
+            return new RaportWrapper();
+        }
+    }
+
+    /**
+     * Metoda egzekwujaca drugie zapytanie z raportu o zakwaterowanych.
+     * @param query
+     * @param nam
+     * @return
+     */
+
+    ArrayList<ArrayList<String>> zakwaterowaniExecuteRaportQuery2(String query){
+        try {
+            PreparedStatement pst = c.prepareStatement(query, ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
+            ResultSet rs = pst.executeQuery();
+            ArrayList<ArrayList<String>> records = new ArrayList<>();
+            ArrayList<String> tmp;
+            ArrayList<String> atrybuty = new ArrayList<>(Arrays.asList("info_id","status_czy_zakwaterowany","imie","nazwisko","rezerwacja_id","od_kiedy","do_kiedy","liczba_dzieci","liczba_doroslych","numer_pokoju"));
+
+            records.add(atrybuty);
+
+            while (rs.next())  {
+                tmp = new ArrayList<>();
+                tmp.add(rs.getString("info_id"));
+                tmp.add(rs.getString("status_czy_zakwaterowany"));
+                tmp.add(rs.getString("imie"));
+                tmp.add(rs.getString("nazwisko"));
+                tmp.add(rs.getString("rezerwacja_id"));
+                tmp.add(rs.getString("od_kiedy"));
+                tmp.add(rs.getString("do_kiedy"));
+                tmp.add(rs.getString("liczba_dzieci"));
+                tmp.add(rs.getString("liczba_doroslych"));
+                tmp.add(rs.getString("numer_pokoju"));
+                records.add(tmp);
+            }
+            rs.close();
+            pst.close();
+            return records;
+        }
+        catch(SQLException e)  {
+            System.out.println("Blad podczas przetwarzania danych:"+e) ;
+            return new ArrayList<ArrayList<String>>();
+        }
+    }
+
+    /**
+     * Metoda zwracajaca wartosci dla podlgadu raportu o zablokowanych uzytkownikach.
+     * @return
+     */
+
+    public RaportWrapper getRaportZablokowani(){
+        try {
+            PreparedStatement pst = c.prepareStatement("SELECT * FROM projekt.zablokowaniView",ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
+            ResultSet rs = pst.executeQuery();
+            ArrayList<ArrayList<String>> records = new ArrayList<>();
+            ArrayList<String> tmp;
+            ArrayList<String> atrybuty = new ArrayList<>(Arrays.asList("info_id","uzytkownik_id","imie","nazwisko","powod"));
+            ArrayList<String> grupowalne = new ArrayList<>(Arrays.asList("imie", "nazwisko", "powod"));
+
+            records.add(atrybuty);
+
+            while (rs.next())  {
+                tmp = new ArrayList<>();
+                tmp.add(rs.getString("info_id"));
+                tmp.add(rs.getString("uzytkownik_id"));
+                tmp.add(rs.getString("imie"));
+                tmp.add(rs.getString("nazwisko"));
+                tmp.add(rs.getString("powod"));
+                records.add(tmp);
+            }
+            rs.close();
+            pst.close();
+            return new RaportWrapper(records, atrybuty, grupowalne, null);
+        }
+        catch(SQLException e)  {
+            System.out.println("Blad podczas przetwarzania danych:"+e) ;
+            return new RaportWrapper();
+        }
+    }
+
+    /**
+     * Metoda egzekwujaca drugie zapytanie z raportu o zablokowanych uzytkownikach.
+     * @param query
+     * @param nam
+     * @return
+     */
+
+    ArrayList<ArrayList<String>> zablokowaniExecuteRaportQuery2(String query){
+        try {
+            PreparedStatement pst = c.prepareStatement(query, ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
+            ResultSet rs = pst.executeQuery();
+            ArrayList<ArrayList<String>> records = new ArrayList<>();
+            ArrayList<String> tmp;
+            ArrayList<String> atrybuty = new ArrayList<>(Arrays.asList("info_id","uzytkownik_id","imie","nazwisko","powod"));
+
+            records.add(atrybuty);
+
+            while (rs.next())  {
+                tmp = new ArrayList<>();
+                tmp.add(rs.getString("info_id"));
+                tmp.add(rs.getString("uzytkownik_id"));
+                tmp.add(rs.getString("imie"));
+                tmp.add(rs.getString("nazwisko"));
+                tmp.add(rs.getString("powod"));
+                records.add(tmp);
+            }
+            rs.close();
+            pst.close();
+            return records;
+        }
+        catch(SQLException e)  {
+            System.out.println("Blad podczas przetwarzania danych:"+e) ;
+            return new ArrayList<ArrayList<String>>();
+        }
+    }
+
+    /**
+     * Metoda zwracajaca wartosci dla podlgadu raportu o rezygnacjach.
+     * @return
+     */
+
+    public RaportWrapper getRaportRezygnacje(){
+        try {
+            PreparedStatement pst = c.prepareStatement("SELECT * FROM projekt.rezygnacjeView",ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
+            ResultSet rs = pst.executeQuery();
+            ArrayList<ArrayList<String>> records = new ArrayList<>();
+            ArrayList<String> tmp;
+            ArrayList<String> atrybuty = new ArrayList<>(Arrays.asList("info_id","uzytkownik_id","imie","nazwisko","rezerwacja_id","data_rezerwacji","od_kiedy","do_kiedy"));
+            ArrayList<String> grupowalne = new ArrayList<>(Arrays.asList("uzytkownik_id", "imie", "nazwisko"));
+
+            records.add(atrybuty);
+
+            while (rs.next())  {
+                tmp = new ArrayList<>();
+                tmp.add(rs.getString("info_id"));
+                tmp.add(rs.getString("uzytkownik_id"));
+                tmp.add(rs.getString("imie"));
+                tmp.add(rs.getString("nazwisko"));
+                tmp.add(rs.getString("rezerwacja_id"));
+                tmp.add(rs.getString("data_rezerwacji"));
+                tmp.add(rs.getString("od_kiedy"));
+                tmp.add(rs.getString("do_kiedy"));
+                records.add(tmp);
+            }
+            rs.close();
+            pst.close();
+            return new RaportWrapper(records, atrybuty, grupowalne, null);
+        }
+        catch(SQLException e)  {
+            System.out.println("Blad podczas przetwarzania danych:"+e) ;
+            return new RaportWrapper();
+        }
+    }
+
+    /**
+     * Metoda egzekwujaca drugie zapytanie z raportu o rezygnacjach.
+     * @param query
+     * @param nam
+     * @return
+     */
+
+    ArrayList<ArrayList<String>> rezygnacjeExecuteRaportQuery2(String query){
+        try {
+            PreparedStatement pst = c.prepareStatement(query, ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
+            ResultSet rs = pst.executeQuery();
+            ArrayList<ArrayList<String>> records = new ArrayList<>();
+            ArrayList<String> tmp;
+            ArrayList<String> atrybuty = new ArrayList<>(Arrays.asList("info_id","uzytkownik_id","imie","nazwisko","rezerwacja_id","data_rezerwacji","od_kiedy","do_kiedy"));
+
+            records.add(atrybuty);
+
+            while (rs.next())  {
+                tmp = new ArrayList<>();
+                tmp.add(rs.getString("info_id"));
+                tmp.add(rs.getString("uzytkownik_id"));
+                tmp.add(rs.getString("imie"));
+                tmp.add(rs.getString("nazwisko"));
+                tmp.add(rs.getString("rezerwacja_id"));
+                tmp.add(rs.getString("data_rezerwacji"));
+                tmp.add(rs.getString("od_kiedy"));
+                tmp.add(rs.getString("do_kiedy"));
+                records.add(tmp);
+            }
+            rs.close();
+            pst.close();
+            return records;
+        }
+        catch(SQLException e)  {
+            System.out.println("Blad podczas przetwarzania danych:"+e) ;
+            return new ArrayList<ArrayList<String>>();
+        }
+    }
+
+    /**
+     * Metoda zwracajaca wartosci dla podlgadu raportu o rezerwacjach.
+     * @return
+     */
+
+    public RaportWrapper getRaportRezerwacje(){
+        try {
+            PreparedStatement pst = c.prepareStatement("SELECT * FROM projekt.RezerwacjeInfoView",ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
+            ResultSet rs = pst.executeQuery();
+            ArrayList<ArrayList<String>> records = new ArrayList<>();
+            ArrayList<String> tmp;
+            ArrayList<String> atrybuty = new ArrayList<>(Arrays.asList("rezerwacja_id","imie","nazwisko","data_rezerwacji","od_kiedy","do_kiedy","numer_pokoju","nazwa_kategorii","nazwa_uslugi","kwota","status_czy_oplacone"));
+            ArrayList<String> grupowalne = new ArrayList<>(Arrays.asList("imie", "nazwisko", "numer_pokoju", "nazwa_uslugi","status_czy_oplacone"));
+            ArrayList<String> agregaty = new ArrayList<>(Arrays.asList("COUNT", "SUM", "AVG", "MIN", "MAX"));
+
+            records.add(atrybuty);
+
+            while (rs.next())  {
+                tmp = new ArrayList<>();
+                tmp.add(rs.getString("rezerwacja_id"));
+                tmp.add(rs.getString("imie"));
+                tmp.add(rs.getString("nazwisko"));
+                tmp.add(rs.getString("data_rezerwacji"));
+                tmp.add(rs.getString("od_kiedy"));
+                tmp.add(rs.getString("do_kiedy"));
+                tmp.add(rs.getString("numer_pokoju"));
+                tmp.add(rs.getString("nazwa_kategorii"));
+                tmp.add(rs.getString("nazwa_uslugi"));
+                tmp.add(rs.getString("kwota"));
+                tmp.add(rs.getString("status_czy_oplacone"));
+                records.add(tmp);
+            }
+            rs.close();
+            pst.close();
+            return new RaportWrapper(records, atrybuty, grupowalne, agregaty);
+        }
+        catch(SQLException e)  {
+            System.out.println("Blad podczas przetwarzania danych:"+e) ;
+            return new RaportWrapper();
+        }
+    }
+
+    /**
+     * Metoda egzekwujaca pierwsze zapytanie dla raportu o rezerwacjach.
+     * @param query
+     * @param nam
+     * @return
+     */
+
+    ArrayList<ArrayList<String>> rezerwacjeExecuteRaportQuery1(String query, String nam, String fun){
+        try {
+            PreparedStatement pst = c.prepareStatement(query, ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
+            ResultSet rs = pst.executeQuery();
+            ArrayList<ArrayList<String>> records = new ArrayList<>();
+            ArrayList<String> tmp;
+            ArrayList<String> atrybuty = new ArrayList<>(Arrays.asList(nam.toUpperCase(), fun.toUpperCase()));
+
+            records.add(atrybuty);
+
+            while (rs.next())  {
+                tmp = new ArrayList<>();
+                tmp.add(rs.getString(nam));
+                tmp.add(rs.getString(fun));
+                records.add(tmp);
+            }
+            rs.close();
+            pst.close();
+            return records;
+        }
+        catch(SQLException e)  {
+            System.out.println("Blad podczas przetwarzania danych:"+e) ;
+            return new ArrayList<ArrayList<String>>();
+        }
+    }
+
+    /**
+     * Metoda egzekwujaca drugie zapytanie z raportu o rezerwacjach.
+     * @param query
+     * @param nam
+     * @return
+     */
+
+    ArrayList<ArrayList<String>> uzytkownicyExecuteRaportQuery2(String query){
+        try {
+            PreparedStatement pst = c.prepareStatement(query, ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
+            ResultSet rs = pst.executeQuery();
+            ArrayList<ArrayList<String>> records = new ArrayList<>();
+            ArrayList<String> tmp;
+            ArrayList<String> atrybuty = new ArrayList<>(Arrays.asList("rezerwacja_id","imie","nazwisko","data_rezerwacji","od_kiedy","do_kiedy","numer_pokoju","nazwa_kategorii","nazwa_uslugi","kwota","status_czy_oplacone"));
+
+            records.add(atrybuty);
+
+            while (rs.next())  {
+                tmp = new ArrayList<>();
+                tmp.add(rs.getString("rezerwacja_id"));
+                tmp.add(rs.getString("imie"));
+                tmp.add(rs.getString("nazwisko"));
+                tmp.add(rs.getString("data_rezerwacji"));
+                tmp.add(rs.getString("od_kiedy"));
+                tmp.add(rs.getString("do_kiedy"));
+                tmp.add(rs.getString("numer_pokoju"));
+                tmp.add(rs.getString("nazwa_kategorii"));
+                tmp.add(rs.getString("nazwa_uslugi"));
+                tmp.add(rs.getString("kwota"));
+                tmp.add(rs.getString("status_czy_oplacone"));
                 records.add(tmp);
             }
             rs.close();
