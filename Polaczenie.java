@@ -913,7 +913,7 @@ public class Polaczenie {
       }
        rs.close();
        pst.close();    
-      return new RaportWrapper(records, atrybuty, grupowalne);
+      return new RaportWrapper(records, atrybuty, grupowalne, null, null);
       }
       catch(SQLException e)  {
          System.out.println("Blad podczas przetwarzania danych:"+e) ;

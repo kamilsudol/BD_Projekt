@@ -18,7 +18,7 @@ public class GUI_Raport_Uzytkownicy{
     public JButton podgladButton;
     public ArrayList<ArrayList<String>> records;
     public ArrayList<String> atrybuty;
-    public ArrayList<String> grupowalne;
+    public ArrayList<String> countable;
     public JButton resetujButton;
     public JCheckBox groupCheck;
     public JComboBox<ComboInsert> groupBox;
@@ -137,7 +137,7 @@ public class GUI_Raport_Uzytkownicy{
         groupBox.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e){
                 Object item = groupBox.getSelectedItem();
-                clearDropList();
+                clearDropList(sortWhatBox);
                 updateDropList(((ComboInsert)item).getName());
             }
         });
@@ -264,7 +264,7 @@ public class GUI_Raport_Uzytkownicy{
         RaportWrapper wartosci = a.getRaportUzytkownicy();
         records = wartosci.calosc;
         atrybuty = wartosci.atrybuty;
-        grupowalne = wartosci.grupowalne;
+        countable = wartosci.countable;
     }
 
     /**
@@ -288,7 +288,7 @@ public class GUI_Raport_Uzytkownicy{
         clearDropList(groupBox);
         clearDropList(searchBox);
         clearDropList(searchSortBox);
-        wypelnijDropList(groupBox, grupowalne);
+        wypelnijDropList(groupBox, countable);
         wypelnijDropList(searchBox, atrybuty);
         wypelnijDropList(searchSortBox, atrybuty);
     }
@@ -322,9 +322,9 @@ public class GUI_Raport_Uzytkownicy{
         Object item = groupBox.getSelectedItem();
         String nam = ((ComboInsert)item).getName();
 
-        String query = "SELECT "+nam+", COUNT(*) AS zlicz FROM projekt.uzytkownicy GROUP BY " + nam;
+        String query = "SELECT "+nam+", COUNT("+nam+") AS zlicz FROM projekt.uzytkownicy GROUP BY " + nam;
         if(varCheck.isSelected()){
-            query+=" HAVING " + nam +" LIKE \'"+varField.getText() +"\'";
+            query+=" HAVING " + nam +" LIKE \'%"+varField.getText() +"%\'";
         }
         if(sortCheck.isSelected()){
             item = sortWhatBox.getSelectedItem();
