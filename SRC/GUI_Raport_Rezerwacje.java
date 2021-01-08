@@ -121,20 +121,10 @@ public class GUI_Raport_Rezerwacje{
         podgladUpPanel.setLayout(new GridLayout(0,8));
 
         groupCheck = new JComboBox<>();
-        groupCheck.setSelected(false);
-        groupCheck.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e){
-                if(groupCheck.isSelected()){
-                    groupBox.setEnabled(true);
-                }else{
-                    groupBox.setEnabled(false);
-                }
-            }
-        });
         podgladUpPanel.add(groupCheck);
 
         groupBox = new JComboBox<>();
-        groupBox.setEnabled(false);
+        groupBox.setEnabled(true);
         groupBox.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e){
                 Object item = groupBox.getSelectedItem();
@@ -187,9 +177,9 @@ public class GUI_Raport_Rezerwacje{
         pokaz1 = new JButton("Pokaz");
         pokaz1.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e){
-                if(groupCheck.isSelected()){
+                // if(groupCheck.isSelected()){
                     resloveQuery1();
-                }
+                // }
             }
         });
         podgladUpPanel.add(pokaz1);
@@ -321,7 +311,7 @@ public class GUI_Raport_Rezerwacje{
     /**
      * Metoda tworzaca zapytanie GROUP BY
      */
- ////////////////////////////////////////////zmienic ta metode./...............//////////////////
+
     public void resloveQuery1(){
         Object item = groupBox.getSelectedItem();
         String nam = ((ComboInsert)item).getName();
@@ -330,9 +320,9 @@ public class GUI_Raport_Rezerwacje{
 
         String query = "";
         if(fun.equals("COUNT")){
-            query += "SELECT "+nam+", COUNT(kwota) FROM projekt.RezerwacjeInfoView GROUP BY " + nam;
+            query += "SELECT "+nam+", COUNT("+nam+") FROM projekt.RezerwacjeAllInfoView GROUP BY " + nam;
         }else{
-            query+= "SELECT "+nam+", "+fun+"("+nam+") FROM projekt.RezerwacjeInfoView GROUP BY " + nam;
+            query+= "SELECT "+nam+", "+fun+"(kwota) FROM projekt.RezerwacjeAllInfoView GROUP BY " + nam;
         }
         if(varCheck.isSelected()){
             query+=" HAVING " + nam +" LIKE \'%"+varField.getText() +"%\'";
@@ -358,7 +348,7 @@ public class GUI_Raport_Rezerwacje{
 
         String what = searchField.getText();
 
-        String query = "SELECT * FROM projekt.RezerwacjeInfoView WHERE "+nam+" = \'" + what + "\'";
+        String query = "SELECT * FROM projekt.RezerwacjeAllInfoView WHERE "+nam+" = \'" + what + "\'";
 
         if(searchSortCheck.isSelected()){
             item = searchSortBox.getSelectedItem();
@@ -378,7 +368,6 @@ public class GUI_Raport_Rezerwacje{
     public void reset(){
         searchField.setText("");
         varField.setText("");
-        groupCheck.setSelected(false);
         varCheck.setSelected(false);
         sortHowBox.setSelected(false);
         searchSortCheck.setSelected(false);

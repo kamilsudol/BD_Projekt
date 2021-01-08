@@ -1295,7 +1295,7 @@ public class Polaczenie {
 
     public RaportWrapper getRaportRezerwacje(){
         try {
-            PreparedStatement pst = c.prepareStatement("SELECT * FROM projekt.RezerwacjeInfoView",ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
+            PreparedStatement pst = c.prepareStatement("SELECT * FROM projekt.RezerwacjeAllInfoView",ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
             ResultSet rs = pst.executeQuery();
             ArrayList<ArrayList<String>> records = new ArrayList<>();
             ArrayList<String> tmp;
@@ -1370,7 +1370,7 @@ public class Polaczenie {
      * @return
      */
 
-    ArrayList<ArrayList<String>> uzytkownicyExecuteRaportQuery2(String query){
+    ArrayList<ArrayList<String>> rezerwacjeExecuteRaportQuery2(String query){
         try {
             PreparedStatement pst = c.prepareStatement(query, ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
             ResultSet rs = pst.executeQuery();
