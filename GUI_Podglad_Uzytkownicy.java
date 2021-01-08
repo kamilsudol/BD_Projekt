@@ -3,6 +3,11 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 
+/**
+ * Klasa GUI_Podglad_Uzytkownicy
+ * Klasa realizujaca podglad zawartosci tabeli uzytkownik
+ */
+
 public class GUI_Podglad_Uzytkownicy{
     public int login_id;
     public GUI_Login mainWindow;

@@ -3,6 +3,11 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 
+/**
+ * Klasa GUI_Podglad_Uslugi
+ * Klasa realizujaca podglad zawartosci tabeli dodatkowe_uslugi
+ */
+
 public class GUI_Podglad_Uslugi{
     public int login_id;
     public GUI_Login mainWindow;

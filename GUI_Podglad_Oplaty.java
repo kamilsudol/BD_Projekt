@@ -3,6 +3,11 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 
+/**
+ * Klasa GUI_Podglad_Oplaty
+ * Klasa realizujaca podglad zawartosci tabeli oplata
+ */
+
 public class GUI_Podglad_Oplaty{
     public int login_id;
     public GUI_Login mainWindow;

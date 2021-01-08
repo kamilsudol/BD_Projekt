@@ -3,6 +3,11 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 
+/**
+ * Klasa GUI_Podglad_Rezygnacja
+ * Klasa realizujaca podglad zawartosci tabeli rezygnacja_z_rezerwacji_info
+ */
+
 public class GUI_Podglad_Rezygnacja{
     public int login_id;
     public GUI_Login mainWindow;

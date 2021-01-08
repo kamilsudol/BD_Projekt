@@ -3,6 +3,11 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 
+/**
+ * Klasa GUI_Raport_Uzytkownicy
+ * Klasa realizujaca podglad raportu o uzytkownikach
+ */
+
 public class GUI_Raport_Uzytkownicy{
     public int login_id;
     public GUI_Login mainWindow;
@@ -33,6 +38,14 @@ public class GUI_Raport_Uzytkownicy{
     public JCheckBox searchSortHowBox;
     public JButton pokaz2;
 
+    /**
+     * Konstruktor domyslny przyjmujacy polaczenie do bazy, okno glowne aplikacji
+     * oraz id aktualnie zalogowanego uzytkownika.
+     * @param p
+     * @param mainWindow
+     * @param id
+     */
+
     public GUI_Raport_Uzytkownicy(Polaczenie p, GUI_Login mainWindow, int id){
         login_id = id;
         this.mainWindow = mainWindow;
@@ -45,6 +58,11 @@ public class GUI_Raport_Uzytkownicy{
 
         initialInserts();
     }
+
+    /**
+     * Metoda wypelniajaca srodkowy panel wyswietlajac dane z bazy.
+     * @param rec
+     */
 
     public void wypelnij(ArrayList<ArrayList<String>> rec){
         String tmp;
@@ -62,12 +80,16 @@ public class GUI_Raport_Uzytkownicy{
         }
     }
 
+    /**
+     * Metoda wypelniajaca funkcjonalnoscia dolna czesc okna aplikacji.
+     */
+
     public void wypelnijDolnyPanel(){
         podgladButtonPanel = new JPanel();
         podgladButtonPanel.setBorder(BorderFactory.createEmptyBorder(20,20,20,20));
         podgladButtonPanel.setLayout(new GridLayout(0,1));
 
-        resetujButton = new JButton("Resetuj podglad");
+        resetujButton = new JButton("Resetuj podglad"); //Przycisk realizujacy przywrocenie wygladu domyslnego
         resetujButton.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e){
                 reset();
@@ -75,7 +97,7 @@ public class GUI_Raport_Uzytkownicy{
         });
         podgladButtonPanel.add(resetujButton);
 
-        podgladButton = new JButton("Powrot do podgladu raportow");
+        podgladButton = new JButton("Powrot do podgladu raportow");//Przycisk realizujacy powrot do menu podlgadu.
         podgladButton.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e){
                 GUI_Raport m = new GUI_Raport(a, mainWindow, login_id);
@@ -88,7 +110,11 @@ public class GUI_Raport_Uzytkownicy{
         podgladButtonPanel.add(podgladButton);
     }
 
-    public void wypelnijGornyPanel1(){
+    /**
+     * Metoda wypelniajaca funkcjonalnoscia gorna czesc okna aplikacji.
+     */
+
+    public void wypelnijGornyPanel1(){//Sekcja realizujaca zapytanie GROUP BY
         podgladUpPanel = new JPanel();
         podgladUpPanel.setBorder(BorderFactory.createEmptyBorder(20,20,20,20));
         podgladUpPanel.setLayout(new GridLayout(0,8));
@@ -168,7 +194,7 @@ public class GUI_Raport_Uzytkownicy{
         podgladUpPanel.add(pokaz1);
     }
 
-    public void wypelnijGornyPanel2(){
+    public void wypelnijGornyPanel2(){//Selcka realizujaca zapytanie wyszukujace.
         for(int i = 0; i < 8; i++){
             podgladUpPanel.add(new JLabel(""));
         }
@@ -218,12 +244,21 @@ public class GUI_Raport_Uzytkownicy{
 
     }
 
+    /**
+     * Metoda inicjalizujaca srodkowy panel.
+     * @param rec
+     */
+
     public void wypelnijCentralnyPanel(ArrayList<ArrayList<String>> rec){
         podgladPanel = new JPanel();
         podgladPanel.setBorder(BorderFactory.createEmptyBorder(100,100,100,100));
         podgladPanel.setLayout(new GridLayout(0,rec.get(0).size()));
         wypelnij(rec);
     }
+
+    /**
+     * Metoda wyznaczajaca potrzebne dla raportu elementy.
+     */
 
     public void resolve(){
         RaportWrapper wartosci = a.getRaportUzytkownicy();
@@ -232,11 +267,21 @@ public class GUI_Raport_Uzytkownicy{
         grupowalne = wartosci.grupowalne;
     }
 
+    /**
+     * Metoda wypelniajaca wskazany JComboBox
+     * @param droplista
+     * @param elementy
+     */
+
     public void wypelnijDropList(JComboBox<ComboInsert> droplista, ArrayList<String> elementy){
         for(int i = 0; i < elementy.size(); i++){
             droplista.addItem(new ComboInsert(elementy.get(i), i));
         }
     }
+
+    /**
+     * Pomocnicza metoda wypelniajaca wszystkie droplisty.
+     */
 
     public void initialInserts(){
         clearDropList(sortWhatBox);
@@ -248,16 +293,30 @@ public class GUI_Raport_Uzytkownicy{
         wypelnijDropList(searchSortBox, atrybuty);
     }
 
+    /**
+     * Metoda czyszczaca zawartosc JComboBox
+     * @param x
+     */
+
     public void clearDropList(JComboBox<ComboInsert> x){
         for(int i=x.getItemCount()-1;i>-1;i--){
             x.removeItemAt(i);
         }
     }
 
+    /**
+     * Metoda wypelniajaca dropliste dla sortowania przy GROUP BY
+     * @param s
+     */
+
     public void updateDropList(String s){
         sortWhatBox.addItem(new ComboInsert(s, 0));
         sortWhatBox.addItem(new ComboInsert("zlicz", 1));
     }
+
+    /**
+     * Metoda tworzaca zapytanie GROUP BY
+     */
 
     public void resloveQuery1(){
         Object item = groupBox.getSelectedItem();
@@ -278,6 +337,10 @@ public class GUI_Raport_Uzytkownicy{
         aktualizujCentralnyPanel(a.uzytkownicyExecuteRaportQuery1(query, nam));
     }
 
+    /**
+     * Metoda tworzaca zapytanie wyszukujace
+     */
+
     public void resloveQuery2(){
         Object item = searchBox.getSelectedItem();
         String nam = ((ComboInsert)item).getName();
@@ -297,6 +360,10 @@ public class GUI_Raport_Uzytkownicy{
         aktualizujCentralnyPanel(a.uzytkownicyExecuteRaportQuery2(query));
     }
 
+    /**
+     * Metoda przywracajaca domyslne wartosci.
+     */
+
     public void reset(){
         searchField.setText("");
         varField.setText("");
@@ -308,6 +375,11 @@ public class GUI_Raport_Uzytkownicy{
         initialInserts();
         aktualizujCentralnyPanel(records);
     }
+
+    /**
+     * Pomocnicza metoda wypelniajaca srodkowy panel podanymi danymi.
+     * @param rec
+     */
 
     public void aktualizujCentralnyPanel(ArrayList<ArrayList<String>> rec){
         podgladPanel.removeAll();

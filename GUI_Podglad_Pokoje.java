@@ -3,6 +3,11 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 
+/**
+ * Klasa GUI_Podglad_Pokoje
+ * Klasa realizujaca podglad zawartosci tabeli pokoj
+ */
+
 public class GUI_Podglad_Pokoje{
     public int login_id;
     public GUI_Login mainWindow;

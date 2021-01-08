@@ -1,5 +1,10 @@
 import java.util.*;
 
+/**
+ * Klasa RaportWrapper
+ * Pomocnicza klasa opakowujaca zmienne.
+ */
+
 public class RaportWrapper{
     public ArrayList<String> grupowalne;
     public ArrayList<ArrayList<String>> calosc;

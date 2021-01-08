@@ -3,6 +3,11 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 
+/**
+ * Klasa GUI_Podglad_Kategoria
+ * Klasa realizujaca podglad zawartosci tabeli kategoria
+ */
+
 public class GUI_Podglad_Kategoria{
     public int login_id;
     public GUI_Login mainWindow;

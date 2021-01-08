@@ -3,6 +3,11 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 
+/**
+ * Klasa GUI_Podglad_Rezerwacje
+ * Klasa realizujaca podglad zawartosci tabeli rezerwacja
+ */
+
 public class GUI_Podglad_Rezerwacje{
     public int login_id;
     public GUI_Login mainWindow;

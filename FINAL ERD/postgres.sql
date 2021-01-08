@@ -5,7 +5,7 @@ CREATE TABLE "panel" (
 );
 
 CREATE TABLE "uzytkownik" (
-  "uzytkownik_id" int PRIMARY KEY,
+  "uzytkownik_id" serial PRIMARY KEY,
   "imie" varchar,
   "nazwisko" varchar,
   "e_mail" text,
@@ -89,8 +89,8 @@ ALTER TABLE "czarna_lista" ADD FOREIGN KEY ("uzytkownik_id") REFERENCES "uzytkow
 ALTER TABLE "rezygnacja_z_rezerwacji_info" ADD FOREIGN KEY ("rezerwacja_id") REFERENCES "rezerwacje" ("rezerwacja_id");
 
 
-INSERT INTO "uzytkownik" VALUES (0, 'ADMIN', 'ADMIN', 'TEST@TEST.COM', 999999999, 'HeadAdmin');
-INSERT INTO "panel" VALUES (0, 'admin', 'admin');
+INSERT INTO "uzytkownik"("imie","nazwisko","e_mail","numer","typ") VALUES (0, 'ADMIN', 'ADMIN', 'TEST@TEST.COM', 999999999, 'HeadAdmin');
+INSERT INTO "panel" VALUES (latest_uzytkownik_id(), 'admin', 'admin');
 CREATE VIEW uzytkownicy AS SELECT * FROM uzytkownik u JOIN panel p ON u.uzytkownik_id = p.uzyt_id;
 CREATE VIEW pokojeView AS SELECT pokoj_id, numer_pokoju, pietro, liczba_miejsc, p.kategoria_id, nazwa_kategorii, cena_od_osoby FROM pokoj p JOIN kategoria k ON p.kategoria_id = k.kategoria_id;
 -- CREATE VIEW mojeRezerwacje1 AS SELECT * FROM 
@@ -106,9 +106,7 @@ BEGIN
     EXCEPTION WHEN others THEN
     RETURN FALSE;
 END;
-$$
-STRICT
-LANGUAGE plpgsql IMMUTABLE;
+$$LANGUAGE 'plpgsql';
 
 -------------------------------------------------------------
 
@@ -580,3 +578,15 @@ CREATE TRIGGER trigger_TransakcjaRejestracjaChecker BEFORE INSERT ON projekt.pan
 
 select typ, count(*) from uzytkownicy group by typ;
 select typ, count(*) from uzytkownicy group by imie, typ having imie like 'Kamil';
+
+--------------------------------------------------------
+CREATE OR REPLACE FUNCTION latest_uzytkownik_id() RETURNS int AS $$
+DECLARE 
+    x INT;
+    rec RECORD;
+BEGIN
+    SELECT MAX(uzytkownik_id) AS latest INTO rec FROM projekt.uzytkownik;
+    x := rec.latest;
+    RETURN x;
+END;
+$$LANGUAGE 'plpgsql';

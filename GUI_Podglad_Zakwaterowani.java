@@ -3,6 +3,11 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 
+/**
+ * Klasa GUI_Podglad_Zakwaterowani
+ * Klasa realizujaca podglad zawartosci tabeli zakwaterowani_goscie_info
+ */
+
 public class GUI_Podglad_Zakwaterowani{
     public int login_id;
     public GUI_Login mainWindow;

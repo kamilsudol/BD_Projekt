@@ -75,18 +75,18 @@ public class Polaczenie {
 
   public String zarejestruj(String imie, String nazwisko, String email, String telefon, String login, String haslo, String typ){
     try {
-      PreparedStatement counted_id = c.prepareStatement("SELECT COUNT(uzyt_id) AS id FROM projekt.panel",ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
-      ResultSet result_count_id = counted_id.executeQuery();
-      result_count_id.next();
-      String string_id = result_count_id.getString("id");
-      int id = Integer.parseInt(string_id);
-      id++;
-      result_count_id.close();
-      counted_id.close();
+//      PreparedStatement counted_id = c.prepareStatement("SELECT COUNT(uzyt_id) AS id FROM projekt.panel",ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
+//      ResultSet result_count_id = counted_id.executeQuery();
+//      result_count_id.next();
+//      String string_id = result_count_id.getString("id");
+//      int id = Integer.parseInt(string_id);
+//      id++;
+//      result_count_id.close();
+//      counted_id.close();
 
       PreparedStatement pst1 = c.prepareStatement("BEGIN");
-      PreparedStatement pst2 = c.prepareStatement("INSERT INTO projekt.uzytkownik VALUES("+id+",\'"+imie+"\',\'"+nazwisko+"\',\'"+email+"\',\'"+telefon+"\',\'"+typ+"\' )");
-      PreparedStatement pst3 = c.prepareStatement("INSERT INTO projekt.panel VALUES("+id+", \'"+login+"\',\'"+haslo+"\')");
+      PreparedStatement pst2 = c.prepareStatement("INSERT INTO projekt.uzytkownik(\"imie\",\"nazwisko\",\"e_mail\",\"numer\",\"typ\") VALUES(\'"+imie+"\',\'"+nazwisko+"\',\'"+email+"\',\'"+telefon+"\',\'"+typ+"\' )");
+      PreparedStatement pst3 = c.prepareStatement("INSERT INTO projekt.panel VALUES(projekt.latest_uzytkownik_id(), \'"+login+"\',\'"+haslo+"\')");
       PreparedStatement pst4 = c.prepareStatement("COMMIT");
 
       pst1.executeUpdate();
@@ -883,6 +883,11 @@ public class Polaczenie {
       }
   }
 
+    /**
+     * Metoda zwracajaca wartosci dla podlgadu raportu o uzytkownikach.
+     * @return
+     */
+
   public RaportWrapper getRaportUzytkownicy(){
     try {
       PreparedStatement pst = c.prepareStatement("SELECT * FROM projekt.uzytkownicy",ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
@@ -915,6 +920,14 @@ public class Polaczenie {
           return new RaportWrapper();
       }
   }
+
+    /**
+     * Metoda egzekwujaca pierwsze zapytanie z raportu o uzytkownikach.
+     * @param query
+     * @param nam
+     * @return
+     */
+
   ArrayList<ArrayList<String>> uzytkownicyExecuteRaportQuery1(String query, String nam){
     try {
       PreparedStatement pst = c.prepareStatement(query, ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
@@ -940,6 +953,13 @@ public class Polaczenie {
           return new ArrayList<ArrayList<String>>();
       }
   }
+
+    /**
+     * Metoda egzekwujaca drugie zapytanie z raportu o uzytkownikach.
+     * @param query
+     * @param nam
+     * @return
+     */
 
   ArrayList<ArrayList<String>> uzytkownicyExecuteRaportQuery2(String query){
     try {
