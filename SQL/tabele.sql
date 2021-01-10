@@ -1,3 +1,7 @@
+-- DROP SCHEMA projekt CASCADE;
+-- CREATE SCHEMA projekt;
+-- SET SEARCH_PATH TO projekt;
+
 CREATE TABLE "panel" (
   "uzyt_id" int PRIMARY KEY,
   "login" varchar,
