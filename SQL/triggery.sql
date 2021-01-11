@@ -218,6 +218,9 @@ BEGIN
     IF rec.c >= 5 THEN
         INSERT INTO projekt.czarna_lista("uzytkownik_id","powod") VALUES(NEW.uzytkownik_id, 'Ciagle rezygnowanie ze skladanych rezerwacji.');
     END IF;
+    DELETE FROM projekt.oplata WHERE rezerwacja_id = NEW.rezerwacja_id;
+    DELETE FROM projekt.dodatkowe_uslugi WHERE rezerwacja_id = NEW.rezerwacja_id;
+    DELETE FROM projekt.rezerwacje WHERE rezerwacja_id = NEW.rezerwacja_id;
     RETURN NEW;
 END;
 $$LANGUAGE 'plpgsql';
