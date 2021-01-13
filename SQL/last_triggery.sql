@@ -114,43 +114,6 @@ END;
 $$LANGUAGE 'plpgsql';
 
 CREATE TRIGGER trigger_panel_validator BEFORE INSERT ON projekt.panel FOR EACH ROW EXECUTE PROCEDURE panel_validator();
-
-------------------------------------------------------------
-CREATE OR REPLACE FUNCTION platnosc_rezerwacja() RETURNS TRIGGER AS $$
-DECLARE
-    cena NUMERIC;
-    liczba_dni INT;
-    rec RECORD;
-BEGIN
-    liczba_dni := projekt.get_liczba_dni(NEW.od_kiedy, NEW.do_kiedy);
-    SELECT liczba_miejsc, cena_od_osoby INTO rec FROM projekt.pokojeView WHERE pokoj_id = NEW.pokoj_id;
-    cena := liczba_dni*rec.cena_od_osoby*(NEW.liczba_doroslych + 0.5*NEW.liczba_dzieci + 0.25*(rec.liczba_miejsc - NEW.liczba_dzieci - NEW.liczba_doroslych));
-    RAISE NOTICE 'PLATNOSC REZERWACJA: %', cena;
-    RAISE NOTICE 'LICZBA DNI: %', liczba_dni;
-    INSERT INTO projekt.oplata("rezerwacja_id", "status_czy_oplacone", "kwota") VALUES(NEW.rezerwacja_id, 'Nieoplacone', cena);
-    RETURN NEW;
-END;
-$$LANGUAGE 'plpgsql';
-
-CREATE TRIGGER trigger_platnosc_rezerwacja AFTER INSERT ON projekt.rezerwacje FOR EACH ROW EXECUTE PROCEDURE platnosc_rezerwacja();
-
------------------------------
-CREATE OR REPLACE FUNCTION platnosc_update() RETURNS TRIGGER AS $$
-DECLARE
-    rec RECORD;
-    r_id INT;
-    dodatkowa_kwota NUMERIC;
-BEGIN
-    r_id := projekt.latest_rezerwacja_id();
-    SELECT liczba_doroslych, liczba_dzieci INTO rec FROM projekt.rezerwacje WHERE rezerwacja_id = r_id;
-    dodatkowa_kwota := NEW.cena_od_osoby*(rec.liczba_doroslych + 0.5*rec.liczba_dzieci);
-    RAISE NOTICE 'CENA USLUGI: %', dodatkowa_kwota;
-    UPDATE projekt.oplata SET kwota = kwota + dodatkowa_kwota WHERE rezerwacja_id = r_id;
-    RETURN NEW;
-END;
-$$LANGUAGE 'plpgsql';
-
-CREATE TRIGGER trigger_platnosc_update AFTER INSERT ON projekt.dodatkowe_uslugi FOR EACH ROW EXECUTE PROCEDURE platnosc_update();
 -----------------------------
 CREATE OR REPLACE FUNCTION oplataStatus() RETURNS TRIGGER AS $$
 DECLARE
@@ -163,8 +126,6 @@ BEGIN
         IF OLD.status_czy_oplacone LIKE 'Nieoplacone' THEN
             IF NEW.status_czy_oplacone LIKE 'Oplacone' THEN
                 INSERT INTO projekt.zakwaterowani_goscie_info("rezerwacja_id","status_czy_zakwaterowany") VALUES(rec.rezerwacja_id, 'Oczekiwanie na zakwaterowanie');
-            ELSIF NEW.status_czy_oplacone LIKE 'Nieoplacone - rezygnacja' THEN
-                INSERT INTO projekt.rezygnacja_z_rezerwacji_info("rezerwacja_id", "uzytkownik_id") VALUES(rec.rezerwacja_id, rec.uzytkownik_id);
             END IF;
             RETURN NEW;
         ELSE
@@ -176,7 +137,6 @@ END;
 $$LANGUAGE 'plpgsql';
 
 CREATE TRIGGER trigger_platnosc_status BEFORE UPDATE ON projekt.oplata FOR EACH ROW EXECUTE PROCEDURE oplataStatus();
-
 -----------------------------------------------
 CREATE OR REPLACE FUNCTION RezerwacjaNaTydzienPrzed() RETURNS TRIGGER AS $$
 BEGIN
@@ -190,25 +150,6 @@ END;
 $$LANGUAGE 'plpgsql';
 
 CREATE TRIGGER trigger_RezerwacjaNaTydzienPrzed BEFORE INSERT ON projekt.rezerwacje FOR EACH ROW EXECUTE PROCEDURE RezerwacjaNaTydzienPrzed();
----------------------------------------------
-CREATE OR REPLACE FUNCTION RezerwacjaOsobyValidator() RETURNS TRIGGER AS $$
-DECLARE
-    rec RECORD;
-BEGIN
-    SELECT liczba_miejsc AS lm INTO rec FROM projekt.pokoj WHERE pokoj_id = NEW.pokoj_id;
-    IF NEW.liczba_dzieci = 0 AND NEW.liczba_doroslych = 0 THEN
-        RAISE EXCEPTION '||Nie mozna zrealizowac rezerwacji dla braku zadeklarowanych osob!||';
-        RETURN NULL;
-    ELSIF NEW.liczba_dzieci + NEW.liczba_doroslych > rec.lm THEN
-        RAISE EXCEPTION '||Nie mozna zrealizowac rezerwacji dla liczby osob przewyzszajacej pojemnosc pokoju!||';
-        RETURN NULL;
-    ELSE
-        RETURN NEW;
-    END IF;
-END;
-$$LANGUAGE 'plpgsql';
-
-CREATE TRIGGER trigger_RezerwacjaOsobyValidator BEFORE INSERT ON projekt.rezerwacje FOR EACH ROW EXECUTE PROCEDURE RezerwacjaOsobyValidator();
 -----------------------------------------
 CREATE OR REPLACE FUNCTION RezygnacjaChecker() RETURNS TRIGGER AS $$
 DECLARE
@@ -218,8 +159,6 @@ BEGIN
     IF rec.c >= 5 THEN
         INSERT INTO projekt.czarna_lista("uzytkownik_id","powod") VALUES(NEW.uzytkownik_id, 'Ciagle rezygnowanie ze skladanych rezerwacji.');
     END IF;
-    DELETE FROM projekt.oplata WHERE rezerwacja_id = NEW.rezerwacja_id;
-    DELETE FROM projekt.dodatkowe_uslugi WHERE rezerwacja_id = NEW.rezerwacja_id;
     DELETE FROM projekt.rezerwacje WHERE rezerwacja_id = NEW.rezerwacja_id;
     RETURN NEW;
 END;
@@ -284,3 +223,12 @@ END;
 $$LANGUAGE 'plpgsql';
 
 CREATE TRIGGER trigger_TransakcjaRejestracjaChecker BEFORE INSERT ON projekt.panel FOR EACH ROW EXECUTE PROCEDURE TransakcjaRejestracjaChecker();
+-----------------------------
+CREATE OR REPLACE FUNCTION DeleteRezerwacje() RETURNS TRIGGER AS $$
+BEGIN
+    DELETE FROM projekt.oplata WHERE rezerwacja_id = OLD.rezerwacja_id;
+    DELETE FROM projekt.dodatkowe_uslugi WHERE rezerwacja_id = OLD.rezerwacja_id;
+END;
+$$LANGUAGE 'plpgsql';
+
+CREATE TRIGGER trigger_DeleteRezerwacje BEFORE DELETE ON projekt.rezerwacje FOR EACH ROW EXECUTE PROCEDURE DeleteRezerwacje();

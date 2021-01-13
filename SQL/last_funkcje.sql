@@ -31,26 +31,6 @@ BEGIN
     CLOSE kursor_pokoj;
 END;
 $$LANGUAGE 'plpgsql';
---------------------------
-CREATE OR REPLACE FUNCTION get_liczba_dni(data_start DATE, data_stop DATE) RETURNS int AS $$
-DECLARE
-    x INT;
-BEGIN
-    x := data_stop - data_start + 1;
-    RETURN x;
-END;
-$$LANGUAGE 'plpgsql';
-----------------------------
-CREATE OR REPLACE FUNCTION latest_rezerwacja_id() RETURNS int AS $$
-DECLARE 
-    x INT;
-    rec RECORD;
-BEGIN
-    SELECT MAX(rezerwacja_id) AS latest INTO rec FROM projekt.rezerwacje;
-    x := rec.latest;
-    RETURN x;
-END;
-$$LANGUAGE 'plpgsql';
 
 -------------------------
 CREATE OR REPLACE FUNCTION oplataZaplac(id int) RETURNS void AS $$
@@ -60,8 +40,11 @@ END;
 $$LANGUAGE 'plpgsql';
 -------------------------------------------
 CREATE OR REPLACE FUNCTION oplataRezygnuj(id int) RETURNS void AS $$
+DECLARE
+    rec RECORD;
 BEGIN
-    UPDATE projekt.oplata SET status_czy_oplacone = 'Nieoplacone - rezygnacja' WHERE oplata_id = id;
+    SELECT * INTO rec FROM projekt.rezerwacje WHERE rezerwacja_id = (SELECT rezerwacja_id FROM projekt.oplata WHERE oplata_id = id);
+    INSERT INTO projekt.rezygnacja_z_rezerwacji_info("rezerwacja_id", "uzytkownik_id") VALUES(rec.rezerwacja_id, rec.uzytkownik_id);
 END;
 $$LANGUAGE 'plpgsql';
 ------------------------------------------- 
@@ -91,6 +74,7 @@ BEGIN
                 UPDATE projekt.zakwaterowani_goscie_info SET status_czy_zakwaterowany='Zakwaterowany' WHERE rezerwacja_id = rec.rezerwacja_id;
             ELSIF rec.status_czy_oplacone LIKE 'Nieoplacone' THEN
                 INSERT INTO projekt.czarna_lista("uzytkownik_id","powod") VALUES(rec.uzytkownik_id, 'Nieoplacenie rezerwacji w terminie.');
+                DELETE FROM projekt.rezerwacje WHERE rezerwacja_id = rec.rezerwacja_id;
             END IF;
         ELSIF rec.do_kiedy - CAST(NOW() AS DATE) <= 0 AND rec.status_czy_oplacone LIKE 'Oplacone' THEN
             UPDATE projekt.zakwaterowani_goscie_info SET status_czy_zakwaterowany='Wykwaterowany' WHERE rezerwacja_id = rec.rezerwacja_id;
@@ -113,16 +97,5 @@ BEGIN
         flag := 0;
     END IF;
     RETURN flag;
-END;
-$$LANGUAGE 'plpgsql';
--------------------------------
-CREATE OR REPLACE FUNCTION latest_uzytkownik_id() RETURNS int AS $$
-DECLARE 
-    x INT;
-    rec RECORD;
-BEGIN
-    SELECT MAX(uzytkownik_id) AS latest INTO rec FROM projekt.uzytkownik;
-    x := rec.latest;
-    RETURN x;
 END;
 $$LANGUAGE 'plpgsql';
