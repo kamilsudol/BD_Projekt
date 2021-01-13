@@ -706,7 +706,7 @@ public class Polaczenie {
       return "Pomyslnie zrezygnowano z rezerwacji!";
       }
       catch(SQLException e)  {
-//          System.out.println("Blad podczas przetwarzania danych:"+e) ;
+         System.out.println("Blad podczas przetwarzania danych:"+e) ;
           String powod = e.getMessage();
           String[] powod_tab = powod.split("[||]");
           return "Blad przy rezygnacji z rezerwacji! " +powod_tab[2];
@@ -1300,7 +1300,7 @@ public class Polaczenie {
             ArrayList<ArrayList<String>> records = new ArrayList<>();
             ArrayList<String> tmp;
             ArrayList<String> atrybuty = new ArrayList<>(Arrays.asList("rezerwacja_id","imie","nazwisko","data_rezerwacji","od_kiedy","do_kiedy","numer_pokoju","nazwa_kategorii","nazwa_uslugi","kwota","status_czy_oplacone"));
-            ArrayList<String> grupowalne = new ArrayList<>(Arrays.asList("imie", "nazwisko", "numer_pokoju", "nazwa_uslugi","status_czy_oplacone"));
+            ArrayList<String> grupowalne = new ArrayList<>(Arrays.asList("imie", "nazwisko", "numer_pokoju", "nazwa_uslugi","status_czy_oplacone", "nazwa_kategorii"));
             ArrayList<String> agregaty = new ArrayList<>(Arrays.asList("COUNT", "SUM", "AVG", "MIN", "MAX"));
 
             records.add(atrybuty);

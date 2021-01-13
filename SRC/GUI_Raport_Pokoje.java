@@ -51,6 +51,7 @@ public class GUI_Raport_Pokoje {
         this.mainWindow = mainWindow;
         a = p;
         resolve();
+        podgladUpPanel = new JPanel();
         wypelnijGornyPanel1();
         wypelnijGornyPanel2();
         wypelnijCentralnyPanel(records);
@@ -115,7 +116,7 @@ public class GUI_Raport_Pokoje {
      */
 
     public void wypelnijGornyPanel1(){//Sekcja realizujaca zapytanie GROUP BY
-        podgladUpPanel = new JPanel();
+        podgladUpPanel.removeAll();
         podgladUpPanel.setBorder(BorderFactory.createEmptyBorder(20,20,20,20));
         podgladUpPanel.setLayout(new GridLayout(0,8));
 
@@ -136,9 +137,11 @@ public class GUI_Raport_Pokoje {
         groupBox.setEnabled(false);
         groupBox.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e){
-                Object item = groupBox.getSelectedItem();
-                clearDropList(sortWhatBox);
-                updateDropList(((ComboInsert)item).getName());
+                if(groupBox.getItemCount() != 0){
+                    Object item = groupBox.getSelectedItem();
+                    clearDropList(sortWhatBox);
+                    updateDropList(((ComboInsert)item).getName());
+                }
             }
         });
         podgladUpPanel.add(groupBox);
@@ -299,8 +302,10 @@ public class GUI_Raport_Pokoje {
      */
 
     public void clearDropList(JComboBox<ComboInsert> x){
-        for(int i=x.getItemCount()-1;i>-1;i--){
-            x.removeItemAt(i);
+        if(x.getItemCount()!=0){
+            for(int i=x.getItemCount()-1;i>-1;i--){
+                x.removeItemAt(i);
+            }
         }
     }
 
@@ -324,7 +329,7 @@ public class GUI_Raport_Pokoje {
 
         String query = "SELECT "+nam+", COUNT("+nam+") AS zlicz FROM projekt.pokojeView GROUP BY " + nam;
         if(varCheck.isSelected()){
-            query+=" HAVING " + nam +" LIKE \'%"+varField.getText() +"%\'";
+            query+=" HAVING CAST(" + nam +" AS TEXT) LIKE \'%"+varField.getText() +"%\'";
         }
         if(sortCheck.isSelected()){
             item = sortWhatBox.getSelectedItem();
@@ -365,14 +370,10 @@ public class GUI_Raport_Pokoje {
      */
 
     public void reset(){
-        searchField.setText("");
-        varField.setText("");
-        groupCheck.setSelected(false);
-        varCheck.setSelected(false);
-        sortHowBox.setSelected(false);
-        searchSortCheck.setSelected(false);
-        searchSortHowBox.setSelected(false);
+        wypelnijGornyPanel1();
+        wypelnijGornyPanel2();
         initialInserts();
+        podgladUpPanel.validate();
         aktualizujCentralnyPanel(records);
     }
 

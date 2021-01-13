@@ -52,6 +52,7 @@ public class GUI_Raport_Rezerwacje{
         this.mainWindow = mainWindow;
         a = p;
         resolve();
+        podgladUpPanel = new JPanel();
         wypelnijGornyPanel1();
         wypelnijGornyPanel2();
         wypelnijCentralnyPanel(records);
@@ -116,7 +117,7 @@ public class GUI_Raport_Rezerwacje{
      */
 
     public void wypelnijGornyPanel1(){//Sekcja realizujaca zapytanie GROUP BY
-        podgladUpPanel = new JPanel();
+        podgladUpPanel.removeAll();
         podgladUpPanel.setBorder(BorderFactory.createEmptyBorder(20,20,20,20));
         podgladUpPanel.setLayout(new GridLayout(0,8));
 
@@ -325,7 +326,7 @@ public class GUI_Raport_Rezerwacje{
             query+= "SELECT "+nam+", "+fun+"(kwota) FROM projekt.RezerwacjeAllInfoView GROUP BY " + nam;
         }
         if(varCheck.isSelected()){
-            query+=" HAVING " + nam +" LIKE \'%"+varField.getText() +"%\'";
+            query+=" HAVING CAST(" + nam +" AS TEXT) LIKE \'%"+varField.getText() +"%\'";
         }
         if(sortCheck.isSelected()){
             item = sortWhatBox.getSelectedItem();
@@ -366,13 +367,10 @@ public class GUI_Raport_Rezerwacje{
      */
 
     public void reset(){
-        searchField.setText("");
-        varField.setText("");
-        varCheck.setSelected(false);
-        sortHowBox.setSelected(false);
-        searchSortCheck.setSelected(false);
-        searchSortHowBox.setSelected(false);
+        wypelnijGornyPanel1();
+        wypelnijGornyPanel2();
         initialInserts();
+        podgladUpPanel.validate();
         aktualizujCentralnyPanel(records);
     }
 
