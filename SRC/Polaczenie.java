@@ -24,7 +24,7 @@ public class Polaczenie {
       System.exit(1);
     }
     if (c != null) {
-      System.out.println("Polaczenie z baza danych OK ! ");
+      // System.out.println("Polaczenie z baza danych OK ! ");
     }else{
         System.out.println("Brak polaczenia z baza, dalsza czesc aplikacji nie jest wykonywana.");   
     }
@@ -55,7 +55,7 @@ public class Polaczenie {
       }
       }
      catch(SQLException e)  {
-          System.out.println("Blad podczas przetwarzania danych:"+e) ;
+          // System.out.println("Blad podczas przetwarzania danych:"+e) ;
           return -1;
         }
   }
@@ -93,13 +93,13 @@ public class Polaczenie {
       return "Pomyslnie dodano nowego uzytkownika!";
       }
       catch(SQLException e)  {
-          System.out.println("Blad podczas przetwarzania danych:"+e) ;
+          // System.out.println("Blad podczas przetwarzania danych:"+e) ;
           try{
             PreparedStatement pst5 = c.prepareStatement("ROLLBACK");
             pst5.executeUpdate();
             pst5.close();
           }catch(SQLException d){
-            System.out.println("Blad podczas przetwarzania danych:"+d) ;
+            // System.out.println("Blad podczas przetwarzania danych:"+d) ;
             return "Blad przy dodawaniu nowego uzytkownika!";
           }
           String powod = e.getMessage();
@@ -610,13 +610,13 @@ public class Polaczenie {
       return "Pomyslnie dodano rezerwacje!";
       }
       catch(SQLException e)  {
-          System.out.println("Blad podczas przetwarzania danych:"+e) ;
+          // System.out.println("Blad podczas przetwarzania danych:"+e) ;
           try{
             PreparedStatement pst5 = c.prepareStatement("ROLLBACK");
             pst5.executeUpdate();
             pst5.close();
           }catch(SQLException d){
-           System.out.println("Blad podczas przetwarzania danych:"+d) ;
+          //  System.out.println("Blad podczas przetwarzania danych:"+d) ;
             return "Blad przy dodawaniu rezerwacji!";
           }
           String powod = e.getMessage();
@@ -677,14 +677,13 @@ public class Polaczenie {
   public String oplacRezerwacje(int id){
     try{
       PreparedStatement pst1 = c.prepareStatement("SELECT projekt.oplataZaplac("+id+")");
-      // pst1.executeUpdate();
       pst1.executeQuery();
       pst1.close();  
       
       return "Pomyslnie oplacono rezerwacje!";
       }
       catch(SQLException e)  {
-          System.out.println("Blad podczas przetwarzania danych:"+e) ;
+          // System.out.println("Blad podczas przetwarzania danych:"+e) ;
           String powod = e.getMessage();
           String[] powod_tab = powod.split("[||]");
           return "Blad przy oplacaniu rezerwacji! " +powod_tab[2];
@@ -706,7 +705,7 @@ public class Polaczenie {
       return "Pomyslnie zrezygnowano z rezerwacji!";
       }
       catch(SQLException e)  {
-         System.out.println("Blad podczas przetwarzania danych:"+e) ;
+        //  System.out.println("Blad podczas przetwarzania danych:"+e) ;
           String powod = e.getMessage();
           String[] powod_tab = powod.split("[||]");
           return "Blad przy rezygnacji z rezerwacji! " +powod_tab[2];
@@ -907,7 +906,7 @@ public class Polaczenie {
       return new RaportWrapper(records, atrybuty, grupowalne, null);
       }
       catch(SQLException e)  {
-         System.out.println("Blad podczas przetwarzania danych:"+e) ;
+        //  System.out.println("Blad podczas przetwarzania danych:"+e) ;
           return new RaportWrapper();
       }
   }
@@ -940,7 +939,7 @@ public class Polaczenie {
       return records;
       }
       catch(SQLException e)  {
-         System.out.println("Blad podczas przetwarzania danych:"+e) ;
+        //  System.out.println("Blad podczas przetwarzania danych:"+e) ;
           return new ArrayList<ArrayList<String>>();
       }
   }
@@ -979,7 +978,7 @@ public class Polaczenie {
       return records;
       }
       catch(SQLException e)  {
-         System.out.println("Blad podczas przetwarzania danych:"+e) ;
+        //  System.out.println("Blad podczas przetwarzania danych:"+e) ;
           return new ArrayList<ArrayList<String>>();
       }
   }
@@ -1016,7 +1015,7 @@ public class Polaczenie {
             return new RaportWrapper(records, atrybuty, grupowalne, null);
         }
         catch(SQLException e)  {
-            System.out.println("Blad podczas przetwarzania danych:"+e) ;
+            // System.out.println("Blad podczas przetwarzania danych:"+e) ;
             return new RaportWrapper();
         }
     }
@@ -1054,7 +1053,7 @@ public class Polaczenie {
             return records;
         }
         catch(SQLException e)  {
-            System.out.println("Blad podczas przetwarzania danych:"+e) ;
+            // System.out.println("Blad podczas przetwarzania danych:"+e) ;
             return new ArrayList<ArrayList<String>>();
         }
     }
@@ -1094,7 +1093,7 @@ public class Polaczenie {
             return new RaportWrapper(records, atrybuty, grupowalne, null);
         }
         catch(SQLException e)  {
-            System.out.println("Blad podczas przetwarzania danych:"+e) ;
+            // System.out.println("Blad podczas przetwarzania danych:"+e) ;
             return new RaportWrapper();
         }
     }
@@ -1135,7 +1134,7 @@ public class Polaczenie {
             return records;
         }
         catch(SQLException e)  {
-            System.out.println("Blad podczas przetwarzania danych:"+e) ;
+            // System.out.println("Blad podczas przetwarzania danych:"+e) ;
             return new ArrayList<ArrayList<String>>();
         }
     }
@@ -1170,7 +1169,7 @@ public class Polaczenie {
             return new RaportWrapper(records, atrybuty, grupowalne, null);
         }
         catch(SQLException e)  {
-            System.out.println("Blad podczas przetwarzania danych:"+e) ;
+            // System.out.println("Blad podczas przetwarzania danych:"+e) ;
             return new RaportWrapper();
         }
     }
@@ -1206,7 +1205,7 @@ public class Polaczenie {
             return records;
         }
         catch(SQLException e)  {
-            System.out.println("Blad podczas przetwarzania danych:"+e) ;
+            // System.out.println("Blad podczas przetwarzania danych:"+e) ;
             return new ArrayList<ArrayList<String>>();
         }
     }
@@ -1244,7 +1243,7 @@ public class Polaczenie {
             return new RaportWrapper(records, atrybuty, grupowalne, null);
         }
         catch(SQLException e)  {
-            System.out.println("Blad podczas przetwarzania danych:"+e) ;
+            // System.out.println("Blad podczas przetwarzania danych:"+e) ;
             return new RaportWrapper();
         }
     }
@@ -1283,7 +1282,7 @@ public class Polaczenie {
             return records;
         }
         catch(SQLException e)  {
-            System.out.println("Blad podczas przetwarzania danych:"+e) ;
+            // System.out.println("Blad podczas przetwarzania danych:"+e) ;
             return new ArrayList<ArrayList<String>>();
         }
     }
@@ -1325,7 +1324,7 @@ public class Polaczenie {
             return new RaportWrapper(records, atrybuty, grupowalne, agregaty);
         }
         catch(SQLException e)  {
-            System.out.println("Blad podczas przetwarzania danych:"+e) ;
+            // System.out.println("Blad podczas przetwarzania danych:"+e) ;
             return new RaportWrapper();
         }
     }
@@ -1358,7 +1357,7 @@ public class Polaczenie {
             return records;
         }
         catch(SQLException e)  {
-            System.out.println("Blad podczas przetwarzania danych:"+e) ;
+            // System.out.println("Blad podczas przetwarzania danych:"+e) ;
             return new ArrayList<ArrayList<String>>();
         }
     }
@@ -1400,7 +1399,7 @@ public class Polaczenie {
             return records;
         }
         catch(SQLException e)  {
-            System.out.println("Blad podczas przetwarzania danych:"+e) ;
+            // System.out.println("Blad podczas przetwarzania danych:"+e) ;
             return new ArrayList<ArrayList<String>>();
         }
     }

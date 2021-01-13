@@ -1,6 +1,11 @@
 import java.util.*;
 import java.io.*;
 
+/**
+ * Klasa InsertGenerator
+ * Klasa generujaca przykładowe insert uzytkownikow lub rezerwacji do projektowej bazy danych
+ */
+
 public class InsertGenerator {
     private final String file;
     private ArrayList<String> inserts;
@@ -127,7 +132,7 @@ public class InsertGenerator {
 //        uzyt.save();
 
         InsertGenerator rez = new InsertGenerator("rezerwacje.sql");
-        rez.generujRezerwacje(30);
+        rez.generujRezerwacje(100);
         rez.save();
     }
 }

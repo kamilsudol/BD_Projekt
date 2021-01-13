@@ -10,7 +10,6 @@ import java.awt.event.*;
 
 public class GUI_Register{
     public GUI_Login mainWindow;
-    // public JFrame registerFrame;
     public JPanel registerPanel;
     public JButton confirm;
     public JButton back;
@@ -38,7 +37,6 @@ public class GUI_Register{
     public GUI_Register(Polaczenie p, GUI_Login mainWindow){
         this.mainWindow = mainWindow;
         a = p;
-        // registerFrame = new JFrame();
         registerPanel = new JPanel();
         confirm = new JButton("Zatwierdz");
         back = new JButton("Powrot");
@@ -50,7 +48,7 @@ public class GUI_Register{
         hasloText= new JTextField(32);
         imieLabel = new JLabel("Podaj imie:");
         nazwiskoLabel = new JLabel("Podaj nazwisko:");
-        emailLabel = new JLabel("Podaj e-email:");
+        emailLabel = new JLabel("Podaj e-mail:");
         telefonLabel = new JLabel("Podaj telefon:");
         loginLabel = new JLabel("Podaj login:");
         hasloLabel = new JLabel("Podaj haslo:");

@@ -228,6 +228,7 @@ CREATE OR REPLACE FUNCTION DeleteRezerwacje() RETURNS TRIGGER AS $$
 BEGIN
     DELETE FROM projekt.oplata WHERE rezerwacja_id = OLD.rezerwacja_id;
     DELETE FROM projekt.dodatkowe_uslugi WHERE rezerwacja_id = OLD.rezerwacja_id;
+    RETURN OLD;
 END;
 $$LANGUAGE 'plpgsql';
 

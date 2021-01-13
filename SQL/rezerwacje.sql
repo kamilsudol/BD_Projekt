@@ -147,4 +147,3 @@ BEGIN;
 INSERT INTO projekt.rezerwacje("uzytkownik_id","pokoj_id","data_rezerwacji","od_kiedy","do_kiedy","liczba_dzieci","liczba_doroslych") VALUES(10, 8,NOW(),CAST('2020-4-23' AS DATE),CAST('2020-4-26' AS DATE), 0,0);
 INSERT INTO projekt.dodatkowe_uslugi("nazwa_uslugi", "cena_od_osoby", "rezerwacja_id") VALUES('Brak', 0.0, latest_rezerwacja_id());
 COMMIT;
-

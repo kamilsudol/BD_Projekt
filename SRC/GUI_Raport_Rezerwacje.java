@@ -178,9 +178,7 @@ public class GUI_Raport_Rezerwacje{
         pokaz1 = new JButton("Pokaz");
         pokaz1.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e){
-                // if(groupCheck.isSelected()){
                     resloveQuery1();
-                // }
             }
         });
         podgladUpPanel.add(pokaz1);

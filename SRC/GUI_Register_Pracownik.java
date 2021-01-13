@@ -10,7 +10,6 @@ import java.awt.event.*;
 public class GUI_Register_Pracownik{
     public int login_id;
     public GUI_Login mainWindow;
-    // public JFrame registerFrame;
     public JPanel registerPanel;
     public JButton confirm;
     public JButton menuButton;
@@ -41,7 +40,6 @@ public class GUI_Register_Pracownik{
         login_id = id;
         this.mainWindow = mainWindow;
         a = p;
-        // registerFrame = new JFrame();
         registerPanel = new JPanel();
         confirm = new JButton("Zatwierdz");
         imieText = new JTextField(32);
@@ -52,7 +50,7 @@ public class GUI_Register_Pracownik{
         hasloText= new JTextField(32);
         imieLabel = new JLabel("Podaj imie pracownika:");
         nazwiskoLabel = new JLabel("Podaj nazwisko pracownika:");
-        emailLabel = new JLabel("Podaj e-email pracownika:");
+        emailLabel = new JLabel("Podaj e-mail pracownika:");
         telefonLabel = new JLabel("Podaj telefon pracownika:");
         loginLabel = new JLabel("Podaj login pracownika:");
         hasloLabel = new JLabel("Podaj haslo pracownika:");
