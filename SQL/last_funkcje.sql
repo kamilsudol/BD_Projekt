@@ -1,5 +1,6 @@
 CREATE OR REPLACE FUNCTION numeric_check(TEXT) RETURNS BOOLEAN AS $$
-DECLARE x NUMERIC;
+DECLARE 
+    x NUMERIC;
 BEGIN
     x = $1::NUMERIC;
     RETURN TRUE;
@@ -8,6 +9,21 @@ BEGIN
 END;
 $$LANGUAGE 'plpgsql';
 
+-------------------------------------------------------------
+CREATE OR REPLACE FUNCTION zalogujCheck(log TEXT, pass TEXT) RETURNS INT AS $$
+DECLARE 
+    id INT;
+    rec RECORD;
+BEGIN
+    SELECT uzyt_id, haslo INTO rec FROM projekt.panel WHERE login = log;
+    IF rec.haslo = pass THEN
+        id := rec.uzyt_id;
+    ELSE
+        id := -1;
+    END IF;
+    RETURN id;
+END;
+$$LANGUAGE 'plpgsql';
 -------------------------------------------------------------
 CREATE OR REPLACE FUNCTION get_pokoje(liczba_osob INT, data_start DATE, data_stop DATE) RETURNS TABLE(id_pokoju INTEGER) AS $$
 DECLARE 
