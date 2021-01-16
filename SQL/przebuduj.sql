@@ -1,5 +1,5 @@
 \i tabele.sql
-\i wisoki.sql
+\i widoki.sql
 \i first_funkcje.sql
 \i first_triggery.sql
 \i inserty.sql

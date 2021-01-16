@@ -39,24 +39,20 @@ public class Polaczenie {
      */
 
   int checkPasswd(String login, String password){
-    try {
-       PreparedStatement pst = c.prepareStatement("SELECT uzyt_id, haslo FROM projekt.panel WHERE login = \'" + login+"\'",ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
-       ResultSet rs = pst.executeQuery();
-       String haslo;
-            rs.next();
-            haslo = rs.getString("haslo") ;
-            int id = Integer.parseInt(rs.getString("uzyt_id"));
-       rs.close();
-       pst.close();    
-      if(password.equals(haslo)){
-        return id;
-      }else{
-        return -1;
-      }
+      int a = -1;
+      try { 
+      PreparedStatement pst = c.prepareStatement("SELECT * FROM projekt.zalogujCheck(\'" + login+"\',\'" + password+"\')",ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
+        ResultSet rs = pst.executeQuery();
+        while (rs.next())  {
+              a = Integer.parseInt(rs.getString("zalogujCheck"));
+        }
+        rs.close();
+        pst.close();    
+        return a;
       }
      catch(SQLException e)  {
           // System.out.println("Blad podczas przetwarzania danych:"+e) ;
-          return -1;
+          return a;
         }
   }
 
@@ -841,7 +837,7 @@ public class Polaczenie {
       }
       catch(SQLException e)  {
 //          System.out.println("Blad podczas przetwarzania danych:"+e) ;
-          return -1;
+          return a;
       }
   }
 
