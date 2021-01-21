@@ -115,3 +115,31 @@ BEGIN
     RETURN flag;
 END;
 $$LANGUAGE 'plpgsql';
+-------------------------------------
+CREATE OR REPLACE FUNCTION DeleteUser(id int) RETURNS void AS $$
+DECLARE
+    rec RECORD;
+BEGIN
+    SELECT typ INTO rec FROM projekt.uzytkownik WHERE uzytkownik_id = id;
+    IF rec.typ LIKE 'HeadAdmin' THEN
+        RAISE EXCEPTION '||Operacja zabroniona! Nie mozna zablokowac HeadAdmina!||';
+    ELSE
+        DELETE FROM projekt.rezerwacje WHERE uzytkownik_id = id;
+        DELETE FROM projekt.uzytkownik WHERE uzytkownik_id = id;
+    END IF;
+    RETURN;
+END;
+$$LANGUAGE 'plpgsql';
+-------------------------------------
+CREATE OR REPLACE FUNCTION HeadAdminCheck(id int) RETURNS BOOLEAN AS $$
+DECLARE
+    rec RECORD;
+BEGIN
+    SELECT typ INTO rec FROM projekt.uzytkownik WHERE uzytkownik_id = id;
+    IF rec.typ LIKE 'HeadAdmin' THEN
+        RETURN TRUE;
+    ELSE
+        RETURN FALSE;
+    END IF;
+END;
+$$LANGUAGE 'plpgsql';

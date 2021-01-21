@@ -16,6 +16,7 @@ public class GUI_Menu_Admin{
     public JPanel menuPanel;
     public JLabel menuLabel;
     public JButton zablokuj;
+    public JButton usun;
     public JButton podglad_tabel;
     public JButton podglad_raportow;
     public JButton menuButton;
@@ -67,6 +68,23 @@ public class GUI_Menu_Admin{
         });
 
         menuPanel.add(zablokuj);
+
+        if(a.HeadAdmin(id)){//funkcjonalnosc dostepna tylko dla HeadAdmina
+            usun = new JButton("Usun uzytkownika");//Przycisk realizujacy mozliwosc usuniecia konkretnego uzytkownika
+            usun.addActionListener(new ActionListener(){
+                public void actionPerformed(ActionEvent e){
+                    GUI_Usun m = new GUI_Usun(a, mainWindow, login_id);
+                    mainWindow.frame.getContentPane().removeAll();
+                    mainWindow.frame.add(m.panelUp, BorderLayout.NORTH);
+                    mainWindow.frame.add(m.panelCenter, BorderLayout.CENTER);
+                    mainWindow.frame.add(m.panelDown, BorderLayout.SOUTH);
+                    mainWindow.frame.setTitle("BD PROJEKT - Usun uzytkownika");
+                    mainWindow.frame.validate();
+                }
+            });
+
+            menuPanel.add(usun);
+        }
 
         podglad_tabel = new JButton("Podglad tabel");//Przycisk realuzujacy mozliwosc podlgadu tabel bazy danych
         podglad_tabel.addActionListener(new ActionListener(){

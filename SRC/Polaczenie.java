@@ -869,6 +869,34 @@ public class Polaczenie {
       }
   }
 
+  /**
+     * Metoda zwracajaca informacje o wszystkich uzytkownikach.
+     * @return
+     */
+
+    public ArrayList<ComboUserInsert> getAllUsers(){
+      try {
+        PreparedStatement pst = c.prepareStatement("SELECT * FROM projekt.uzytkownik",ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
+        ResultSet rs = pst.executeQuery();
+        ArrayList<ComboUserInsert> records = new ArrayList<>();
+  
+        while (rs.next())  {
+              String id = rs.getString("uzytkownik_id");
+              String im = rs.getString("imie");
+              String naz = rs.getString("nazwisko");
+              String typ = rs.getString("typ");
+              records.add(new ComboUserInsert(Integer.parseInt(id), im, naz, typ));
+        }
+         rs.close();
+         pst.close();    
+        return records;
+        }
+        catch(SQLException e)  {
+  //          System.out.println("Blad podczas przetwarzania danych:"+e) ;
+            return new ArrayList<ComboUserInsert>();
+        }
+    }
+
     /**
      * Metoda zwracajaca wartosci dla podlgadu raportu o uzytkownikach.
      * @return
@@ -1399,4 +1427,44 @@ public class Polaczenie {
             return new ArrayList<ArrayList<String>>();
         }
     }
+
+    /**
+     * Metoda realizujaca usuniecie uzytkownika z bazy.
+     * @param id
+     * @return
+     */
+
+  public String Usun(int id){
+    try{
+      PreparedStatement pst1 = c.prepareStatement("SELECT projekt.DeleteUser("+id+")");
+      pst1.executeQuery();
+      pst1.close();  
+      
+      return "Pomyslnie usunieto uzytkownika!";
+      }
+      catch(SQLException e)  {
+         System.out.println("Blad podczas przetwarzania danych:"+e) ;
+          String powod = e.getMessage();
+          String[] powod_tab = powod.split("[||]");
+          return "Blad przy usuwaniu uzytkownka! " +powod_tab[2];
+      }
+  }
+
+  public Boolean HeadAdmin(int id){
+    String a = "";
+    try { 
+      PreparedStatement pst = c.prepareStatement("SELECT * FROM projekt.HeadAdminCheck("+id+")",ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
+      ResultSet rs = pst.executeQuery();
+      while (rs.next())  {
+            a = rs.getString("HeadAdminCheck");
+      }
+      rs.close();
+      pst.close();
+      return a.equals("t");
+      }
+      catch(SQLException e)  {
+        //  System.out.println("Blad podczas przetwarzania danych:"+e) ;
+          return false;
+      }
+  }
 }

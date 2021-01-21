@@ -228,8 +228,20 @@ CREATE OR REPLACE FUNCTION DeleteRezerwacje() RETURNS TRIGGER AS $$
 BEGIN
     DELETE FROM projekt.oplata WHERE rezerwacja_id = OLD.rezerwacja_id;
     DELETE FROM projekt.dodatkowe_uslugi WHERE rezerwacja_id = OLD.rezerwacja_id;
+    DELETE FROM projekt.zakwaterowani_goscie_info WHERE rezerwacja_id = OLD.rezerwacja_id;
     RETURN OLD;
 END;
 $$LANGUAGE 'plpgsql';
 
 CREATE TRIGGER trigger_DeleteRezerwacje BEFORE DELETE ON projekt.rezerwacje FOR EACH ROW EXECUTE PROCEDURE DeleteRezerwacje();
+-----------------------------
+CREATE OR REPLACE FUNCTION DeleteUserPanel() RETURNS TRIGGER AS $$
+BEGIN
+    DELETE FROM projekt.panel WHERE uzyt_id = OLD.uzytkownik_id;
+    DELETE FROM projekt.rezygnacja_z_rezerwacji_info WHERE uzytkownik_id = OLD.uzytkownik_id;
+    DELETE FROM projekt.czarna_lista WHERE uzytkownik_id = OLD.uzytkownik_id;
+    RETURN OLD;
+END;
+$$LANGUAGE 'plpgsql';
+
+CREATE TRIGGER trigger_DeleteUserPanel BEFORE DELETE ON projekt.uzytkownik FOR EACH ROW EXECUTE PROCEDURE DeleteUserPanel();
