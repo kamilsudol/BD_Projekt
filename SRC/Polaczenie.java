@@ -848,7 +848,7 @@ public class Polaczenie {
 
   public ArrayList<ComboUserInsert> getUsers(){
     try {
-      PreparedStatement pst = c.prepareStatement("SELECT * FROM projekt.uzytkownik u WHERE (SELECT uzytkownik_id FROM projekt.czarna_lista WHERE uzytkownik_id = u.uzytkownik_id) IS NULL",ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
+      PreparedStatement pst = c.prepareStatement("SELECT * FROM projekt.uzytkownik u WHERE (SELECT uzytkownik_id FROM projekt.czarna_lista WHERE uzytkownik_id = u.uzytkownik_id LIMIT 1) IS NULL",ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
       ResultSet rs = pst.executeQuery();
       ArrayList<ComboUserInsert> records = new ArrayList<>();
 
@@ -864,7 +864,7 @@ public class Polaczenie {
       return records;
       }
       catch(SQLException e)  {
-//          System.out.println("Blad podczas przetwarzania danych:"+e) ;
+        //  System.out.println("Blad podczas przetwarzania danych:"+e) ;
           return new ArrayList<ComboUserInsert>();
       }
   }

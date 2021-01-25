@@ -60,6 +60,14 @@ public class InsertGenerator {
         }
     }
 
+    void generujPracownikow(int x){
+        for(int i = 0; i < x; i++){
+            inserts.add("INSERT INTO \"uzytkownik\"(\"imie\",\"nazwisko\",\"e_mail\",\"numer\",\"typ\") VALUES ('"+getRandomName()+"', '"+getRandomSurname()+"', 'mail"+i+"@gmail.COM', "+getRandomNumber(500000000,999999999)+", 'Pracownik');\n");
+            inserts.add("INSERT INTO \"panel\" VALUES (latest_uzytkownik_id(), 'pracownik"+i+"', 'haslo"+i+"');\n");
+            inserts.add("\n");
+        }
+    }
+
     void save(){
         try{
             File f1 = new File(file);
@@ -131,8 +139,12 @@ public class InsertGenerator {
 //        uzyt.generujUzytkownikow(20);
 //        uzyt.save();
 
-        InsertGenerator rez = new InsertGenerator("rezerwacje.sql");
-        rez.generujRezerwacje(100);
-        rez.save();
+//        InsertGenerator rez = new InsertGenerator("rezerwacje.sql");
+//        rez.generujRezerwacje(100);
+//        rez.save();
+
+        InsertGenerator uzyt = new InsertGenerator("pracownicy.sql");
+        uzyt.generujPracownikow(10);
+        uzyt.save();
     }
 }

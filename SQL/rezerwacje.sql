@@ -147,3 +147,105 @@ BEGIN;
 INSERT INTO projekt.rezerwacje("uzytkownik_id","pokoj_id","data_rezerwacji","od_kiedy","do_kiedy","liczba_dzieci","liczba_doroslych") VALUES(10, 8,NOW(),CAST('2020-4-23' AS DATE),CAST('2020-4-26' AS DATE), 0,0);
 INSERT INTO projekt.dodatkowe_uslugi("nazwa_uslugi", "cena_od_osoby", "rezerwacja_id") VALUES('Brak', 0.0, latest_rezerwacja_id());
 COMMIT;
+
+
+BEGIN;
+INSERT INTO projekt.rezerwacje("uzytkownik_id","pokoj_id","data_rezerwacji","od_kiedy","do_kiedy","liczba_dzieci","liczba_doroslych") VALUES(13, 5,NOW(),CAST('2020-7-23' AS DATE),CAST('2020-7-24' AS DATE), 1,3);
+INSERT INTO projekt.dodatkowe_uslugi("nazwa_uslugi", "cena_od_osoby", "rezerwacja_id") VALUES('Kregielnia', 25.0, latest_rezerwacja_id());
+COMMIT;
+
+BEGIN;
+INSERT INTO projekt.rezerwacje("uzytkownik_id","pokoj_id","data_rezerwacji","od_kiedy","do_kiedy","liczba_dzieci","liczba_doroslych") VALUES(9, 10,NOW(),CAST('2021-3-21' AS DATE),CAST('2021-8-24' AS DATE), 0,5);
+INSERT INTO projekt.dodatkowe_uslugi("nazwa_uslugi", "cena_od_osoby", "rezerwacja_id") VALUES('Bilard', 10.0, latest_rezerwacja_id());
+COMMIT;
+
+BEGIN;
+INSERT INTO projekt.rezerwacje("uzytkownik_id","pokoj_id","data_rezerwacji","od_kiedy","do_kiedy","liczba_dzieci","liczba_doroslych") VALUES(5, 17,NOW(),CAST('2020-12-26' AS DATE),CAST('2020-12-26' AS DATE), 4,0);
+INSERT INTO projekt.dodatkowe_uslugi("nazwa_uslugi", "cena_od_osoby", "rezerwacja_id") VALUES('Basen', 15.0, latest_rezerwacja_id());
+COMMIT;
+
+BEGIN;
+INSERT INTO projekt.rezerwacje("uzytkownik_id","pokoj_id","data_rezerwacji","od_kiedy","do_kiedy","liczba_dzieci","liczba_doroslych") VALUES(10, 9,NOW(),CAST('2021-12-7' AS DATE),CAST('2022-12-18' AS DATE), 4,0);
+INSERT INTO projekt.dodatkowe_uslugi("nazwa_uslugi", "cena_od_osoby", "rezerwacja_id") VALUES('Bilard', 10.0, latest_rezerwacja_id());
+COMMIT;
+
+BEGIN;
+INSERT INTO projekt.rezerwacje("uzytkownik_id","pokoj_id","data_rezerwacji","od_kiedy","do_kiedy","liczba_dzieci","liczba_doroslych") VALUES(10, 9,NOW(),CAST('2020-7-3' AS DATE),CAST('2021-9-5' AS DATE), 2,2);
+INSERT INTO projekt.dodatkowe_uslugi("nazwa_uslugi", "cena_od_osoby", "rezerwacja_id") VALUES('Silownia', 5.0, latest_rezerwacja_id());
+COMMIT;
+
+BEGIN;
+INSERT INTO projekt.rezerwacje("uzytkownik_id","pokoj_id","data_rezerwacji","od_kiedy","do_kiedy","liczba_dzieci","liczba_doroslych") VALUES(19, 18,NOW(),CAST('2021-9-23' AS DATE),CAST('2022-12-28' AS DATE), 4,0);
+INSERT INTO projekt.dodatkowe_uslugi("nazwa_uslugi", "cena_od_osoby", "rezerwacja_id") VALUES('Basen', 15.0, latest_rezerwacja_id());
+COMMIT;
+
+BEGIN;
+INSERT INTO projekt.rezerwacje("uzytkownik_id","pokoj_id","data_rezerwacji","od_kiedy","do_kiedy","liczba_dzieci","liczba_doroslych") VALUES(19, 1,NOW(),CAST('2020-5-18' AS DATE),CAST('2021-7-21' AS DATE), 0,1);
+INSERT INTO projekt.dodatkowe_uslugi("nazwa_uslugi", "cena_od_osoby", "rezerwacja_id") VALUES('Kregielnia', 25.0, latest_rezerwacja_id());
+COMMIT;
+
+BEGIN;
+INSERT INTO projekt.rezerwacje("uzytkownik_id","pokoj_id","data_rezerwacji","od_kiedy","do_kiedy","liczba_dzieci","liczba_doroslych") VALUES(13, 14,NOW(),CAST('2021-12-4' AS DATE),CAST('2022-12-24' AS DATE), 1,1);
+INSERT INTO projekt.dodatkowe_uslugi("nazwa_uslugi", "cena_od_osoby", "rezerwacja_id") VALUES('Basen', 15.0, latest_rezerwacja_id());
+COMMIT;
+
+BEGIN;
+INSERT INTO projekt.rezerwacje("uzytkownik_id","pokoj_id","data_rezerwacji","od_kiedy","do_kiedy","liczba_dzieci","liczba_doroslych") VALUES(3, 7,NOW(),CAST('2021-2-7' AS DATE),CAST('2021-4-15' AS DATE), 0,3);
+INSERT INTO projekt.dodatkowe_uslugi("nazwa_uslugi", "cena_od_osoby", "rezerwacja_id") VALUES('Silownia', 5.0, latest_rezerwacja_id());
+COMMIT;
+
+BEGIN;
+INSERT INTO projekt.rezerwacje("uzytkownik_id","pokoj_id","data_rezerwacji","od_kiedy","do_kiedy","liczba_dzieci","liczba_doroslych") VALUES(17, 7,NOW(),CAST('2021-7-10' AS DATE),CAST('2022-9-28' AS DATE), 3,0);
+INSERT INTO projekt.dodatkowe_uslugi("nazwa_uslugi", "cena_od_osoby", "rezerwacja_id") VALUES('Basen', 15.0, latest_rezerwacja_id());
+COMMIT;
+
+BEGIN;
+INSERT INTO projekt.rezerwacje("uzytkownik_id","pokoj_id","data_rezerwacji","od_kiedy","do_kiedy","liczba_dzieci","liczba_doroslych") VALUES(18, 16,NOW(),CAST('2021-3-17' AS DATE),CAST('2022-5-22' AS DATE), 5,0);
+INSERT INTO projekt.dodatkowe_uslugi("nazwa_uslugi", "cena_od_osoby", "rezerwacja_id") VALUES('Brak', 0.0, latest_rezerwacja_id());
+COMMIT;
+
+BEGIN;
+INSERT INTO projekt.rezerwacje("uzytkownik_id","pokoj_id","data_rezerwacji","od_kiedy","do_kiedy","liczba_dzieci","liczba_doroslych") VALUES(13, 16,NOW(),CAST('2021-5-1' AS DATE),CAST('2022-9-25' AS DATE), 2,1);
+INSERT INTO projekt.dodatkowe_uslugi("nazwa_uslugi", "cena_od_osoby", "rezerwacja_id") VALUES('Brak', 0.0, latest_rezerwacja_id());
+COMMIT;
+
+BEGIN;
+INSERT INTO projekt.rezerwacje("uzytkownik_id","pokoj_id","data_rezerwacji","od_kiedy","do_kiedy","liczba_dzieci","liczba_doroslych") VALUES(0, 11,NOW(),CAST('2020-7-23' AS DATE),CAST('2021-11-24' AS DATE), 5,0);
+INSERT INTO projekt.dodatkowe_uslugi("nazwa_uslugi", "cena_od_osoby", "rezerwacja_id") VALUES('Silownia', 5.0, latest_rezerwacja_id());
+COMMIT;
+
+BEGIN;
+INSERT INTO projekt.rezerwacje("uzytkownik_id","pokoj_id","data_rezerwacji","od_kiedy","do_kiedy","liczba_dzieci","liczba_doroslych") VALUES(19, 19,NOW(),CAST('2021-9-4' AS DATE),CAST('2022-11-9' AS DATE), 0,3);
+INSERT INTO projekt.dodatkowe_uslugi("nazwa_uslugi", "cena_od_osoby", "rezerwacja_id") VALUES('Silownia', 5.0, latest_rezerwacja_id());
+COMMIT;
+
+BEGIN;
+INSERT INTO projekt.rezerwacje("uzytkownik_id","pokoj_id","data_rezerwacji","od_kiedy","do_kiedy","liczba_dzieci","liczba_doroslych") VALUES(10, 2,NOW(),CAST('2021-7-25' AS DATE),CAST('2021-9-29' AS DATE), 1,4);
+INSERT INTO projekt.dodatkowe_uslugi("nazwa_uslugi", "cena_od_osoby", "rezerwacja_id") VALUES('Basen', 15.0, latest_rezerwacja_id());
+COMMIT;
+
+BEGIN;
+INSERT INTO projekt.rezerwacje("uzytkownik_id","pokoj_id","data_rezerwacji","od_kiedy","do_kiedy","liczba_dzieci","liczba_doroslych") VALUES(12, 6,NOW(),CAST('2021-7-2' AS DATE),CAST('2022-8-23' AS DATE), 4,1);
+INSERT INTO projekt.dodatkowe_uslugi("nazwa_uslugi", "cena_od_osoby", "rezerwacja_id") VALUES('Basen', 15.0, latest_rezerwacja_id());
+COMMIT;
+
+BEGIN;
+INSERT INTO projekt.rezerwacje("uzytkownik_id","pokoj_id","data_rezerwacji","od_kiedy","do_kiedy","liczba_dzieci","liczba_doroslych") VALUES(16, 11,NOW(),CAST('2021-11-10' AS DATE),CAST('2022-11-26' AS DATE), 5,0);
+INSERT INTO projekt.dodatkowe_uslugi("nazwa_uslugi", "cena_od_osoby", "rezerwacja_id") VALUES('Bilard', 10.0, latest_rezerwacja_id());
+COMMIT;
+
+BEGIN;
+INSERT INTO projekt.rezerwacje("uzytkownik_id","pokoj_id","data_rezerwacji","od_kiedy","do_kiedy","liczba_dzieci","liczba_doroslych") VALUES(1, 0,NOW(),CAST('2021-2-15' AS DATE),CAST('2021-12-18' AS DATE), 5,0);
+INSERT INTO projekt.dodatkowe_uslugi("nazwa_uslugi", "cena_od_osoby", "rezerwacja_id") VALUES('Basen', 15.0, latest_rezerwacja_id());
+COMMIT;
+
+BEGIN;
+INSERT INTO projekt.rezerwacje("uzytkownik_id","pokoj_id","data_rezerwacji","od_kiedy","do_kiedy","liczba_dzieci","liczba_doroslych") VALUES(15, 3,NOW(),CAST('2021-11-22' AS DATE),CAST('2021-12-23' AS DATE), 5,0);
+INSERT INTO projekt.dodatkowe_uslugi("nazwa_uslugi", "cena_od_osoby", "rezerwacja_id") VALUES('Brak', 0.0, latest_rezerwacja_id());
+COMMIT;
+
+BEGIN;
+INSERT INTO projekt.rezerwacje("uzytkownik_id","pokoj_id","data_rezerwacji","od_kiedy","do_kiedy","liczba_dzieci","liczba_doroslych") VALUES(14, 16,NOW(),CAST('2021-8-16' AS DATE),CAST('2022-10-27' AS DATE), 5,0);
+INSERT INTO projekt.dodatkowe_uslugi("nazwa_uslugi", "cena_od_osoby", "rezerwacja_id") VALUES('Basen', 15.0, latest_rezerwacja_id());
+COMMIT;
+

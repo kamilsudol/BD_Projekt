@@ -58,9 +58,15 @@ $$LANGUAGE 'plpgsql';
 CREATE OR REPLACE FUNCTION oplataRezygnuj(id int) RETURNS void AS $$
 DECLARE
     rec RECORD;
+    rec2 RECORD;
 BEGIN
-    SELECT * INTO rec FROM projekt.rezerwacje WHERE rezerwacja_id = (SELECT rezerwacja_id FROM projekt.oplata WHERE oplata_id = id);
-    INSERT INTO projekt.rezygnacja_z_rezerwacji_info("rezerwacja_id", "uzytkownik_id") VALUES(rec.rezerwacja_id, rec.uzytkownik_id);
+    SELECT * INTO rec2 FROM projekt.oplata WHERE oplata_id = id;
+    IF rec2.status_czy_oplacone LIKE 'Nieoplacone' THEN
+        SELECT * INTO rec FROM projekt.rezerwacje WHERE rezerwacja_id = (SELECT rezerwacja_id FROM projekt.oplata WHERE oplata_id = id);
+        INSERT INTO projekt.rezygnacja_z_rezerwacji_info("rezerwacja_id", "uzytkownik_id") VALUES(rec.rezerwacja_id, rec.uzytkownik_id);
+    ELSE
+        RAISE EXCEPTION '||Nie mozna ponownie zmienic wczesniej zmienionego statusu oplaty rezerwacji!||';
+    END IF;
 END;
 $$LANGUAGE 'plpgsql';
 ------------------------------------------- 

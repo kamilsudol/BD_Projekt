@@ -58,3 +58,33 @@ INSERT INTO "panel" VALUES (latest_uzytkownik_id(), 'uzytkownik18', 'haslo18');
 INSERT INTO "uzytkownik"("imie","nazwisko","e_mail","numer","typ") VALUES ('Tomasz', 'Kutyla', 'mail19@gmail.COM', 904968760, 'Klient');
 INSERT INTO "panel" VALUES (latest_uzytkownik_id(), 'uzytkownik19', 'haslo19');
 
+INSERT INTO "uzytkownik"("imie","nazwisko","e_mail","numer","typ") VALUES ('Anna', 'Wisniewski', 'mail_pracowniczy0@gmail.COM', 948911999, 'Pracownik');
+INSERT INTO "panel" VALUES (latest_uzytkownik_id(), 'pracownik0', 'haslo0');
+
+INSERT INTO "uzytkownik"("imie","nazwisko","e_mail","numer","typ") VALUES ('Sylwia', 'Abacki', 'mail_pracowniczy1@gmail.COM', 588826563, 'Pracownik');
+INSERT INTO "panel" VALUES (latest_uzytkownik_id(), 'pracownik1', 'haslo1');
+
+INSERT INTO "uzytkownik"("imie","nazwisko","e_mail","numer","typ") VALUES ('Sylwia', 'Kutyla', 'mail_pracowniczy2@gmail.COM', 588664148, 'Pracownik');
+INSERT INTO "panel" VALUES (latest_uzytkownik_id(), 'pracownik2', 'haslo2');
+
+INSERT INTO "uzytkownik"("imie","nazwisko","e_mail","numer","typ") VALUES ('Jan', 'Babacki', 'mail_pracowniczy3@gmail.COM', 968862033, 'Pracownik');
+INSERT INTO "panel" VALUES (latest_uzytkownik_id(), 'pracownik3', 'haslo3');
+
+INSERT INTO "uzytkownik"("imie","nazwisko","e_mail","numer","typ") VALUES ('Tomasz', 'Okon', 'mail_pracowniczy4@gmail.COM', 972078220, 'Pracownik');
+INSERT INTO "panel" VALUES (latest_uzytkownik_id(), 'pracownik4', 'haslo4');
+
+INSERT INTO "uzytkownik"("imie","nazwisko","e_mail","numer","typ") VALUES ('Anna', 'Okon', 'mail_pracowniczy5@gmail.COM', 829304259, 'Pracownik');
+INSERT INTO "panel" VALUES (latest_uzytkownik_id(), 'pracownik5', 'haslo5');
+
+INSERT INTO "uzytkownik"("imie","nazwisko","e_mail","numer","typ") VALUES ('Sylwia', 'Leszcz', 'mail_pracowniczy6@gmail.COM', 577365381, 'Pracownik');
+INSERT INTO "panel" VALUES (latest_uzytkownik_id(), 'pracownik6', 'haslo6');
+
+INSERT INTO "uzytkownik"("imie","nazwisko","e_mail","numer","typ") VALUES ('Anna', 'Wisniewski', 'mail_pracowniczy7@gmail.COM', 776964986, 'Pracownik');
+INSERT INTO "panel" VALUES (latest_uzytkownik_id(), 'pracownik7', 'haslo7');
+
+INSERT INTO "uzytkownik"("imie","nazwisko","e_mail","numer","typ") VALUES ('Sylwia', 'Babacki', 'mail_pracowniczy8@gmail.COM', 859527017, 'Pracownik');
+INSERT INTO "panel" VALUES (latest_uzytkownik_id(), 'pracownik8', 'haslo8');
+
+INSERT INTO "uzytkownik"("imie","nazwisko","e_mail","numer","typ") VALUES ('Agnieszka', 'Wisniewski', 'mail_pracowniczy9@gmail.COM', 763430041, 'Pracownik');
+INSERT INTO "panel" VALUES (latest_uzytkownik_id(), 'pracownik9', 'haslo9');
+
