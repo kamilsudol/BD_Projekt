@@ -8,7 +8,7 @@ The project focuses on database hotel services, which inlcudes implementations o
 * triggers and trigger functions
 * transactions
 
-## Full documentation can be found [here](./DOC/Dokumentacja_Baza danych_Hotel.pdf)
+Full documentation can be found [here](./DOC/Dokumentacja_Baza_danych_Hotel.pdf).
 
 ## ERD diagram 
 ![diagram](DOC/Baza_danych_hotel.png)
